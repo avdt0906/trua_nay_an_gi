@@ -1,0 +1,72 @@
+/* General styles for both pages */
+body, html {
+    height: 100%;
+    margin: 0;
+    font-family: 'Roboto', sans-serif;
+}
+
+.bg-image-wrapper {
+    background-image: url('https://img.tripi.vn/cdn-cgi/image/width=1920,quality=80/https://img6.thuthuatphanmem.vn/uploads/2022/03/16/background-mon-an-dep_024906543.jpg');
+    height: 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.auth-card {
+    width: 100%;
+    background: #fff;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+
+.auth-card .auth-header {
+    background-color: #007bff;
+    color: white;
+    padding: 30px;
+    text-align: center;
+}
+
+.auth-card .auth-header h2 {
+    font-weight: 700;
+    margin: 0;
+}
+
+.auth-card .auth-body {
+    padding: 40px;
+}
+
+.auth-card .auth-footer-link {
+    padding: 20px 40px;
+    background-color: #f8f9fa;
+    border-top: 1px solid #dee2e6;
+    font-size: 0.95rem;
+}
+
+/* Specific widths for each card */
+.login-card {
+    max-width: 480px;
+}
+
+.register-card {
+    max-width: 520px;
+}
+
+
+/* Form controls */
+.form-control:focus {
+    box-shadow: 0 0 0 0.25rem rgba(0, 123, 255, 0.25);
+    border-color: #86b7fe;
+}
+
+.btn-primary {
+    background-color: #007bff;
+    border-color: #007bff;
+    padding: 12px;
+    font-weight: 500;
+}
