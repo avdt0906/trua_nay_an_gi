@@ -1,4 +1,4 @@
-/* General styles for both pages */
+
 body, html {
     height: 100%;
     margin: 0;
@@ -6,7 +6,7 @@ body, html {
 }
 
 .bg-image-wrapper {
-    background-image: url('https://img.tripi.vn/cdn-cgi/image/width=1920,quality=80/https://img6.thuthuatphanmem.vn/uploads/2022/03/16/background-mon-an-dep_024906543.jpg');
+    background-image: url('http://anhnen.jpg');
     height: 100%;
     background-position: center;
     background-repeat: no-repeat;
