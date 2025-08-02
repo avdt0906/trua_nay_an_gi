@@ -1,7 +1,7 @@
 package com.codegym.project_module_5.service.impl;
 
 import com.codegym.project_module_5.model.User;
-import com.codegym.project_module_5.repository.UserRepository;
+import com.codegym.project_module_5.repository.IUserRepository;
 import com.codegym.project_module_5.model.UserDetailsImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -13,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
     @Autowired
-    UserRepository userRepository;
+    IUserRepository userRepository;
 
     @Override
     @Transactional
