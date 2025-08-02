@@ -1,5 +1,6 @@
 package com.codegym.project_module_5.model;
 
+
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -8,17 +9,13 @@ import lombok.*;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class User {
+public class UserAddress {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String username;
-    private String password;
-    private String email;
-    private String phone;
-    private String fullName;
-    private String avatar_url;
+    private String address;
     @ManyToOne
-    @JoinColumn(name = "role_id")
-    private Role role;
+    @JoinColumn(name = "user_id")
+    private User user;
+
 }

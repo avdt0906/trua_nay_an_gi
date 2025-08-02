@@ -8,17 +8,15 @@ import lombok.*;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class User {
+public class DishOption {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String username;
-    private String password;
-    private String email;
-    private String phone;
-    private String fullName;
-    private String avatar_url;
+    private String name;
     @ManyToOne
-    @JoinColumn(name = "role_id")
-    private Role role;
+    @JoinColumn(name = "dish_id")
+    private Dish dish;
+    private Double price;
+    private String description;
+    private Boolean is_available = true;
 }
