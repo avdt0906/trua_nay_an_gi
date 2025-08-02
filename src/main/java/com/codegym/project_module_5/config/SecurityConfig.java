@@ -49,14 +49,14 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authenticationProvider(authenticationProvider())
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/login", "/registry","/api/auth/**").permitAll()
+                        .requestMatchers("/login", "/register","/api/auth/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
                         .loginPage("/login")
                         .loginProcessingUrl("/login")
                         .defaultSuccessUrl("/home", true)
-                        .failureUrl("/auth/login?error=true")
+                        .failureUrl("/login")
                         .permitAll()
                 )
                 .logout(logout -> logout
