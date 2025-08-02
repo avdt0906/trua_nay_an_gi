@@ -1,7 +1,10 @@
 package com.codegym.project_module_5.config;
 
+import com.codegym.project_module_5.model.Role;
+import com.codegym.project_module_5.repository.IRoleRepository;
 import com.codegym.project_module_5.service.impl.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -32,11 +35,21 @@ public class SecurityConfig {
     }
 
     @Bean
+    CommandLineRunner init(IRoleRepository roleRepo) {
+        return args -> {
+            if (roleRepo.findByName("USER").isEmpty()) {
+                roleRepo.save(new Role(null, "USER"));
+            }
+        };
+    }
+
+    @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
+                .csrf(csrf -> csrf.disable())
                 .authenticationProvider(authenticationProvider())
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/login", "/registry").permitAll()
+                        .requestMatchers("/login", "/registry","/api/auth/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
@@ -47,6 +60,8 @@ public class SecurityConfig {
                         .permitAll()
                 )
                 .logout(logout -> logout
+                        .logoutUrl("/logout")
+                        .logoutSuccessUrl("/login?logout")
                         .permitAll()
                 );
         return http.build();
