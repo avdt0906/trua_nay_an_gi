@@ -50,6 +50,7 @@ public class SecurityConfig {
                 .authenticationProvider(authenticationProvider())
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/login", "/register","/api/auth/**").permitAll()
+                        .requestMatchers("/restaurants/**").hasAuthority("OWNER")
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Cập nhật thông tin Nhà hàng</title>
+</head>
+<body>
+<h1>Cập nhật thông tin Nhà Hàng của bạn</h1>
+<form th:action="@{/restaurants/update_restaurant}" method="post" th:object="${restaurant}">
+    <input type="text" th:field="*{id}" hidden>
+    <div>
+        <label for="name">Tên nhà hàng</label><br>
+        <input type="text" id="name" th:field="*{name}"/>
+    </div>
+    <div>
+        <label for="user">Chủ sở hữu</label><br>
+        <input type="text" id="user" th:field="*{user}" readonly/>
+    </div>
+    <div>
+        <label for="address">Địa chỉ</label><br>
+        <input type="text" id="address" th:field="*{address}"/>
+    </div>
+    <div>
+        <label for="phone">Số điện thoại liên hệ</label><br>
+        <input type="text" id="phone" th:field="*{phone}"/>
+    </div>
+    <div>
+        <label for="description">Mô tả</label><br>
+        <textarea id="description" th:field="*{description}"></textarea>
+    </div>
+    <button type="submit">Cập nhật</button>
+</form>
+</body>
+</html>
