@@ -20,6 +20,4 @@ public class RegisterController {
         User registered = userService.register(request);
         return ResponseEntity.ok(registered);
     }
-
-
 }
