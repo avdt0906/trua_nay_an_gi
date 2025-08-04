@@ -1,7 +1,6 @@
 package com.codegym.project_module_5.controller.owner;
 
 import com.codegym.project_module_5.model.Restaurant;
-import com.codegym.project_module_5.model.User;
 import com.codegym.project_module_5.service.IRestaurantService;
 import com.codegym.project_module_5.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +26,7 @@ public class RestaurantController {
 
     @GetMapping("/update_restaurant_form")
     public ModelAndView showUpdateRestaurantForm() {
-        ModelAndView mv = new ModelAndView("owner/update_restaurant_form");
+        ModelAndView mv = new ModelAndView("owner/restaurant/update_restaurant_form");
         String username = getCurrentUsername();
         Optional<Restaurant> restaurant = restaurantService.findByUsername(username);
         mv.addObject("restaurant", restaurant.get());
