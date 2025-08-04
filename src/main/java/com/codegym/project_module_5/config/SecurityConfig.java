@@ -49,7 +49,8 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authenticationProvider(authenticationProvider())
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/login", "/register","/api/auth/**").permitAll()
+                        .requestMatchers("/css/**", "/js/**", "/images/**").permitAll()
+                        .requestMatchers("/login", "/register","/api/auth/**","/forgotPassword").permitAll()
                         .requestMatchers("/restaurants/**").hasAuthority("OWNER")
                         .anyRequest().authenticated()
                 )

@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Đăng Ký</title>
+    <title>Register</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -14,12 +14,12 @@
 <div class="bg-image-wrapper">
     <div class="auth-card register-card">
         <div class="auth-header">
-            <h2>Tạo Tài Khoản Mới</h2>
+            <h2>Create a New Account</h2>
         </div>
         <div class="auth-body">
             <form th:action="@{/register}" method="post">
                 <div class="mb-3">
-                    <label for="fullName" class="form-label">Họ và Tên</label>
+                    <label for="fullName" class="form-label">Full Name</label>
                     <input type="text" class="form-control" id="fullName" name="fullName" required>
                 </div>
                 <div class="mb-3">
@@ -27,20 +27,20 @@
                     <input type="email" class="form-control" id="email" name="email" required>
                 </div>
                 <div class="mb-3">
-                    <label for="password" class="form-label">Mật khẩu</label>
+                    <label for="password" class="form-label">Password</label>
                     <input type="password" class="form-control" id="password" name="password" required>
                 </div>
                 <div class="mb-4">
-                    <label for="confirmPassword" class="form-label">Xác nhận mật khẩu</label>
+                    <label for="confirmPassword" class="form-label">Confirm Password</label>
                     <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required>
                 </div>
                 <div class="d-grid">
-                    <button type="submit" class="btn btn-primary btn-lg">Đăng Ký</button>
+                    <button type="submit" class="btn btn-primary btn-lg">Register</button>
                 </div>
             </form>
         </div>
         <div class="text-center auth-footer-link">
-            <p class="mb-0">Đã có tài khoản? <a th:href="@{/home}" class="fw-bold text-decoration-none">Đăng nhập tại đây</a></p>
+            <p class="mb-0">Already have an account? <a th:href="@{/login}" class="fw-bold text-decoration-none">Login here</a></p>
         </div>
     </div>
 </div>
