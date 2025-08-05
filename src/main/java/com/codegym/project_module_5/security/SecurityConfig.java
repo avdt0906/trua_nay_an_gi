@@ -23,7 +23,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/auth/**").permitAll()
                         .anyRequest().authenticated()
                 )
-                .httpBasic(); // hoặc .formLogin() hoặc JWT tùy bạn dùng
+                .httpBasic();
 
         return http.build();
     }
@@ -36,8 +36,12 @@ public class SecurityConfig {
     @Bean
     CommandLineRunner init(IRoleRepository roleRepo) {
         return args -> {
-            if (roleRepo.findByName("USER").isEmpty()) {
-                roleRepo.save(new Role(null, "USER"));
+            if (roleRepo.findByName("CUSTOMER").isEmpty()) {
+                roleRepo.save(new Role(null, "CUSTOMER"));
+            } else if (roleRepo.findByName("ADMIN").isEmpty()) {
+                roleRepo.save(new Role(null, "ADMIN"));
+            } else if (roleRepo.findByName("OWNER").isEmpty()) {
+                roleRepo.save(new Role(null, "OWNER"));
             }
         };
     }

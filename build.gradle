@@ -36,7 +36,6 @@ dependencies {
 
     //security
     implementation 'org.springframework.boot:spring-boot-starter-security'
-
     implementation 'jakarta.servlet:jakarta.servlet-api:6.0.0'
 }
 
