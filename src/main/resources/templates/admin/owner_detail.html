@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Chi tiết Chủ nhà hàng</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Roboto', sans-serif;
+        }
+        .navbar {
+            box-shadow: 0 2px 4px rgba(0,0,0,.08);
+        }
+        .detail-container {
+            background-color: #ffffff;
+            padding: 2rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 8px rgba(0,0,0,.05);
+        }
+        .card {
+            border-radius: 0.75rem;
+        }
+        .list-group-item {
+            border-left: 0;
+            border-right: 0;
+        }
+        .list-group-item:first-child {
+            border-top-left-radius: 0.75rem;
+            border-top-right-radius: 0.75rem;
+            border-top: 0;
+        }
+        .list-group-item:last-child {
+            border-bottom-left-radius: 0.75rem;
+            border-bottom-right-radius: 0.75rem;
+            border-bottom: 0;
+        }
+        .status-badge {
+            font-size: 0.9em;
+            padding: 0.5em 0.8em;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Sử dụng Navbar Fragment -->
+<div th:replace="~{admin/fragments/navbar :: navbar}"></div>
+
+<!-- Main Content -->
+<main class="container mt-4">
+    <div class="detail-container">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 class="h3 mb-0">Chi tiết Chủ nhà hàng</h1>
+            <a th:href="@{/admin/list}" class="btn btn-outline-secondary">
+                <i class="fas fa-arrow-left me-1"></i> Quay lại danh sách
+            </a>
+        </div>
+
+        <div class="row">
+            <!-- Owner Details Card -->
+            <div class="col-lg-6 mb-4">
+                <div class="card h-100">
+                    <div class="card-header bg-dark text-white">
+                        <h5 class="mb-0"><i class="fas fa-user-tie me-2"></i>Thông tin Chủ sở hữu</h5>
+                    </div>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <strong>ID:</strong>
+                            <span th:text="${owner.id}"></span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <strong>Họ và Tên:</strong>
+                            <span th:text="${owner.fullName}"></span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <strong>Username:</strong>
+                            <span th:text="${owner.username}"></span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <strong>Email:</strong>
+                            <span th:text="${owner.email}"></span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <strong>Số điện thoại:</strong>
+                            <span th:text="${owner.phone}"></span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Restaurant Details Card -->
+            <div class="col-lg-6 mb-4">
+                <div class="card h-100">
+                    <div class="card-header bg-dark text-white">
+                        <h5 class="mb-0"><i class="fas fa-store me-2"></i>Thông tin Nhà hàng</h5>
+                    </div>
+                    <!-- Trường hợp có nhà hàng -->
+                    <div th:if="${restaurant != null}">
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <strong>Tên nhà hàng:</strong>
+                                <span th:text="${restaurant.name}"></span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <strong>Địa chỉ:</strong>
+                                <span th:text="${restaurant.address}"></span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <strong>Điện thoại:</strong>
+                                <span th:text="${restaurant.phone}"></span>
+                            </li>
+                            <li class="list-group-item">
+                                <strong>Trạng thái:</strong>
+                                <div class="mt-2">
+                                    <span th:if="${restaurant.is_open}" class="badge rounded-pill bg-success status-badge">Đang mở cửa</span>
+                                    <span th:unless="${restaurant.is_open}" class="badge rounded-pill bg-secondary status-badge">Đã đóng cửa</span>
+
+                                    <span th:if="${restaurant.is_approved}" class="badge rounded-pill bg-primary status-badge">Đã xác thực</span>
+                                    <span th:unless="${restaurant.is_approved}" class="badge rounded-pill bg-warning text-dark status-badge">Chưa xác thực</span>
+
+                                    <span th:if="${restaurant.is_locked}" class="badge rounded-pill bg-danger status-badge">Đã bị khóa</span>
+                                    <span th:unless="${restaurant.is_locked}" class="badge rounded-pill bg-light text-dark status-badge">Không bị khóa</span>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                    <!-- Trường hợp chưa có nhà hàng -->
+                    <div th:if="${restaurant == null}" class="card-body d-flex align-items-center justify-content-center">
+                        <div class="text-center text-muted">
+                            <i class="fas fa-exclamation-circle fa-2x mb-2"></i>
+                            <p>Chủ sở hữu này chưa đăng ký nhà hàng.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
