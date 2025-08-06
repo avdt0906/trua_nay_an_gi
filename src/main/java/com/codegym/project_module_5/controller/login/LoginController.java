@@ -12,10 +12,6 @@ public class LoginController {
     public String login(Model model) {
         return "login/login";
     }
-    @GetMapping("/home")
-    public String home(Model model) {
-        return "login/home";
-    }
     @GetMapping("/register")
     public String register(Model model) {
         return "login/register";

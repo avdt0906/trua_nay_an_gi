@@ -24,6 +24,12 @@ public class RestaurantController {
     @Autowired
     private IUserService userService;
 
+    @GetMapping("")
+    public ModelAndView showDashboard() {
+        ModelAndView mv = new ModelAndView("owner/restaurant/dashboard");
+        return mv;
+    }
+
     @GetMapping("/update_restaurant_form")
     public ModelAndView showUpdateRestaurantForm() {
         ModelAndView mv = new ModelAndView("owner/restaurant/update_restaurant_form");
