@@ -36,6 +36,9 @@ dependencies {
 
     //security
     implementation 'org.springframework.boot:spring-boot-starter-security'
+    //Sengird
+    implementation 'com.sendgrid:sendgrid-java:4.9.3'
+    
 
     implementation 'jakarta.servlet:jakarta.servlet-api:6.0.0'
 }

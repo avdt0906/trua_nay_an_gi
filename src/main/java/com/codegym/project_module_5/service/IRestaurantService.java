@@ -6,4 +6,10 @@ import java.util.Optional;
 
 public interface IRestaurantService extends IGeneralService<Restaurant> {
     Optional<Restaurant> findByUsername(String username);
+
+    boolean approveRestaurant(Long restaurantId);
+
+    boolean rejectRestaurant(Long restaurantId);
+    
+    boolean toggleRestaurantApproval(Long restaurantId);
 }
