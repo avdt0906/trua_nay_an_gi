@@ -20,8 +20,8 @@ public class LoginController {
     public String register(Model model) {
         return "login/register";
     }
-    @GetMapping("/forgotPassword")
+    @GetMapping("/forgot_password")
     public String forgotPassword(Model model) {
-        return "login/forgotPassword";
+        return "login/forgot_password";
     }
 }
