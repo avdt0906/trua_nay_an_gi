@@ -13,7 +13,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Controller
@@ -29,11 +31,20 @@ public class AdminController {
     @Autowired
     private IRestaurantService restaurantService;
 
+    /**
+     * Chuyển hướng từ /admin sang /admin/dashboard.
+     * @return Chuỗi chuyển hướng.
+     */
     @GetMapping
     public String redirectToDashboard() {
         return "redirect:/admin/dashboard";
     }
 
+    /**
+     * Hiển thị trang tổng quan (dashboard) chính của admin.
+     * @param model Model để truyền dữ liệu tới view.
+     * @return Tên view của trang dashboard.
+     */
     @GetMapping("/dashboard")
     public String showAdminDashboard(Model model) {
         int ownerCount = userService.findAllByRoleName("OWNER").size();
@@ -48,15 +59,34 @@ public class AdminController {
         return "admin/dashboard";
     }
 
+    /**
+     * Hiển thị danh sách các chủ nhà hàng và trạng thái nhà hàng của họ.
+     * @param model Model để truyền dữ liệu tới view.
+     * @return Tên view của trang danh sách.
+     */
     @GetMapping("/list")
     public String showOwnerList(Model model) {
         List<User> owners = userService.findAllByRoleName("OWNER");
+        Map<Long, Restaurant> restaurantMap = new HashMap<>();
+        for (User owner : owners) {
+            restaurantService.findByUsername(owner.getUsername())
+                    .ifPresent(restaurant -> restaurantMap.put(owner.getId(), restaurant));
+        }
+
         model.addAttribute("owners", owners);
+        model.addAttribute("restaurantMap", restaurantMap); // Truyền Map nhà hàng tới view
         model.addAttribute("activePage", "list");
 
         return "admin/list";
     }
 
+    /**
+     * Hiển thị trang chi tiết thông tin của một chủ nhà hàng và nhà hàng của họ.
+     * @param id ID của chủ nhà hàng (User).
+     * @param model Model để truyền dữ liệu tới view.
+     * @param redirectAttributes Dùng để gửi thông báo lỗi nếu không tìm thấy.
+     * @return Tên view của trang chi tiết hoặc chuyển hướng về trang danh sách.
+     */
     @GetMapping("/owner/{id}")
     public String showOwnerDetail(@PathVariable("id") Long id, Model model, RedirectAttributes redirectAttributes) {
         Optional<User> ownerOptional = userService.findById(id);
@@ -67,11 +97,13 @@ public class AdminController {
         }
 
         User owner = ownerOptional.get();
+        // Tìm nhà hàng dựa trên username của chủ sở hữu
         Optional<Restaurant> restaurantOptional = restaurantService.findByUsername(owner.getUsername());
 
         model.addAttribute("owner", owner);
+        // Ngay cả khi không có nhà hàng, vẫn truyền một Optional rỗng để view xử lý
         model.addAttribute("restaurant", restaurantOptional.orElse(null));
-        model.addAttribute("activePage", "list");
+        model.addAttribute("activePage", "list"); // Giữ cho mục "Quản lý Chủ quán" active
 
         return "admin/owner_detail";
     }

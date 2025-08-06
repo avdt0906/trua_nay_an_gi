@@ -57,15 +57,6 @@ public class SecurityConfig {
                 Role adminRole = roleRepo.findByName("ADMIN").orElseThrow(
                         () -> new RuntimeException("Lỗi: Không tìm thấy vai trò ADMIN.")
                 );
-
-                // Tạo admin test a có thể xóa đi hoặc để lại cho mn test luôn
-                User admin = new User();
-                admin.setUsername("admin");
-                admin.setPassword(passwordEncoder.encode("admin123"));
-                admin.setEmail("admin@example.com");
-                admin.setFullName("Administrator");
-                admin.setRole(adminRole);
-                userRepo.save(admin);
             }
         };
     }
