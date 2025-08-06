@@ -1,5 +1,6 @@
 package com.codegym.project_module_5.controller.register;
 
+import com.codegym.project_module_5.model.User;
 import com.codegym.project_module_5.model.dto.request.RegisterRequest;
 import com.codegym.project_module_5.service.impl.UserService;
 import lombok.RequiredArgsConstructor;
