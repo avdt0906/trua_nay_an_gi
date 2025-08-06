@@ -59,31 +59,36 @@
             <th scope="col">Họ và Tên</th>
             <th scope="col">Username</th>
             <th scope="col">Email</th>
-            <th scope="col">Số điện thoại</th>
+            <th scope="col">Trạng thái Cửa hàng</th>
             <th scope="col" class="text-center">Thao tác</th>
           </tr>
           </thead>
           <tbody>
-          <tr th:each="owner : ${owners}">
+          <tr th:each="owner : ${owners}" th:with="restaurant=${restaurantMap[owner.id]}">
             <th scope="row" th:text="${owner.id}"></th>
             <td th:text="${owner.fullName}"></td>
             <td th:text="${owner.username}"></td>
             <td th:text="${owner.email}"></td>
-            <td th:text="${owner.phone}"></td>
+            <td>
+              <!-- Hiển thị trạng thái dựa trên dữ liệu từ restaurantMap -->
+              <div th:if="${restaurant != null}">
+                <span th:if="${restaurant.is_locked}" class="badge bg-danger">Đã bị khóa</span>
+                <span th:unless="${restaurant.is_locked}" class="badge bg-success">Đang hoạt động</span>
+              </div>
+              <div th:unless="${restaurant != null}">
+                <span class="badge bg-secondary">Chưa có</span>
+              </div>
+            </td>
             <td class="text-center">
-              <!-- Nút Xem Chi Tiết -->
               <a th:href="@{/admin/owner/{id}(id=${owner.id})}" class="btn btn-sm btn-success btn-action" title="Xem Chi Tiết">
                 <i class="fas fa-eye"></i>
               </a>
-              <!-- Nút Sửa -->
               <a href="#" class="btn btn-sm btn-info btn-action" title="Sửa">
                 <i class="fas fa-edit"></i>
               </a>
-              <!-- Nút Xóa -->
               <a href="#" class="btn btn-sm btn-danger btn-action" title="Xóa">
                 <i class="fas fa-trash"></i>
               </a>
-              <!-- Nút Khóa Nhà Hàng -->
               <a href="#" class="btn btn-sm btn-warning btn-action" title="Khóa/Mở khóa Nhà hàng">
                 <i class="fas fa-store-slash"></i>
               </a>
