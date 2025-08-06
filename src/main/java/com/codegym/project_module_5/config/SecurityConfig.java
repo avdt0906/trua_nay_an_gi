@@ -76,7 +76,7 @@ public class SecurityConfig {
                 .authenticationProvider(authenticationProvider())
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/css/**", "/js/**", "/images/**").permitAll()
-                        .requestMatchers("/login", "/signup", "/api/auth/**", "/forgotPassword").permitAll()
+                        .requestMatchers("/login", "/register", "/api/auth/**", "/forgotPassword").permitAll()
                         .requestMatchers("/admin/**").hasAuthority("ADMIN")
                         .requestMatchers("/restaurants/**").hasAuthority("OWNER")
                         .anyRequest().authenticated()
