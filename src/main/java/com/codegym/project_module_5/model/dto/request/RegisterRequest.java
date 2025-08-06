@@ -10,4 +10,5 @@ public class RegisterRequest {
     private String phone;
     private String fullName;
     private String avatar_url;
+    private String confim_password;
 }

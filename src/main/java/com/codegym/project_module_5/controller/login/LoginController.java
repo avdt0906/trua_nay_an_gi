@@ -16,10 +16,10 @@ public class LoginController {
     public String home(Model model) {
         return "login/home";
     }
-    @GetMapping("/register")
-    public String register(Model model) {
-        return "login/register";
-    }
+//    @GetMapping("/register")
+//    public String register(Model model) {
+//        return "login/register";
+//    }
     @GetMapping("/forgotPassword")
     public String forgotPassword(Model model) {
         return "login/forgotPassword";
