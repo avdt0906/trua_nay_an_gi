@@ -12,10 +12,12 @@ public class LoginController {
     public String login(Model model) {
         return "login/login";
     }
+
     @GetMapping("/register")
     public String register(Model model) {
         return "login/register";
     }
+  
     @GetMapping("/forgot_password")
     public String forgotPassword(Model model) {
         return "login/forgot_password";
