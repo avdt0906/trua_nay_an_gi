@@ -43,7 +43,7 @@ public class UserService implements IUserService {
         user.setEmail(request.getEmail());
         user.setPhone(request.getPhone());
         user.setFullName(request.getFullName());
-        user.setAvatar_url(request.getAvatar_url());
+        user.setAvatarUrl(request.getAvatar_url());
         user.setRoles((Set<Role>) userRole);
         return userRepository.save(user);
     }
@@ -67,8 +67,8 @@ public class UserService implements IUserService {
     public void save(User user) {
         userRepository.save(user);
     }
-    @Override
-    public List<User> findAllByRoleName(String roleName) {
-        return userRepository.findAllByRole_Name(roleName);
-    }
+//    @Override
+//    public List<User> findAllByRoleName(String roleName) {
+//        return userRepository.findAllByRole_Name(roleName);
+//    }
 }
