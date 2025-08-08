@@ -22,5 +22,5 @@ public class DishOption {
     @NotNull
     private Double price;
     private String description;
-    private Boolean is_available = true;
+    private Boolean isAvailable = true;
 }

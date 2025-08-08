@@ -23,8 +23,14 @@ public class Order {
     @NotNull
     private Restaurant restaurant;
     @ManyToOne
+    @JoinColumn(name = "shipper_id")
+    private Shipper shipper;
+    @ManyToOne
     @JoinColumn(name = "order_status_id")
     @NotNull
     private OrderStatus orderStatus;
+    @ManyToOne
+    @JoinColumn(name = "coupon_id")
+    private Coupon coupon;
     private String customerNote;
 }

@@ -26,7 +26,7 @@ public class  User {
     private String phone;
     @NotNull
     private String fullName;
-    private String avatar_url;
+    private String avatarUrl;
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "user_roles",
             joinColumns = {@JoinColumn(name = "user_id")},

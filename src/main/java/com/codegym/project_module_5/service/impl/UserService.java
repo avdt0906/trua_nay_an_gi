@@ -43,7 +43,7 @@ public class UserService implements IUserService {
         user.setPhone(request.getPhone());
         user.setFullName(request.getFullName());
         user.setAvatar_url(request.getAvatar_url());
-        user.setRole(userRole);
+            user.setRole(userRole);
 
         return userRepository.save(user);
     }
