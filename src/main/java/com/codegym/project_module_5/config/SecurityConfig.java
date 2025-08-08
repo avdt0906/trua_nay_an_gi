@@ -59,13 +59,13 @@ public class SecurityConfig {
                 );
 
                 // Tạo admin test a có thể xóa đi hoặc để lại cho mn test luôn
-                User admin = new User();
-                admin.setUsername("admin");
-                admin.setPassword(passwordEncoder.encode("admin123"));
-                admin.setEmail("admin@example.com");
-                admin.setFullName("Administrator");
-                admin.setRole(adminRole);
-                userRepo.save(admin);
+//                User admin = new User();
+//                admin.setUsername("admin");
+//                admin.setPassword(passwordEncoder.encode("admin123"));
+//                admin.setEmail("admin@example.com");
+//                admin.setFullName("Administrator");
+//                admin.setRole(adminRole);
+//                userRepo.save(admin);
             }
         };
     }
@@ -78,7 +78,8 @@ public class SecurityConfig {
                         .requestMatchers("/css/**", "/js/**", "/images/**").permitAll()
                         .requestMatchers("/login", "/register", "/api/auth/**", "/forgotPassword").permitAll()
                         .requestMatchers("/admin/**").hasAuthority("ADMIN")
-                        .requestMatchers("/restaurants/**").hasAuthority("OWNER")
+                        .requestMatchers("/restaurants/signup").authenticated()
+                        .requestMatchers("/restaurants/**").hasAnyAuthority("OWNER", "ADMIN")
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
