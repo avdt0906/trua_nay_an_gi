@@ -3,15 +3,12 @@ package com.codegym.project_module_5.controller.register;
 import com.codegym.project_module_5.model.User;
 import com.codegym.project_module_5.model.dto.request.RegisterRequest;
 import com.codegym.project_module_5.service.impl.UserService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import org.springframework.http.ResponseEntity;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
 
 @Controller
 @RequestMapping("")

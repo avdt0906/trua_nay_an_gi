@@ -3,6 +3,7 @@ package com.codegym.project_module_5.model;
 import jakarta.persistence.*;
 import lombok.*;
 
+
 @Entity
 @Getter
 @Setter

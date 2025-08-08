@@ -24,7 +24,7 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
                 redirectUrl = "/admin/dashboard";
                 break;
             } else if (grantedAuthority.getAuthority().equals("OWNER")) {
-                redirectUrl = "/restaurants";
+                redirectUrl = "/restaurants/dashboard";
                 break;
             }
         }
