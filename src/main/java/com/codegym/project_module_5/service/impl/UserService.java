@@ -34,8 +34,9 @@ public class UserService implements IUserService {
             throw new RuntimeException("Username already exists");
         }
 
-        Role userRole = roleRepository.findByName("USER")
+        Role userRole = roleRepository.findByName("CUSTOMER")
                 .orElseThrow(() -> new RuntimeException("Default role not found"));
+        Set<Role> userRoles = Set.of(userRole);
 
         User user = new User();
         user.setUsername(request.getUsername());
@@ -44,7 +45,7 @@ public class UserService implements IUserService {
         user.setPhone(request.getPhone());
         user.setFullName(request.getFullName());
         user.setAvatarUrl(request.getAvatar_url());
-        user.setRoles((Set<Role>) userRole);
+        user.setRoles(userRoles);
         return userRepository.save(user);
     }
 
