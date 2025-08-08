@@ -41,26 +41,6 @@ public class SecurityConfig {
     }
 
     @Bean
-    CommandLineRunner init(IRoleRepository roleRepo, IUserRepository userRepo, PasswordEncoder passwordEncoder) {
-        return args -> {
-            if (roleRepo.findByName("ADMIN").isEmpty()) {
-                roleRepo.save(new Role(null, "ADMIN"));
-            }
-            if (roleRepo.findByName("OWNER").isEmpty()) {
-                roleRepo.save(new Role(null, "OWNER"));
-            }
-            if (roleRepo.findByName("CUSTOMER").isEmpty()) {
-                roleRepo.save(new Role(null, "CUSTOMER"));
-            }
-
-            if (userRepo.findByUsername("admin").isEmpty()) {
-                Role adminRole = roleRepo.findByName("ADMIN").orElseThrow(
-                        () -> new RuntimeException("Lỗi: Không tìm thấy vai trò ADMIN.")
-                );
-            }
-        };
-    }
-    @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(csrf -> csrf.disable())
