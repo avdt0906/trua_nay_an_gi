@@ -38,3 +38,6 @@ out/
 ### Perties ##
 **/application.properties
 
+
+application.properties
+.env

@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Nhà hàng</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .navbar {
+            box-shadow: 0 2px 4px rgba(0,0,0,.08);
+        }
+        .card {
+            border: none;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 8px rgba(0,0,0,.05);
+            transition: transform .2s, box-shadow .2s;
+        }
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(0,0,0,.1);
+        }
+        .status-badge {
+            font-size: 0.875rem;
+            padding: 0.5rem 1rem;
+            border-radius: 2rem;
+        }
+        .status-pending {
+            background-color: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+        .status-approved {
+            background-color: #d1e7dd;
+            color: #0f5132;
+            border: 1px solid #badbcc;
+        }
+        .status-rejected {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-light bg-white sticky-top">
+    <div class="container-fluid">
+        <a class="navbar-brand fw-bold" th:href="@{/restaurants/dashboard}">
+            <i class="fas fa-utensils me-2 text-primary"></i>Restaurant Panel
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#restaurantNavbar" aria-controls="restaurantNavbar" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="restaurantNavbar">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" th:href="@{/restaurants/dashboard}">
+                        <i class="fas fa-tachometer-alt me-1"></i>Dashboard
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/restaurants/dishes/add_dish_form}">
+                        <i class="fas fa-plus me-1"></i>Thêm món ăn
+                    </a>
+                </li>
+                <!-- Thêm các mục menu khác ở đây -->
+            </ul>
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a th:href="@{/logout}" class="btn btn-outline-danger">
+                        <i class="fas fa-sign-out-alt me-1"></i>Đăng xuất
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!-- Main Content -->
+<main class="container mt-4">
+    
+    <!-- Success Message -->
+    <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="fas fa-check-circle me-2"></i>
+        <span th:text="${successMessage}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1 class="h3 mb-2">Chào mừng trở lại!</h1>
+            <p class="text-muted">Đây là trang quản lý nhà hàng của bạn.</p>
+        </div>
+    </div>
+
+    <!-- Restaurant Information -->
+    <div class="row" th:if="${restaurant}">
+        <div class="col-lg-8">
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-store me-2"></i>Thông tin Nhà hàng
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6 class="fw-bold text-primary">Tên nhà hàng:</h6>
+                            <p class="mb-3" th:text="${restaurant.name}">Tên nhà hàng</p>
+                            
+                            <h6 class="fw-bold text-primary">Email:</h6>
+                            <p class="mb-3" th:text="${restaurant.user.email}">email@example.com</p>
+                            
+                            <h6 class="fw-bold text-primary">Số điện thoại:</h6>
+                            <p class="mb-3" th:text="${restaurant.phone}">Số điện thoại</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="fw-bold text-primary">Địa chỉ:</h6>
+                            <p class="mb-3" th:text="${restaurant.address}">Địa chỉ</p>
+                            
+                            <h6 class="fw-bold text-primary">Mô tả:</h6>
+                            <p class="mb-3" th:text="${restaurant.description}">Mô tả</p>
+                            
+                            <h6 class="fw-bold text-primary">Trạng thái:</h6>
+                            <div class="mb-3">
+                                <span th:if="${restaurant.isApproved}" class="status-badge status-approved">
+                                    <i class="fas fa-check me-1"></i>Đã phê duyệt
+                                </span>
+                                <span th:unless="${restaurant.isApproved}" class="status-badge status-pending">
+                                    <i class="fas fa-clock me-1"></i>Chờ phê duyệt
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-4">
+            <div class="card mb-4">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-chart-bar me-2"></i>Thống kê
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <span>Trạng thái mở cửa:</span>
+                        <span th:if="${restaurant.is_open}" class="badge bg-success">
+                            <i class="fas fa-door-open me-1"></i>Đang mở
+                        </span>
+                        <span th:unless="${restaurant.is_open}" class="badge bg-secondary">
+                            <i class="fas fa-door-closed me-1"></i>Đã đóng
+                        </span>
+                    </div>
+                    
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <span>Đối tác dài hạn:</span>
+                        <span th:if="${restaurant.is_long_term_partner}" class="badge bg-warning">
+                            <i class="fas fa-star me-1"></i>Có
+                        </span>
+                        <span th:unless="${restaurant.is_long_term_partner}" class="badge bg-light text-dark">
+                            <i class="fas fa-star-o me-1"></i>Không
+                        </span>
+                    </div>
+                    
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span>Trạng thái khóa:</span>
+                        <span th:if="${restaurant.is_locked}" class="badge bg-danger">
+                            <i class="fas fa-lock me-1"></i>Đã khóa
+                        </span>
+                        <span th:unless="${restaurant.is_locked}" class="badge bg-success">
+                            <i class="fas fa-unlock me-1"></i>Hoạt động
+                        </span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Quick Actions -->
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-bolt me-2"></i>Thao tác nhanh
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <a th:href="@{/restaurants/dishes/add_dish_form}" class="btn btn-outline-primary">
+                            <i class="fas fa-plus me-2"></i>Thêm món ăn mới
+                        </a>
+                        <a href="#" class="btn btn-outline-info">
+                            <i class="fas fa-edit me-2"></i>Cập nhật thông tin
+                        </a>
+                        <a href="#" class="btn btn-outline-warning">
+                            <i class="fas fa-cog me-2"></i>Cài đặt nhà hàng
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- No Restaurant Message -->
+    <div class="row" th:unless="${restaurant}">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body text-center">
+                    <i class="fas fa-store fa-4x text-muted mb-3"></i>
+                    <h4 class="text-muted">Bạn chưa có nhà hàng</h4>
+                    <p class="text-muted">Hãy đăng ký nhà hàng để bắt đầu kinh doanh!</p>
+                    <a th:href="@{/restaurants/register}" class="btn btn-primary btn-lg">
+                        <i class="fas fa-plus me-2"></i>Đăng ký Nhà hàng
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

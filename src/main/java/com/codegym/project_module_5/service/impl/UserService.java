@@ -11,7 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -32,8 +34,9 @@ public class UserService implements IUserService {
             throw new RuntimeException("Username already exists");
         }
 
-        Role userRole = roleRepository.findByName("USER")
+        Role userRole = roleRepository.findByName("CUSTOMER")
                 .orElseThrow(() -> new RuntimeException("Default role not found"));
+        Set<Role> userRoles = Set.of(userRole);
 
         User user = new User();
         user.setUsername(request.getUsername());
@@ -41,9 +44,8 @@ public class UserService implements IUserService {
         user.setEmail(request.getEmail());
         user.setPhone(request.getPhone());
         user.setFullName(request.getFullName());
-        user.setAvatar_url(request.getAvatar_url());
-        user.setRole(userRole);
-
+        user.setAvatarUrl(request.getAvatar_url());
+        user.setRoles(userRoles);
         return userRepository.save(user);
     }
 
@@ -66,4 +68,8 @@ public class UserService implements IUserService {
     public void save(User user) {
         userRepository.save(user);
     }
+//    @Override
+//    public List<User> findAllByRoleName(String roleName) {
+//        return userRepository.findAllByRole_Name(roleName);
+//    }
 }

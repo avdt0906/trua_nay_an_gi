@@ -13,7 +13,7 @@ public interface IRestaurantRepository extends CrudRepository<Restaurant, Long> 
 
     Optional<Restaurant> findByUser_Username(String userUsername);
 
-    @Query("SELECT r FROM Restaurant r WHERE r.is_approved IS NULL")
+    @Query("SELECT r FROM Restaurant r WHERE r.isApproved IS NULL")
     List<Restaurant> findAllIsApprovedNull();
 
 }

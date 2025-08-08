@@ -2,6 +2,7 @@ package com.codegym.project_module_5.service.impl;
 
 import java.io.IOException;
 
+import com.codegym.project_module_5.service.IEmailService;
 import org.springframework.stereotype.Service;
 
 import com.sendgrid.Method;
@@ -15,7 +16,7 @@ import org.springframework.beans.factory.annotation.Value;
 
 
 @Service
-public class EmailService {
+public class EmailService implements IEmailService {
     @Value("${sendgrid.api.key}")
     private String sendGridApiKey;
     @Value("${sendgrid.from.email}")
@@ -70,5 +71,10 @@ public class EmailService {
               e.printStackTrace();
             return false;
         }
+    }
+
+    @Override
+    public void sendRestaurantRegistrationSuccess(String toEmail, String restaurantName) {
+
     }
 }
