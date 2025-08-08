@@ -28,17 +28,23 @@ import java.util.Set;
  */
 @Service
 public class RestaurantService implements IRestaurantService {
+
+    private final EmailService emailService;
     @Autowired
     IRestaurantRepository restaurantRepository;
-    
+
     @Autowired
     IUserRepository userRepository;
-    
+
     @Autowired
     IRoleRepository roleRepository;
-    
+
     @Autowired
     PasswordEncoder passwordEncoder;
+
+    RestaurantService(EmailService emailService) {
+        this.emailService = emailService;
+    }
 
     @Override
     public Iterable<Restaurant> findAll() {
@@ -59,7 +65,51 @@ public class RestaurantService implements IRestaurantService {
     public Optional<Restaurant> findByUsername(String username) {
         return restaurantRepository.findByUser_Username(username);
     }
-    
+
+    @Override
+    public boolean approveRestaurant(Long restaurantId) {
+        Optional<Restaurant> restaurantOptional = restaurantRepository.findById(restaurantId);
+        if (restaurantOptional.isPresent()) {
+            Restaurant restaurant = restaurantOptional.get();
+            restaurant.setIsApproved(true);
+            restaurantRepository.save(restaurant);
+
+            String toEmail = restaurant.getUser().getEmail();
+            String restaurantName = restaurant.getName();
+            emailService.sendApprovalEmail(toEmail, restaurantName);
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean rejectRestaurant(Long restaurantId) {
+        Optional<Restaurant> restaurantOptional = restaurantRepository.findById(restaurantId);
+        if (restaurantOptional.isPresent()) {
+            Restaurant restaurant = restaurantOptional.get();
+            restaurant.setIsApproved(false);
+            restaurantRepository.save(restaurant);
+
+            String toEmail = restaurant.getUser().getEmail();
+            String restaurantName = restaurant.getName();
+            emailService.sendRejectionEmail(toEmail, restaurantName);
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean toggleRestaurantApproval(Long restaurantId) {
+        Optional<Restaurant> restaurantOptional = restaurantRepository.findById(restaurantId);
+        if (restaurantOptional.isPresent()) {
+            Restaurant restaurant = restaurantOptional.get();
+            restaurant.setIsApproved(!restaurant.getIsApproved());
+            restaurantRepository.save(restaurant);
+            return true;
+        }
+        return false;
+    }
+
     @Override
     public Restaurant registerRestaurant(RestaurantRegisterRequest request, String currentUsername) {
 
@@ -67,32 +117,32 @@ public class RestaurantService implements IRestaurantService {
         if (existingRestaurant.isPresent()) {
             throw new RuntimeException("Bạn đã có nhà hàng rồi!");
         }
-        
+
 
         if (!request.getPassword().equals(request.getConfirmPassword())) {
             throw new RuntimeException("Mật khẩu xác nhận không khớp!");
         }
-        
+
 
         Optional<User> currentUser = userRepository.findByUsername(currentUsername);
         if (currentUser.isEmpty()) {
             throw new RuntimeException("Không tìm thấy người dùng!");
         }
-        
+
         User user = currentUser.get();
-        
+
 
         Optional<Role> ownerRole = roleRepository.findByName("OWNER");
         if (ownerRole.isEmpty()) {
             throw new RuntimeException("Không tìm thấy role OWNER!");
         }
-        
+
 
         user.setEmail(request.getEmail());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
         user.setRoles((Set<Role>) ownerRole.get());
         userRepository.save(user);
-        
+
         Restaurant restaurant = new Restaurant();
         restaurant.setName(request.getName());
         restaurant.setUser(user);
@@ -103,7 +153,7 @@ public class RestaurantService implements IRestaurantService {
         restaurant.setIsOpen(false);
         restaurant.setIsLocked(false);
         restaurant.setIsLongTermPartner(false);
-        
+
         return restaurantRepository.save(restaurant);
     }
 }

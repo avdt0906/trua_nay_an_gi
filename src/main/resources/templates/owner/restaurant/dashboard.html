@@ -129,10 +129,10 @@
                             
                             <h6 class="fw-bold text-primary">Trạng thái:</h6>
                             <div class="mb-3">
-                                <span th:if="${restaurant.is_approved}" class="status-badge status-approved">
+                                <span th:if="${restaurant.isApproved}" class="status-badge status-approved">
                                     <i class="fas fa-check me-1"></i>Đã phê duyệt
                                 </span>
-                                <span th:unless="${restaurant.is_approved}" class="status-badge status-pending">
+                                <span th:unless="${restaurant.isApproved}" class="status-badge status-pending">
                                     <i class="fas fa-clock me-1"></i>Chờ phê duyệt
                                 </span>
                             </div>

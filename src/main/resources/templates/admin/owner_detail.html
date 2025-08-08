@@ -116,8 +116,8 @@
                                     <span th:if="${restaurant.is_open}" class="badge rounded-pill bg-success status-badge">Đang mở cửa</span>
                                     <span th:unless="${restaurant.is_open}" class="badge rounded-pill bg-secondary status-badge">Đã đóng cửa</span>
 
-                                    <span th:if="${restaurant.is_approved}" class="badge rounded-pill bg-primary status-badge">Đã xác thực</span>
-                                    <span th:unless="${restaurant.is_approved}" class="badge rounded-pill bg-warning text-dark status-badge">Chưa xác thực</span>
+                                    <span th:if="${restaurant.isApproved}" class="badge rounded-pill bg-primary status-badge">Đã xác thực</span>
+                                    <span th:unless="${restaurant.isApproved}" class="badge rounded-pill bg-warning text-dark status-badge">Chưa xác thực</span>
 
                                     <span th:if="${restaurant.is_locked}" class="badge rounded-pill bg-danger status-badge">Đã bị khóa</span>
                                     <span th:unless="${restaurant.is_locked}" class="badge rounded-pill bg-light text-dark status-badge">Không bị khóa</span>

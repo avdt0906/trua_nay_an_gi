@@ -8,4 +8,10 @@ import java.util.Optional;
 public interface IRestaurantService extends IGeneralService<Restaurant> {
     Optional<Restaurant> findByUsername(String username);
     Restaurant registerRestaurant(RestaurantRegisterRequest request, String currentUsername);
+
+    boolean approveRestaurant(Long restaurantId);
+
+    boolean rejectRestaurant(Long restaurantId);
+
+    boolean toggleRestaurantApproval(Long restaurantId);
 }
