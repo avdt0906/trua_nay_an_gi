@@ -45,7 +45,6 @@ public class UserService implements IUserService {
         user.setFullName(request.getFullName());
         user.setAvatar_url(request.getAvatar_url());
         user.setRoles((Set<Role>) userRole);
-
         return userRepository.save(user);
     }
 
