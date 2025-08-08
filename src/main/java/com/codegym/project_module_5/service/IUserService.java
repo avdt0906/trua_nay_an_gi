@@ -12,5 +12,5 @@ import java.util.Optional;
 public interface IUserService extends IGeneralService<User> {
     Optional<User> findByUsername(String username);
     User register(RegisterRequest request);
-    List<User> findAllByRoleName(String roleName);
+//    List<User> findAllByRoleName(String roleName);
 }

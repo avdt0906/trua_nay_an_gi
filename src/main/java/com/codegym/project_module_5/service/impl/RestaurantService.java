@@ -99,10 +99,10 @@ public class RestaurantService implements IRestaurantService {
         restaurant.setAddress(request.getAddress());
         restaurant.setPhone(request.getPhone());
         restaurant.setDescription(request.getDescription());
-        restaurant.setIs_approved(false);
-        restaurant.setIs_open(false);
-        restaurant.setIs_locked(false);
-        restaurant.setIs_long_term_partner(false);
+        restaurant.setIsApproved(false);
+        restaurant.setIsOpen(false);
+        restaurant.setIsLocked(false);
+        restaurant.setIsLongTermPartner(false);
         
         return restaurantRepository.save(restaurant);
     }

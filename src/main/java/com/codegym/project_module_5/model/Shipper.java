@@ -21,7 +21,6 @@ public class Shipper {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @NotNull
-    @UniqueElements
     private String name;
     @NotNull
     private String phone;

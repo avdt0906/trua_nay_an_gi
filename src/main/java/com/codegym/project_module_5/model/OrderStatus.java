@@ -18,6 +18,5 @@ public class OrderStatus {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @NotNull
-    @UniqueElements
     private String name;
 }
