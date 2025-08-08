@@ -22,11 +22,12 @@ public class Restaurant {
     @NotNull
     private String address;
     @NotNull
+    private Double price;
     private String phone;
-    private String logo_url;
+    private String logoUrl;
     private String description;
-    private Boolean is_long_term_partner = false;
-    private Boolean is_open = true;
-    private Boolean is_locked = false;
-    private Boolean is_approved;
+    private Boolean isLongTermPartner = false;
+    private Boolean isOpen = true;
+    private Boolean isLocked = false;
+    private Boolean isApproved;
 }
