@@ -1,13 +1,13 @@
 package com.codegym.project_module_5.controller.register;
 
-import com.codegym.project_module_5.model.User;
+
 import com.codegym.project_module_5.model.dto.request.RegisterRequest;
 import com.codegym.project_module_5.service.impl.UserService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-
-
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 @Controller
@@ -23,9 +23,17 @@ public class RegisterController {
     }
 
     @PostMapping("/register")
-    public String registerUser(@ModelAttribute("registerRequest") RegisterRequest request, Model model) {
-        User registered = userService.register(request);
-        model.addAttribute("registerRequest", registered);
+    public String registerUser(@Valid @ModelAttribute("registerRequest") RegisterRequest request, BindingResult result) {
+        if (result.hasErrors()) {
+            return "/login/register";
+        }
+        return "login/login";
+    }
+    @GetMapping("/verify")
+    public String verifyEmail(@RequestParam("token") String token, Model model) {
+        // Logic to verify the email using the token
+        // This is a placeholder, actual implementation will depend on your email verification logic
+        model.addAttribute("message", "Email verification successful!");
         return "login/login";
     }
 }
