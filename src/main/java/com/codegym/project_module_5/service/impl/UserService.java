@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -44,7 +43,7 @@ public class UserService implements IUserService {
         user.setEmail(request.getEmail());
         user.setPhone(request.getPhone());
         user.setFullName(request.getFullName());
-        user.setAvatarUrl(request.getAvatar_url());
+        user.setAvatarUrl(request.getAvatarUrl());
         user.setRoles(userRoles);
         return userRepository.save(user);
     }

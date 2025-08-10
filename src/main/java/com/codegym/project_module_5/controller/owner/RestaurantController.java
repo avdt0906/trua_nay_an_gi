@@ -28,9 +28,6 @@ public class RestaurantController {
     private IRestaurantService restaurantService;
     
     @Autowired
-    private IUserService userService;
-    
-    @Autowired
     private IEmailService emailService;
 
 
