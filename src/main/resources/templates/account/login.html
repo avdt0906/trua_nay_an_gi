@@ -18,7 +18,7 @@
             <h2>Login to Your Account</h2>
         </div>
         <div class="auth-body">
-            <form th:action="@{/login}" method="post">
+            <form th:action="@{/account/login}" method="post">
                 <div class="mb-3">
                     <label for="username" class="form-label">Username</label>
                     <input type="text" class="form-control" id="username" name="username" required>
@@ -32,7 +32,7 @@
                         <input class="form-check-input" type="checkbox" value="" id="rememberMe" name="remember-me">
                         <label class="form-check-label" for="rememberMe">Remember me</label>
                     </div>
-                    <a th:href="@{/forgot_password}" class="text-decoration-none small">Forgot password?</a>
+                    <a th:href="@{/account/forgot_password}" class="text-decoration-none small">Forgot password?</a>
                 </div>
                 <div class="d-grid">
                     <button type="submit" class="btn btn-primary btn-lg">Login</button>
@@ -40,7 +40,7 @@
             </form>
         </div>
         <div class="text-center auth-footer-link">
-            <p class="mb-0">Don't have an account? <a th:href="@{/register}" class="fw-bold text-decoration-none">Register here</a></p>
+            <p class="mb-0">Don't have an account? <a th:href="@{/account/register}" class="fw-bold text-decoration-none">Register here</a></p>
         </div>
     </div>
 </div>

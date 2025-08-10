@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Trang chủ</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="/css/index.css"/>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg bg-white border-bottom">
+  <div class="container">
+    <!-- Logo + Tên cửa hàng -->
+    <a class="navbar-brand d-flex align-items-center" href="/">
+      <img src="/images/logo_thiet_ke.png" alt="Logo" width="40" height="40" class="me-2 rounded-circle">
+    </a>
+
+    <!-- Nút menu mobile -->
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <!-- Menu -->
+    <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
+      <ul class="navbar-nav">
+        <li class="nav-item"><a class="nav-link" href="#">Đồ ăn</a></li>
+        <li class="nav-item"><a class="nav-link" href="#">Thực phẩm</a></li>
+        <li class="nav-item"><a class="nav-link" href="#">Rượu bia</a></li>
+        <li class="nav-item"><a class="nav-link" href="#">Hoa</a></li>
+        <li class="nav-item"><a class="nav-link" href="#">Siêu thị</a></li>
+        <li class="nav-item"><a class="nav-link" href="#">Thuốc</a></li>
+        <li class="nav-item"><a class="nav-link" href="#">Thú cưng</a></li>
+      </ul>
+    </div>
+
+    <!-- Khu vực tài khoản -->
+    <div class="d-flex align-items-center gap-2">
+      <!-- Nếu chưa đăng nhập: hiện nút login/register -->
+      <div th:if="${!isAuthenticated}">
+        <a th:href="@{/account/login}" class="btn btn-outline-danger">Đăng nhập</a>
+        <a th:href="@{/account/register}" class="btn btn-danger">Đăng ký</a>
+      </div>
+      <!-- Nếu đã đăng nhập: hiện avatar + menu -->
+      <div class="dropdown" th:if="${isAuthenticated}" >
+        <a class="d-flex align-items-center text-decoration-none dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+          <img th:src="${#strings.isEmpty(currentUser?.avatarUrl) ? '/images/logo_nguoi_dung.png' : currentUser.avatarUrl}"
+               alt="avatar" width="30" height="30" class="rounded-circle me-2">
+          <span th:text="${currentUser != null ? currentUser.fullName : 'Tài khoản'}"></span>
+        </a>
+        <ul class="dropdown-menu dropdown-menu-end">
+          <li><a class="dropdown-item" href="#">Trang cá nhân</a></li>
+          <li><hr class="dropdown-divider"></li>
+          <li><a class="dropdown-item" th:href="@{/logout}">Đăng xuất</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- Nội dung chính -->
+<main class="text-center py-5">
+  <h1>Chào mừng đến với hệ thống đặt món</h1>
+  <p>Khám phá nhà hàng và món ăn yêu thích. Đăng nhập/Đăng ký để trải nghiệm đầy đủ.</p>
+</main>
+
+<!-- Footer -->
+<footer class="text-center text-muted py-3 border-top">
+  © 2025 Project Module 5
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

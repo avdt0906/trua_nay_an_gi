@@ -76,22 +76,23 @@ public class SecurityConfig {
                 .authenticationProvider(authenticationProvider())
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/css/**", "/js/**", "/images/**").permitAll()
-                        .requestMatchers("/login", "/register", "/api/auth/**", "/forgotPassword").permitAll()
+                        .requestMatchers("/", "/home").permitAll()
+                        .requestMatchers("/account/login", "/account/register", "/forgot_password", "/account/forgot_password").permitAll()
                         .requestMatchers("/admin/**").hasAuthority("ADMIN")
                         .requestMatchers("/restaurants/signup").authenticated()
                         .requestMatchers("/restaurants/**").hasAnyAuthority("OWNER", "ADMIN")
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
-                        .loginPage("/login")
-                        .loginProcessingUrl("/login")
+                        .loginPage("/account/login")
+                        .loginProcessingUrl("/account/login")
                         .successHandler(customAuthenticationSuccessHandler)
-                        .failureUrl("/login?error")
+                        .failureUrl("/account/login?error")
                         .permitAll()
                 )
                 .logout(logout -> logout
                         .logoutUrl("/logout")
-                        .logoutSuccessUrl("/login?logout")
+                        .logoutSuccessUrl("/account/login?logout")
                         .permitAll()
                 );
         return http.build();
