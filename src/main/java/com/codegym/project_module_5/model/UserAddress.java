@@ -1,6 +1,5 @@
 package com.codegym.project_module_5.model;
 
-
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;

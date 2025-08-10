@@ -1,7 +1,6 @@
 package com.codegym.project_module_5.formatter;
 
 import com.codegym.project_module_5.model.Category;
-import com.codegym.project_module_5.model.Restaurant;
 import com.codegym.project_module_5.service.ICategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.Formatter;

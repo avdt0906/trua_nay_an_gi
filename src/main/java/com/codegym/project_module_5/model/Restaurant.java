@@ -21,8 +21,6 @@ public class Restaurant {
     private User user;
     @NotNull
     private String address;
-    @NotNull
-    private Double price;
     private String phone;
     private String logoUrl;
     private String description;
