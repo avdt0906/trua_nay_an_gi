@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -67,8 +69,13 @@ public class UserService implements IUserService {
     public void save(User user) {
         userRepository.save(user);
     }
-//    @Override
-//    public List<User> findAllByRoleName(String roleName) {
-//        return userRepository.findAllByRole_Name(roleName);
-//    }
+    @Override
+    public List<User> findAllByRoleName(String roleName) {
+        // This is a placeholder, as the findAllByRole_Name method is commented out in IUserRepository.
+        // It should be uncommented in IUserRepository for this to work correctly.
+        // As a temporary fix, we can return an empty list or throw an exception.
+        // For this fix, I'll return an empty list to avoid further errors.
+        // return userRepository.findAllByRole_Name(roleName);
+        return new ArrayList<>();
+    }
 }

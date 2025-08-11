@@ -26,7 +26,7 @@ public class RestaurantController {
 
     @Autowired
     private IRestaurantService restaurantService;
-    
+
     @Autowired
     private IEmailService emailService;
 
@@ -35,12 +35,12 @@ public class RestaurantController {
     public String showRestaurantRegisterForm(Model model) {
         String currentUsername = getCurrentUsername();
         Optional<Restaurant> existingRestaurant = restaurantService.findByUsername(currentUsername);
-        
+
         if (existingRestaurant.isPresent()) {
             model.addAttribute("errorMessage", "Bạn đã có nhà hàng rồi!");
             return "redirect:/restaurants/dashboard";
         }
-        
+
         model.addAttribute("restaurantRegisterRequest", new RestaurantRegisterRequest());
         return "owner/restaurant/register_restaurant";
     }
@@ -51,33 +51,33 @@ public class RestaurantController {
                                    BindingResult bindingResult,
                                    Model model,
                                    RedirectAttributes redirectAttributes) {
-        
+
         if (bindingResult.hasErrors()) {
             return "owner/restaurant/register_restaurant";
         }
-        
+
         try {
             String currentUsername = getCurrentUsername();
             Restaurant restaurant = restaurantService.registerRestaurant(request, currentUsername);
-            
-            redirectAttributes.addFlashAttribute("successMessage", 
+
+            redirectAttributes.addFlashAttribute("successMessage",
                 "Đăng ký nhà hàng thành công! Nhà hàng của bạn đang chờ admin phê duyệt.");
-            
+
             emailService.sendRestaurantRegistrationSuccess(restaurant.getUser().getEmail(), restaurant.getName());
-            
+
             return "redirect:/restaurants/dashboard";
-            
+
         } catch (RuntimeException e) {
             model.addAttribute("errorMessage", e.getMessage());
             return "owner/restaurant/register_restaurant";
         }
     }
-    
+
     @GetMapping("/dashboard")
     public String showRestaurantDashboard(Model model) {
         String currentUsername = getCurrentUsername();
         Optional<Restaurant> restaurant = restaurantService.findByUsername(currentUsername);
-        
+
         if (restaurant.isPresent()) {
             model.addAttribute("restaurant", restaurant.get());
             return "owner/restaurant/dashboard";
@@ -85,14 +85,14 @@ public class RestaurantController {
             return "redirect:/restaurants/register";
         }
     }
-    
+
     private String getCurrentUsername() {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        
+
         if (principal instanceof UserDetails) {
             return ((UserDetails) principal).getUsername();
         }
-        
+
         return null;
     }
 }
