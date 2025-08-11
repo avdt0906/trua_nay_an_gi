@@ -8,11 +8,11 @@ public class PasswordMatchesValidator implements jakarta.validation.ConstraintVa
 
      @Override
     public boolean isValid(RegisterRequest registerRequest, ConstraintValidatorContext context) {
-        if (registerRequest == null || registerRequest.getPassword() == null || registerRequest.getConfim_password() == null) {
+        if (registerRequest == null || registerRequest.getPassword() == null || registerRequest.getConfirmPassword() == null) {
             return false;
         }
 
-        boolean matched = registerRequest.getPassword().equals(registerRequest.getConfim_password());
+        boolean matched = registerRequest.getPassword().equals(registerRequest.getConfirmPassword());
 
         if (!matched) {
             context.disableDefaultConstraintViolation();

@@ -1,10 +1,9 @@
 package com.codegym.project_module_5.service.impl;
 
 import java.io.IOException;
-
-import com.codegym.project_module_5.service.IEmailService;
+import java.util.HashMap;
+import java.util.Map;
 import org.springframework.stereotype.Service;
-
 import com.sendgrid.Method;
 import com.sendgrid.Request;
 import com.sendgrid.Response;
@@ -16,12 +15,13 @@ import org.springframework.beans.factory.annotation.Value;
 
 
 @Service
-public class EmailService implements IEmailService {
+public class EmailService  {
     @Value("${sendgrid.api.key}")
     private String sendGridApiKey;
     @Value("${sendgrid.from.email}")
     private String fromEmail;
-
+    @Value("${sendgrid.template.register.id}")
+    private String templateRegisterId;
     private String templateId;
 
     public boolean sendApprovalEmail(String toEmail, String restaurantName) {
@@ -73,8 +73,38 @@ public class EmailService implements IEmailService {
         }
     }
 
-    @Override
-    public void sendRestaurantRegistrationSuccess(String toEmail, String restaurantName) {
+    public boolean sendOtpEmail(String to, String name, String otpCode) {
+        try {
+            Email from = new Email(fromEmail);
+            Email toEmail = new Email(to);
+            String subject = "Mã xác minh tài khoản của bạn";
 
+            Map<String, String> dynamicData = new HashMap<>();
+            dynamicData.put("name", name);
+            dynamicData.put("otpCode", otpCode);
+
+            Mail mail = new Mail();
+            mail.setFrom(from);
+            mail.setSubject(subject);
+            mail.setTemplateId(templateRegisterId);
+
+            Personalization personalization = new Personalization();
+            personalization.addTo(toEmail);
+            dynamicData.forEach(personalization::addDynamicTemplateData);
+            mail.addPersonalization(personalization);
+
+            Request request = new Request();
+            request.setMethod(Method.POST);
+            request.setEndpoint("mail/send");
+            request.setBody(mail.build());
+
+            SendGrid sg = new SendGrid(sendGridApiKey);
+            Response response = sg.api(request);
+
+            return response.getStatusCode() == 202; // true = gửi thành công
+        } catch (Exception e) {
+            return false; // false = gửi thất bại
+        }
     }
+
 }
