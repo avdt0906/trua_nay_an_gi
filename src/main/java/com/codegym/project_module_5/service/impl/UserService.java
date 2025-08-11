@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 
 import java.util.Optional;
 import java.util.Set;
@@ -29,7 +30,7 @@ public class UserService implements IUserService {
     private PasswordEncoder passwordEncoder;
 
     @Override
-    public User register(RegisterRequest request) {   
+    public User register(RegisterRequest request) {
         Role userRole = roleRepository.findByName("CUSTOMER")
                 .orElseThrow(() -> new RuntimeException("Default role not found"));
         Set<Role> userRoles = Set.of(userRole);
@@ -42,6 +43,11 @@ public class UserService implements IUserService {
         user.setFullName(request.getFullName());
         user.setRoles(userRoles);
         return userRepository.save(user);
+    }
+
+    @Override
+    public List<User> findAllByRoleName(String roleName) {
+        return userRepository.findAllByRoles_Name(roleName);
     }
 
     @Override

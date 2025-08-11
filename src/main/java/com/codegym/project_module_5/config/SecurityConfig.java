@@ -17,6 +17,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
+import java.util.Set;
+
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
@@ -57,16 +59,20 @@ public class SecurityConfig {
                 Role adminRole = roleRepo.findByName("ADMIN").orElseThrow(
                         () -> new RuntimeException("Lỗi: Không tìm thấy vai trò ADMIN.")
                 );
-
-                // Tạo admin test a có thể xóa đi hoặc để lại cho mn test luôn
+            }
+//            if (userRepo.findByUsername("admin").isEmpty()) {
+//                Role adminRole = roleRepo.findByName("ADMIN").orElseThrow(
+//                        () -> new RuntimeException("Lỗi: Không tìm thấy vai trò ADMIN.")
+//                );
 //                User admin = new User();
 //                admin.setUsername("admin");
-//                admin.setPassword(passwordEncoder.encode("admin123"));
-//                admin.setEmail("admin@example.com");
-//                admin.setFullName("Administrator");
-//                admin.setRole(adminRole);
+//                admin.setPassword(passwordEncoder.encode("123456"));
+//                admin.setEmail("admin@codegym.vn");
+//                admin.setFullName("Admin");
+//                admin.setPhone("0987654321");
+//                admin.setRoles(Set.of(adminRole));
 //                userRepo.save(admin);
-            }
+//            }
         };
     }
     @Bean
@@ -76,15 +82,16 @@ public class SecurityConfig {
                 .authenticationProvider(authenticationProvider())
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/css/**", "/js/**", "/images/**").permitAll()
-                        .requestMatchers("/login", "/register", "/api/auth/**", "/forgotPassword","/verify-otp").permitAll()
+                        .requestMatchers("/", "/home").permitAll()
+                        .requestMatchers("/account/**","/register","/verify-otp").permitAll()
                         .requestMatchers("/admin/**").hasAuthority("ADMIN")
                         .requestMatchers("/restaurants/signup").authenticated()
                         .requestMatchers("/restaurants/**").hasAnyAuthority("OWNER", "ADMIN")
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
-                        .loginPage("/login")
-                        .loginProcessingUrl("/login")
+                        .loginPage("/account/login")
+                        .loginProcessingUrl("/account/login")
                         .successHandler(customAuthenticationSuccessHandler)
                         .failureUrl("/login?error")
                         .permitAll()

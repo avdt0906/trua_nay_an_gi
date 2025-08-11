@@ -23,7 +23,7 @@ public class RegisterController {
     @GetMapping("/register")
     public String showRegisterForm(Model model) {
         model.addAttribute("registerRequest", new RegisterRequest());
-        return "/login/register";
+        return "/account/register";
     }
 
     @PostMapping("/register")
@@ -31,7 +31,7 @@ public class RegisterController {
             HttpSession session, Model model) {
         if (result.hasErrors()) {
             model.addAttribute("registerRequest", request);
-            return "login/register";
+            return "account/register";
         }
         // Kiểm tra email đã tồn tại
         if (userService.existsByEmail(request.getEmail())) {
@@ -42,7 +42,7 @@ public class RegisterController {
         otpService.generateAndSendOtp(request.getEmail(), request.getFullName());
         session.setAttribute("pendingRegister", request);
         System.out.println("Pending Register: " + request);
-        return "login/verify";
+        return "account/verify";
     }
 
     @PostMapping("/verify-otp")
@@ -53,7 +53,7 @@ public class RegisterController {
         RegisterRequest request = (RegisterRequest) session.getAttribute("pendingRegister");
         if (request == null) {
             model.addAttribute("error", "Không tìm thấy thông tin đăng ký, vui lòng thử lại.");
-            return "login/register";
+            return "account/register";
         }
 
         String email = request.getEmail();
@@ -62,13 +62,13 @@ public class RegisterController {
 
         if (!isValid) {
             model.addAttribute("error", "Mã OTP không hợp lệ hoặc đã hết hạn");
-            return "login/verify";
+            return "account/verify";
         }
 
         userService.register(request);
         session.removeAttribute("pendingRegister");
 
-        return "login/login";
+        return "account/login";
     }
 
 }
