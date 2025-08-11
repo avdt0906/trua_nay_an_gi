@@ -27,19 +27,6 @@ public class AccountController {
     public String forgotPassword(Model model) {
         return "account/forgot_password";
     }
-
-    @GetMapping("/register")
-    public String showRegisterForm(Model model) {
-        model.addAttribute("registerRequest", new RegisterRequest());
-        return "account/register";
-    }
-
-    @PostMapping("/register")
-    public String registerUser(@ModelAttribute("registerRequest") RegisterRequest request, Model model) {
-        User registered = userService.register(request);
-        model.addAttribute("registerRequest", registered);
-        return "account/login";
-    }
 }
 
 
