@@ -17,6 +17,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
+import java.util.Set;
+
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
@@ -58,6 +60,19 @@ public class SecurityConfig {
                         () -> new RuntimeException("Lỗi: Không tìm thấy vai trò ADMIN.")
                 );
             }
+//            if (userRepo.findByUsername("admin").isEmpty()) {
+//                Role adminRole = roleRepo.findByName("ADMIN").orElseThrow(
+//                        () -> new RuntimeException("Lỗi: Không tìm thấy vai trò ADMIN.")
+//                );
+//                User admin = new User();
+//                admin.setUsername("admin");
+//                admin.setPassword(passwordEncoder.encode("123456"));
+//                admin.setEmail("admin@codegym.vn");
+//                admin.setFullName("Admin");
+//                admin.setPhone("0987654321");
+//                admin.setRoles(Set.of(adminRole));
+//                userRepo.save(admin);
+//            }
         };
     }
     @Bean

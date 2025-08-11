@@ -62,7 +62,7 @@ public class EmailService implements IEmailService {
             if (response.getStatusCode() >= 200 && response.getStatusCode() < 300) {
                   System.out.println("✅ Email sent successfully to " + toEmail);
                 return true;
-            } else { 
+            } else {
             System.err.println("❌ Failed to send email to " + toEmail + ". Status: " + response.getStatusCode());
             System.err.println("Response body: " + response.getBody());
                 return false;
