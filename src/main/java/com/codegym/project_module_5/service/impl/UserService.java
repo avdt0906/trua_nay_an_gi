@@ -11,8 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
+
 import java.util.Optional;
 import java.util.Set;
 
@@ -31,10 +31,6 @@ public class UserService implements IUserService {
 
     @Override
     public User register(RegisterRequest request) {
-        if (userRepository.existsByUsername(request.getUsername())) {
-            throw new RuntimeException("Username already exists");
-        }
-
         Role userRole = roleRepository.findByName("CUSTOMER")
                 .orElseThrow(() -> new RuntimeException("Default role not found"));
         Set<Role> userRoles = Set.of(userRole);
@@ -45,9 +41,13 @@ public class UserService implements IUserService {
         user.setEmail(request.getEmail());
         user.setPhone(request.getPhone());
         user.setFullName(request.getFullName());
-        user.setAvatarUrl(request.getAvatarUrl());
         user.setRoles(userRoles);
         return userRepository.save(user);
+    }
+
+    @Override
+    public List<User> findAllByRoleName(String roleName) {
+        return userRepository.findAllByRoles_Name(roleName);
     }
 
     @Override
@@ -70,12 +70,11 @@ public class UserService implements IUserService {
         userRepository.save(user);
     }
     @Override
-    public List<User> findAllByRoleName(String roleName) {
-        // This is a placeholder, as the findAllByRole_Name method is commented out in IUserRepository.
-        // It should be uncommented in IUserRepository for this to work correctly.
-        // As a temporary fix, we can return an empty list or throw an exception.
-        // For this fix, I'll return an empty list to avoid further errors.
-        // return userRepository.findAllByRole_Name(roleName);
-        return new ArrayList<>();
+    public boolean existsByEmail(String email) {
+        return userRepository.existsByEmail(email);
     }
+//    @Override
+//    public List<User> findAllByRoleName(String roleName) {
+//        return userRepository.findAllByRole_Name(roleName);
+//    }
 }

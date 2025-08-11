@@ -4,7 +4,6 @@ import com.codegym.project_module_5.model.Restaurant;
 import com.codegym.project_module_5.model.dto.request.RestaurantRegisterRequest;
 import com.codegym.project_module_5.service.IRestaurantService;
 import com.codegym.project_module_5.service.IUserService;
-import com.codegym.project_module_5.service.IEmailService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -26,10 +25,9 @@ public class RestaurantController {
 
     @Autowired
     private IRestaurantService restaurantService;
-
+    
     @Autowired
-    private IEmailService emailService;
-
+    private IUserService userService;
 
     @GetMapping("/signup")
     public String showRestaurantRegisterForm(Model model) {
@@ -59,12 +57,8 @@ public class RestaurantController {
         try {
             String currentUsername = getCurrentUsername();
             Restaurant restaurant = restaurantService.registerRestaurant(request, currentUsername);
-
             redirectAttributes.addFlashAttribute("successMessage",
                 "Đăng ký nhà hàng thành công! Nhà hàng của bạn đang chờ admin phê duyệt.");
-
-            emailService.sendRestaurantRegistrationSuccess(restaurant.getUser().getEmail(), restaurant.getName());
-
             return "redirect:/restaurants/dashboard";
 
         } catch (RuntimeException e) {

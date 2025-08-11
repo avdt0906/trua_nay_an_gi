@@ -40,7 +40,7 @@
       <!-- Nếu chưa đăng nhập: hiện nút login/register -->
       <div th:if="${!isAuthenticated}">
         <a th:href="@{/account/login}" class="btn btn-outline-danger">Đăng nhập</a>
-        <a th:href="@{/account/register}" class="btn btn-danger">Đăng ký</a>
+        <a th:href="@{/register}" class="btn btn-danger">Đăng ký</a>
       </div>
       <!-- Nếu đã đăng nhập: hiện avatar + menu -->
       <div class="dropdown" th:if="${isAuthenticated}" >
