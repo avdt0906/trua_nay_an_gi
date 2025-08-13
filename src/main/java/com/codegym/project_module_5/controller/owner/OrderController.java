@@ -1,11 +1,11 @@
 package com.codegym.project_module_5.controller.owner;
 
-import com.codegym.project_module_5.model.OrderDetail;
-import com.codegym.project_module_5.model.Orders;
-import com.codegym.project_module_5.model.Restaurant;
-import com.codegym.project_module_5.service.IOrderDetailService;
-import com.codegym.project_module_5.service.IOrderService;
-import com.codegym.project_module_5.service.IRestaurantService;
+import com.codegym.project_module_5.model.order_model.OrderDetail;
+import com.codegym.project_module_5.model.order_model.Orders;
+import com.codegym.project_module_5.model.restaurant_model.Restaurant;
+import com.codegym.project_module_5.service.order_service.IOrderDetailService;
+import com.codegym.project_module_5.service.order_service.IOrderService;
+import com.codegym.project_module_5.service.restaurant_service.IRestaurantService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;

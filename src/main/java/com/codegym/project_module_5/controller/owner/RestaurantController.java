@@ -1,7 +1,7 @@
 package com.codegym.project_module_5.controller.owner;
 
 import com.codegym.project_module_5.model.dto.request.RestaurantRegisterRequest;
-import com.codegym.project_module_5.service.IRestaurantService;
+import com.codegym.project_module_5.service.restaurant_service.IRestaurantService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;

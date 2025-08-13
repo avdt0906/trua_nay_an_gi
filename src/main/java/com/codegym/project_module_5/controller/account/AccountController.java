@@ -1,14 +1,10 @@
 package com.codegym.project_module_5.controller.account;
 
-import com.codegym.project_module_5.model.User;
-import com.codegym.project_module_5.model.dto.request.RegisterRequest;
-import com.codegym.project_module_5.service.IUserService;
+import com.codegym.project_module_5.service.user_service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
