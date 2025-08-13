@@ -1,10 +1,10 @@
 package com.codegym.project_module_5.controller.admin;
 
-import com.codegym.project_module_5.model.Restaurant;
-import com.codegym.project_module_5.model.User;
-import com.codegym.project_module_5.service.IOrderService;
-import com.codegym.project_module_5.service.IRestaurantService;
-import com.codegym.project_module_5.service.IUserService;
+import com.codegym.project_module_5.model.restaurant_model.Restaurant;
+import com.codegym.project_module_5.model.user_model.User;
+import com.codegym.project_module_5.service.order_service.IOrderService;
+import com.codegym.project_module_5.service.restaurant_service.IRestaurantService;
+import com.codegym.project_module_5.service.user_service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

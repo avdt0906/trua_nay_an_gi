@@ -1,5 +1,7 @@
 package com.codegym.project_module_5.controller.client;
 
+import com.codegym.project_module_5.model.user_model.User;
+import com.codegym.project_module_5.service.impl.user_service_impl.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -12,10 +14,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.codegym.project_module_5.model.User;
 import com.codegym.project_module_5.model.dto.request.UserProfileRequest;
 import com.codegym.project_module_5.service.impl.FileStorageService;
-import com.codegym.project_module_5.service.impl.UserService;
 
 import lombok.RequiredArgsConstructor;
 

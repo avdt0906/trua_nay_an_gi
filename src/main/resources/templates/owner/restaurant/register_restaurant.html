@@ -61,14 +61,16 @@
                         <p class="text-muted">Tạo tài khoản nhà hàng của bạn</p>
                     </div>
 
-                    <!-- Success Message -->
-                    <div th:if="${successMessage}" class="success-message" th:text="${successMessage}"></div>
-
-                    <!-- Error Message -->
-                    <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}"></div>
 
                     <!-- Register Form -->
-                    <form th:action="@{/restaurants/signup}" method="post" th:object="${restaurantRegisterRequest}">
+                    <form th:action="@{/restaurants/signup}" method="post" th:object="${restaurant}">
+                        
+                        <!-- Hiển thị error message tổng quát -->
+                        <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            <span th:text="${errorMessage}"></span>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
                         
                         <!-- Tên nhà hàng -->
                         <div class="mb-3">
@@ -92,7 +94,7 @@
                             <input type="email" 
                                    class="form-control" 
                                    id="email" 
-                                   th:field="*{email}" 
+                                   th:field="*{email}"
                                    placeholder="example@restaurant.com"
                                    required>
                             <div th:if="${#fields.hasErrors('email')}" class="error-message" th:errors="*{email}"></div>
@@ -136,6 +138,7 @@
                                    id="address" 
                                    th:field="*{address}" 
                                    placeholder="Nhập địa chỉ nhà hàng">
+                            <div th:if="${#fields.hasErrors('address')}" class="error-message" th:errors="*{address}"></div>
                         </div>
 
                         <!-- Số điện thoại -->
@@ -148,6 +151,7 @@
                                    id="phone" 
                                    th:field="*{phone}" 
                                    placeholder="Nhập số điện thoại">
+                            <div th:if="${#fields.hasErrors('phone')}" class="error-message" th:errors="*{phone}"></div>
                         </div>
 
                         <!-- Mô tả -->
@@ -160,6 +164,7 @@
                                       th:field="*{description}" 
                                       rows="3" 
                                       placeholder="Mô tả về nhà hàng của bạn"></textarea>
+                            <div th:if="${#fields.hasErrors('description')}" class="error-message" th:errors="*{description}"></div>
                         </div>
 
                         <!-- Submit Button -->
