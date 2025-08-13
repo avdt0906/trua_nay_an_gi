@@ -27,4 +27,9 @@ public class DishService implements IDishService {
     public void save(Dish dish) {
         dishRepository.save(dish);
     }
+
+    @Override
+    public Iterable<Dish> findAllByRestaurant(Long id) {
+        return dishRepository.findAllByRestaurant_Id(id);
+    }
 }

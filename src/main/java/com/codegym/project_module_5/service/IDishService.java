@@ -5,4 +5,5 @@ import org.springframework.stereotype.Service;
 
 @Service
 public interface IDishService extends IGeneralService<Dish>{
+    Iterable<Dish> findAllByRestaurant(Long id);
 }
