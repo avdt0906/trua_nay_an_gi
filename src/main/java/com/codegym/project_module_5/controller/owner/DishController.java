@@ -10,9 +10,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.Optional;
@@ -29,6 +31,7 @@ public class DishController {
     @Autowired
     ICategoryRepository categoryRepository;
 
+
     @GetMapping("/dish_list")
     public ModelAndView dishList() {
         ModelAndView mv = new ModelAndView("owner/dish/dish_list");
@@ -37,6 +40,28 @@ public class DishController {
         Iterable<Dish> dishes = dishService.findAllByRestaurant(restaurant.get().getId());
         mv.addObject("dishes", dishes);
         return mv;
+
+    @GetMapping
+    public String showDishList(Model model, @RequestParam(value = "search", required = false) String search) {
+        String username = getCurrentUsername();
+        Optional<Restaurant> restaurantOptional = restaurantService.findByUsername(username);
+
+        if (restaurantOptional.isPresent()) {
+            Restaurant restaurant = restaurantOptional.get();
+            Iterable<Dish> dishes;
+            if (search != null && !search.isEmpty()) {
+                dishes = dishService.findAllByRestaurantIdAndNameContainingIgnoreCase(restaurant.getId(), search);
+            } else {
+                dishes = dishService.findAllByRestaurantId(restaurant.getId());
+            }
+            model.addAttribute("dishes", dishes);
+            model.addAttribute("restaurant", restaurant);
+            model.addAttribute("search", search); // Để giữ lại từ khóa tìm kiếm trên ô input
+            return "owner/dish/list";
+        } else {
+            // Nếu chủ quán chưa có nhà hàng, chuyển hướng đến trang đăng ký.
+            return "redirect:/restaurants/signup";
+        }
     }
 
     @GetMapping("/add_dish_form")
@@ -55,21 +80,18 @@ public class DishController {
         Optional<Restaurant> restaurant = restaurantService.findByUsername(username);
         dish.setRestaurant(restaurant.get());
         dishService.save(dish);
-        ModelAndView mv = new ModelAndView("redirect:/restaurants/dishes/add_dish_form");
+        ModelAndView mv = new ModelAndView("redirect:/restaurants/dishes");
         return mv;
     }
 
     private String getCurrentUsername() {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
         if (principal instanceof UserDetails) {
-            String username = ((UserDetails) principal).getUsername();
-            return username;
+            return ((UserDetails) principal).getUsername();
         }
-
         return null;
     }
-
+      
     @GetMapping("/update_dish_form")
     public ModelAndView showUpdateDishForm() {
         ModelAndView mv = new ModelAndView("owner/dish/update_dish_form");

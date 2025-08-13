@@ -29,7 +29,12 @@ public class DishService implements IDishService {
     }
 
     @Override
-    public Iterable<Dish> findAllByRestaurant(Long id) {
-        return dishRepository.findAllByRestaurant_Id(id);
+    public Iterable<Dish> findAllByRestaurantId(Long restaurantId) {
+        return dishRepository.findAllByRestaurantId(restaurantId);
+    }
+
+    @Override
+    public Iterable<Dish> findAllByRestaurantIdAndNameContainingIgnoreCase(Long restaurantId, String name) {
+        return dishRepository.findAllByRestaurantIdAndNameContainingIgnoreCase(restaurantId, name);
     }
 }
