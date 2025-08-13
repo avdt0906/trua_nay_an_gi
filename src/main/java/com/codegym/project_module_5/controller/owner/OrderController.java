@@ -1,7 +1,9 @@
 package com.codegym.project_module_5.controller.owner;
 
+import com.codegym.project_module_5.model.OrderDetail;
 import com.codegym.project_module_5.model.Orders;
 import com.codegym.project_module_5.model.Restaurant;
+import com.codegym.project_module_5.service.IOrderDetailService;
 import com.codegym.project_module_5.service.IOrderService;
 import com.codegym.project_module_5.service.IRestaurantService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +29,9 @@ public class OrderController {
     @Autowired
     private IRestaurantService restaurantService;
 
+    @Autowired
+    private IOrderDetailService orderDetailService;
+
     @GetMapping
     public String showOrderList(Model model) {
         String username = getCurrentUsername();
@@ -45,7 +50,18 @@ public class OrderController {
     public String showOrderDetail(@PathVariable("id") Long id, Model model, RedirectAttributes redirectAttributes) {
         Optional<Orders> orderOptional = orderService.findById(id);
         if (orderOptional.isPresent()) {
-            model.addAttribute("order", orderOptional.get());
+            Orders order = orderOptional.get();
+            Iterable<OrderDetail> orderDetails = orderDetailService.findAllByOrderId(id);
+
+            // Tính tổng tiền cho đơn hàng
+            double totalPrice = 0;
+            for (OrderDetail detail : orderDetails) {
+                totalPrice += detail.getDish().getPrice() * detail.getQuantity();
+            }
+
+            model.addAttribute("order", order);
+            model.addAttribute("orderDetails", orderDetails);
+            model.addAttribute("totalPrice", totalPrice);
             return "owner/order/detail";
         }
         redirectAttributes.addFlashAttribute("errorMessage", "Không tìm thấy đơn hàng.");
@@ -58,7 +74,7 @@ public class OrderController {
         if (isCancelled) {
             redirectAttributes.addFlashAttribute("successMessage", "Đã hủy đơn hàng thành công.");
         } else {
-            redirectAttributes.addFlashAttribute("errorMessage", "Không thể hủy đơn hàng này.");
+            redirectAttributes.addFlashAttribute("errorMessage", "Không thể hủy đơn hàng này (có thể do trạng thái không hợp lệ).");
         }
         return "redirect:/restaurants/orders";
     }

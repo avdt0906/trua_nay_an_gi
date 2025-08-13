@@ -30,8 +30,30 @@
                     <h4>Các món đã đặt</h4>
                 </div>
                 <div class="card-body">
-                    <!-- This section needs OrderDetail data, which is not yet fetched. -->
-                    <p class="text-muted">Chức năng hiển thị chi tiết món ăn sẽ được thêm sau.</p>
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th>Tên món ăn</th>
+                            <th class="text-center">Số lượng</th>
+                            <th class="text-end">Đơn giá</th>
+                            <th class="text-end">Thành tiền</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="detail : ${orderDetails}">
+                            <td th:text="${detail.dish.name}"></td>
+                            <td class="text-center" th:text="${detail.quantity}"></td>
+                            <td class="text-end" th:text="${#numbers.formatDecimal(detail.dish.price, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'"></td>
+                            <td class="text-end" th:text="${#numbers.formatDecimal(detail.dish.price * detail.quantity, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'"></td>
+                        </tr>
+                        </tbody>
+                        <tfoot>
+                        <tr class="fw-bold">
+                            <td colspan="3" class="text-end">Tổng cộng:</td>
+                            <td class="text-end" th:text="${#numbers.formatDecimal(totalPrice, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'"></td>
+                        </tr>
+                        </tfoot>
+                    </table>
                 </div>
             </div>
         </div>
