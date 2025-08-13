@@ -30,7 +30,7 @@ public class DishService implements IDishService {
 
     @Override
     public Iterable<Dish> findAllByRestaurantId(Long restaurantId) {
-        return dishRepository.findAllByRestaurantId(restaurantId);
+        return dishRepository.findAllByRestaurant_Id(restaurantId);
     }
 
     @Override
