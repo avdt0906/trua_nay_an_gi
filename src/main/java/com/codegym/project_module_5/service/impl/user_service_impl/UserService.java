@@ -3,6 +3,8 @@ package com.codegym.project_module_5.service.impl.user_service_impl;
 import com.codegym.project_module_5.model.user_model.Role;
 import com.codegym.project_module_5.model.user_model.User;
 import com.codegym.project_module_5.model.dto.request.RegisterRequest;
+import com.codegym.project_module_5.model.user_model.UserAddress;
+import com.codegym.project_module_5.repository.user_repository.IUserAddressRepository;
 import com.codegym.project_module_5.repository.user_repository.IRoleRepository;
 import com.codegym.project_module_5.repository.user_repository.IUserRepository;
 import com.codegym.project_module_5.service.user_service.IUserService;
@@ -21,13 +23,16 @@ import java.util.Set;
 public class UserService implements IUserService {
 
     @Autowired
-    private  IUserRepository userRepository;
+    private IUserRepository userRepository;
 
     @Autowired
-    private  IRoleRepository roleRepository;
+    private IRoleRepository roleRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private IUserAddressRepository userAddressRepository;
 
     @Override
     public User register(RegisterRequest request) {
@@ -69,8 +74,53 @@ public class UserService implements IUserService {
     public void save(User user) {
         userRepository.save(user);
     }
+
     @Override
     public boolean existsByEmail(String email) {
         return userRepository.existsByEmail(email);
+    }
+
+  public void updateAvatar(String username, String avatarUrl) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        user.setAvatarUrl(avatarUrl);
+        userRepository.save(user);
+    }
+
+    public void updateUserInfo(String username, User updatedUser) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        user.setFullName(updatedUser.getFullName());
+        user.setPhone(updatedUser.getPhone());
+        userRepository.save(user);
+    }
+
+    public void addAddress(Long userId, String address) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        UserAddress ua = new UserAddress();
+        ua.setUser(user);
+        ua.setAddress(address);
+        userAddressRepository.save(ua);
+    }
+
+    public void deleteAddress(Long addressId) {
+        userAddressRepository.deleteById(addressId);
+    }
+
+    public List<UserAddress> getUserAddresses(Long userId) {
+        return userAddressRepository.findAllByUser_Id(userId);
+    }
+
+    public UserAddress updateUserAddress(Long addressId, String newAddress) {
+        // 1. Tìm địa chỉ theo ID
+        UserAddress userAddress = userAddressRepository.findById(addressId)
+                .orElseThrow(() -> new RuntimeException("Address not found"));
+
+        // 2. Cập nhật địa chỉ
+        userAddress.setAddress(newAddress);
+
+        // 3. Lưu lại
+        return userAddressRepository.save(userAddress);
     }
 }
