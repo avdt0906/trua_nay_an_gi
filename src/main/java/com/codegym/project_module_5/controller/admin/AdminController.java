@@ -47,12 +47,13 @@ public class AdminController {
      */
     @GetMapping("/dashboard")
     public String showAdminDashboard(Model model) {
-        int ownerCount = userService.findAllByRoleName("OWNER").size();
-        int customerCount = userService.findAllByRoleName("CUSTOMER").size();
+        // FindAllByRoleName is used here, so it needs to be uncommented
+        List<User> owners = userService.findAllByRoleName("OWNER");
+        List<User> customers = userService.findAllByRoleName("CUSTOMER");
         long orderCount = orderService.count();
 
-        model.addAttribute("ownerCount", ownerCount);
-        model.addAttribute("customerCount", customerCount);
+        model.addAttribute("ownerCount", owners != null ? owners.size() : 0);
+        model.addAttribute("customerCount", customers != null ? customers.size() : 0);
         model.addAttribute("orderCount", orderCount);
         model.addAttribute("activePage", "dashboard");
 

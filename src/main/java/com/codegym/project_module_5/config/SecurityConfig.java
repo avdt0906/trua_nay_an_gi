@@ -17,6 +17,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
+import java.util.Set;
+
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
@@ -41,20 +43,55 @@ public class SecurityConfig {
     }
 
     @Bean
+    CommandLineRunner init(IRoleRepository roleRepo, IUserRepository userRepo, PasswordEncoder passwordEncoder) {
+        return args -> {
+            if (roleRepo.findByName("ADMIN").isEmpty()) {
+                roleRepo.save(new Role(null, "ADMIN"));
+            }
+            if (roleRepo.findByName("OWNER").isEmpty()) {
+                roleRepo.save(new Role(null, "OWNER"));
+            }
+            if (roleRepo.findByName("CUSTOMER").isEmpty()) {
+                roleRepo.save(new Role(null, "CUSTOMER"));
+            }
+
+            if (userRepo.findByUsername("admin").isEmpty()) {
+                Role adminRole = roleRepo.findByName("ADMIN").orElseThrow(
+                        () -> new RuntimeException("Lỗi: Không tìm thấy vai trò ADMIN.")
+                );
+            }
+//            if (userRepo.findByUsername("admin").isEmpty()) {
+//                Role adminRole = roleRepo.findByName("ADMIN").orElseThrow(
+//                        () -> new RuntimeException("Lỗi: Không tìm thấy vai trò ADMIN.")
+//                );
+//                User admin = new User();
+//                admin.setUsername("admin");
+//                admin.setPassword(passwordEncoder.encode("123456"));
+//                admin.setEmail("admin@codegym.vn");
+//                admin.setFullName("Admin");
+//                admin.setPhone("0987654321");
+//                admin.setRoles(Set.of(adminRole));
+//                userRepo.save(admin);
+//            }
+        };
+    }
+    @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(csrf -> csrf.disable())
                 .authenticationProvider(authenticationProvider())
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/css/**", "/js/**", "/images/**").permitAll()
-                        .requestMatchers("/login", "/register", "/api/auth/**", "/forgotPassword").permitAll()
+                        .requestMatchers("/", "/home").permitAll()
+                        .requestMatchers("/account/**","/register","/verify-otp").permitAll()
                         .requestMatchers("/admin/**").hasAuthority("ADMIN")
-                        .requestMatchers("/restaurants/**").hasAuthority("OWNER")
+                        .requestMatchers("/restaurants/signup").authenticated()
+                        .requestMatchers("/restaurants/**").hasAnyAuthority("OWNER", "ADMIN")
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
-                        .loginPage("/login")
-                        .loginProcessingUrl("/login")
+                        .loginPage("/account/login")
+                        .loginProcessingUrl("/account/login")
                         .successHandler(customAuthenticationSuccessHandler)
                         .failureUrl("/login?error")
                         .permitAll()

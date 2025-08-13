@@ -12,7 +12,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -29,12 +31,9 @@ public class UserService implements IUserService {
 
     @Override
     public User register(RegisterRequest request) {
-        if (userRepository.existsByUsername(request.getUsername())) {
-            throw new RuntimeException("Username already exists");
-        }
-
-        Role userRole = roleRepository.findByName("USER")
+        Role userRole = roleRepository.findByName("CUSTOMER")
                 .orElseThrow(() -> new RuntimeException("Default role not found"));
+        Set<Role> userRoles = Set.of(userRole);
 
         User user = new User();
         user.setUsername(request.getUsername());
@@ -42,10 +41,13 @@ public class UserService implements IUserService {
         user.setEmail(request.getEmail());
         user.setPhone(request.getPhone());
         user.setFullName(request.getFullName());
-        user.setAvatar_url(request.getAvatar_url());
-        user.setRole(userRole);
-
+        user.setRoles(userRoles);
         return userRepository.save(user);
+    }
+
+    @Override
+    public List<User> findAllByRoleName(String roleName) {
+        return userRepository.findAllByRoles_Name(roleName);
     }
 
     @Override
@@ -68,7 +70,11 @@ public class UserService implements IUserService {
         userRepository.save(user);
     }
     @Override
-    public List<User> findAllByRoleName(String roleName) {
-        return userRepository.findAllByRole_Name(roleName);
+    public boolean existsByEmail(String email) {
+        return userRepository.existsByEmail(email);
     }
+//    @Override
+//    public List<User> findAllByRoleName(String roleName) {
+//        return userRepository.findAllByRole_Name(roleName);
+//    }
 }

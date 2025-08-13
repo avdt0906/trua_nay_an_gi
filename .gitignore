@@ -35,5 +35,10 @@ out/
 
 ### VS Code ###
 .vscode/
+### Perties ##
+**/application.properties
+
 
 application.properties
+.env
+env

@@ -1,180 +1,229 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Restaurant Dashboard</title>
+    <title>Dashboard Nhà hàng</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
-    <link href="index.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .navbar {
+            box-shadow: 0 2px 4px rgba(0,0,0,.08);
+        }
+        .card {
+            border: none;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 8px rgba(0,0,0,.05);
+            transition: transform .2s, box-shadow .2s;
+        }
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(0,0,0,.1);
+        }
+        .status-badge {
+            font-size: 0.875rem;
+            padding: 0.5rem 1rem;
+            border-radius: 2rem;
+        }
+        .status-pending {
+            background-color: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+        .status-approved {
+            background-color: #d1e7dd;
+            color: #0f5132;
+            border: 1px solid #badbcc;
+        }
+        .status-rejected {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+    </style>
 </head>
-<body data-bs-theme="light">
-<div class="wrapper">
-    <nav id="sidebar" class="sidebar">
-        <div class="sidebar-header p-3">
-            <h3>Restaurant Hub</h3>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-light bg-white sticky-top">
+    <div class="container-fluid">
+        <a class="navbar-brand fw-bold" th:href="@{/restaurants/dashboard}">
+            <i class="fas fa-utensils me-2 text-primary"></i>Restaurant Panel
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#restaurantNavbar" aria-controls="restaurantNavbar" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="restaurantNavbar">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" th:href="@{/restaurants/dashboard}">
+                        <i class="fas fa-tachometer-alt me-1"></i>Dashboard
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/restaurants/dishes/add_dish_form}">
+                        <i class="fas fa-plus me-1"></i>Thêm món ăn
+                    </a>
+                </li>
+                <!-- Thêm các mục menu khác ở đây -->
+            </ul>
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a th:href="@{/logout}" class="btn btn-outline-danger">
+                        <i class="fas fa-sign-out-alt me-1"></i>Đăng xuất
+                    </a>
+                </li>
+            </ul>
         </div>
-        <ul class="list-unstyled components p-3">
-            <li class="active">
-                <a href="#" class="d-flex align-items-center">
-                    <i class="bi bi-speedometer2 me-2"></i> Dashboard
-                </a>
-            </li>
-            <li>
-                <a href="#" class="d-flex align-items-center">
-                    <i class="bi bi-cart-check me-2"></i> Orders
-                </a>
-            </li>
-            <li>
-                <a href="#" class="d-flex align-items-center">
-                    <i class="bi bi-menu-button-wide me-2"></i> Menu
-                </a>
-            </li>
-            <li>
-                <a href="#" class="d-flex align-items-center">
-                    <i class="bi bi-box-seam me-2"></i> Inventory
-                </a>
-            </li>
-            <li>
-                <a href="#" class="d-flex align-items-center">
-                    <i class="bi bi-people me-2"></i> Customers
-                </a>
-            </li>
-        </ul>
-    </nav>
-    <div class="content">
-        <nav class="navbar navbar-expand-lg">
-            <div class="container-fluid">
-                <button type="button" id="sidebarCollapse" class="btn">
-                    <i class="bi bi-list"></i>
-                </button>
-                <div class="d-flex align-items-center">
-                    <div class="form-check form-switch me-3">
-                        <input class="form-check-input" type="checkbox" id="darkModeSwitch">
-                        <label class="form-check-label" for="darkModeSwitch">
-                            <i class="bi bi-moon-stars"></i>
-                        </label>
-                    </div>
-                    <div class="dropdown">
-                        <button class="btn dropdown-toggle" type="button" id="profileDropdown" data-bs-toggle="dropdown">
-                            <img src="https://images.unsplash.com/photo-1633332755192-727a05c4013d" alt="Profile" class="rounded-circle" width="32" height="32">
-                        </button>
-                        <ul class="dropdown-menu dropdown-menu-end">
-                            <li><a class="dropdown-item" href="#">Profile</a></li>
-                            <li><a class="dropdown-item" href="#">Settings</a></li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="#">Logout</a></li>
-                        </ul>
-                    </div>
+    </div>
+</nav>
+
+<!-- Main Content -->
+<main class="container mt-4">
+
+    <!-- Success Message -->
+    <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="fas fa-check-circle me-2"></i>
+        <span th:text="${successMessage}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1 class="h3 mb-2">Chào mừng trở lại!</h1>
+            <p class="text-muted">Đây là trang quản lý nhà hàng của bạn.</p>
+        </div>
+    </div>
+
+    <!-- Restaurant Information -->
+    <div class="row" th:if="${restaurant}">
+        <div class="col-lg-8">
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-store me-2"></i>Thông tin Nhà hàng
+                    </h5>
                 </div>
-            </div>
-        </nav>
-        <div class="container-fluid p-4">
-            <div class="row g-4">
-                <div class="col-md-3">
-                    <div class="card h-100">
-                        <div class="card-body">
-                            <h6 class="card-subtitle mb-2">Daily Revenue</h6>
-                            <h2 class="card-title">$2,854</h2>
-                            <p class="card-text text-success"><i class="bi bi-arrow-up"></i> 12.5% vs yesterday</p>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6 class="fw-bold text-primary">Tên nhà hàng:</h6>
+                            <p class="mb-3" th:text="${restaurant.name}">Tên nhà hàng</p>
+
+                            <h6 class="fw-bold text-primary">Email:</h6>
+                            <p class="mb-3" th:text="${restaurant.user.email}">email@example.com</p>
+
+                            <h6 class="fw-bold text-primary">Số điện thoại:</h6>
+                            <p class="mb-3" th:text="${restaurant.phone}">Số điện thoại</p>
                         </div>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="card h-100">
-                        <div class="card-body">
-                            <h6 class="card-subtitle mb-2">Orders Today</h6>
-                            <h2 class="card-title">142</h2>
-                            <p class="card-text text-success"><i class="bi bi-arrow-up"></i> 8.2% vs yesterday</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="card h-100">
-                        <div class="card-body">
-                            <h6 class="card-subtitle mb-2">Average Order Value</h6>
-                            <h2 class="card-title">$24.50</h2>
-                            <p class="card-text text-danger"><i class="bi bi-arrow-down"></i> 3.1% vs yesterday</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="card h-100">
-                        <div class="card-body">
-                            <h6 class="card-subtitle mb-2">Customer Satisfaction</h6>
-                            <h2 class="card-title">4.8/5</h2>
-                            <p class="card-text text-success"><i class="bi bi-arrow-up"></i> 0.3 vs last week</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-8">
-                    <div class="card h-100">
-                        <div class="card-body">
-                            <h5 class="card-title">Live Orders</h5>
-                            <div class="table-responsive">
-                                <table class="table">
-                                    <thead>
-                                    <tr>
-                                        <th>Order ID</th>
-                                        <th>Customer</th>
-                                        <th>Items</th>
-                                        <th>Status</th>
-                                        <th>Time</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    <tr>
-                                        <td>#12345</td>
-                                        <td>John Doe</td>
-                                        <td>2x Burger, 1x Fries</td>
-                                        <td><span class="badge bg-warning">In Progress</span></td>
-                                        <td>10:30 AM</td>
-                                    </tr>
-                                    <tr>
-                                        <td>#12344</td>
-                                        <td>Jane Smith</td>
-                                        <td>1x Pizza, 2x Coke</td>
-                                        <td><span class="badge bg-success">Completed</span></td>
-                                        <td>10:25 AM</td>
-                                    </tr>
-                                    <tr>
-                                        <td>#12343</td>
-                                        <td>Mike Johnson</td>
-                                        <td>3x Tacos, 1x Salad</td>
-                                        <td><span class="badge bg-primary">Pending</span></td>
-                                        <td>10:20 AM</td>
-                                    </tr>
-                                    </tbody>
-                                </table>
+                        <div class="col-md-6">
+                            <h6 class="fw-bold text-primary">Địa chỉ:</h6>
+                            <p class="mb-3" th:text="${restaurant.address}">Địa chỉ</p>
+
+                            <h6 class="fw-bold text-primary">Mô tả:</h6>
+                            <p class="mb-3" th:text="${restaurant.description}">Mô tả</p>
+
+                            <h6 class="fw-bold text-primary">Trạng thái:</h6>
+                            <div class="mb-3">
+                                <span th:if="${restaurant.isApproved}" class="status-badge status-approved">
+                                    <i class="fas fa-check me-1"></i>Đã phê duyệt
+                                </span>
+                                <span th:unless="${restaurant.isApproved}" class="status-badge status-pending">
+                                    <i class="fas fa-clock me-1"></i>Chờ phê duyệt
+                                </span>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="col-md-4">
-                    <div class="card h-100">
-                        <div class="card-body">
-                            <h5 class="card-title">Inventory Alerts</h5>
-                            <ul class="list-group list-group-flush">
-                                <li class="list-group-item d-flex justify-content-between align-items-center text-danger">
-                                    Tomatoes
-                                    <span class="badge bg-danger">Low Stock</span>
-                                </li>
-                                <li class="list-group-item d-flex justify-content-between align-items-center text-warning">
-                                    Cheese
-                                    <span class="badge bg-warning">Running Low</span>
-                                </li>
-                                <li class="list-group-item d-flex justify-content-between align-items-center text-success">
-                                    Lettuce
-                                    <span class="badge bg-success">Sufficient</span>
-                                </li>
-                            </ul>
-                        </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card mb-4">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-chart-bar me-2"></i>Thống kê
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <span>Trạng thái mở cửa:</span>
+                        <span th:if="${restaurant.is_open}" class="badge bg-success">
+                            <i class="fas fa-door-open me-1"></i>Đang mở
+                        </span>
+                        <span th:unless="${restaurant.is_open}" class="badge bg-secondary">
+                            <i class="fas fa-door-closed me-1"></i>Đã đóng
+                        </span>
+                    </div>
+
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <span>Đối tác dài hạn:</span>
+                        <span th:if="${restaurant.is_long_term_partner}" class="badge bg-warning">
+                            <i class="fas fa-star me-1"></i>Có
+                        </span>
+                        <span th:unless="${restaurant.is_long_term_partner}" class="badge bg-light text-dark">
+                            <i class="fas fa-star-o me-1"></i>Không
+                        </span>
+                    </div>
+
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span>Trạng thái khóa:</span>
+                        <span th:if="${restaurant.is_locked}" class="badge bg-danger">
+                            <i class="fas fa-lock me-1"></i>Đã khóa
+                        </span>
+                        <span th:unless="${restaurant.is_locked}" class="badge bg-success">
+                            <i class="fas fa-unlock me-1"></i>Hoạt động
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-bolt me-2"></i>Thao tác nhanh
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <a th:href="@{/restaurants/dishes/add_dish_form}" class="btn btn-outline-primary">
+                            <i class="fas fa-plus me-2"></i>Thêm món ăn mới
+                        </a>
+                        <a href="#" class="btn btn-outline-info">
+                            <i class="fas fa-edit me-2"></i>Cập nhật thông tin
+                        </a>
+                        <a href="#" class="btn btn-outline-warning">
+                            <i class="fas fa-cog me-2"></i>Cài đặt nhà hàng
+                        </a>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
+
+    <!-- No Restaurant Message -->
+    <div class="row" th:unless="${restaurant}">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body text-center">
+                    <i class="fas fa-store fa-4x text-muted mb-3"></i>
+                    <h4 class="text-muted">Bạn chưa có nhà hàng</h4>
+                    <p class="text-muted">Hãy đăng ký nhà hàng để bắt đầu kinh doanh!</p>
+                    <a th:href="@{/restaurants/register}" class="btn btn-primary btn-lg">
+                        <i class="fas fa-plus me-2"></i>Đăng ký Nhà hàng
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</main>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
