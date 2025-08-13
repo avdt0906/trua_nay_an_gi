@@ -1,11 +1,11 @@
 package com.codegym.project_module_5.controller.owner;
 
-import com.codegym.project_module_5.model.Category;
-import com.codegym.project_module_5.model.Dish;
-import com.codegym.project_module_5.model.Restaurant;
-import com.codegym.project_module_5.repository.ICategoryRepository;
-import com.codegym.project_module_5.service.IDishService;
-import com.codegym.project_module_5.service.IRestaurantService;
+import com.codegym.project_module_5.model.restaurant_model.Category;
+import com.codegym.project_module_5.model.restaurant_model.Dish;
+import com.codegym.project_module_5.model.restaurant_model.Restaurant;
+import com.codegym.project_module_5.repository.restaurant_repository.ICategoryRepository;
+import com.codegym.project_module_5.service.restaurant_service.IDishService;
+import com.codegym.project_module_5.service.restaurant_service.IRestaurantService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
