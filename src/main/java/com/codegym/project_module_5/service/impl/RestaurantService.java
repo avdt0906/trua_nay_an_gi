@@ -68,7 +68,7 @@ public class RestaurantService implements IRestaurantService {
             user.setEmail(request.getEmail());
             user.setPassword(passwordEncoder.encode(request.getPassword()));
             user.setPhone(request.getPhone());
-            user.setFullName(request.getName()); // Add missing fullName field
+            user.setFullName(request.getName());
 
             Role restaurantRole = iRoleRepository.findByName("OWNER")
                     .orElseThrow(() -> new RuntimeException("Không tìm thấy vai trò OWNER"));
@@ -83,26 +83,12 @@ public class RestaurantService implements IRestaurantService {
             restaurant.setAddress(request.getAddress());
             restaurant.setPhone(request.getPhone());
             restaurant.setDescription(request.getDescription());
-            restaurant.setIsApproved(false);
-            restaurant.setIsOpen(true);
+            restaurant.setIsOpen(false);
             restaurant.setIsLocked(false);
             restaurant.setIsLongTermPartner(false);
 
             Restaurant savedRestaurant = iRestaurantRepository.save(restaurant);
             log.info("Restaurant created successfully with ID: {}", savedRestaurant.getId());
-
-            String subject = "Đăng ký tài khoản thành công";
-            String content = String.format("Xin chào %s,\n\nNhà hàng '%s' của bạn đã đăng ký thành công.",
-                    request.getEmail(), request.getName());
-            
-//            try {
-//                emailService.sendOtpEmail(request.getEmail(), subject, content);
-//                log.info("Email sent successfully to: {}", request.getEmail());
-//            } catch (Exception e) {
-//                log.warn("Failed to send email to: {}, error: {}", request.getEmail(), e.getMessage());
-//            }
-            System.out.println(subject);
-            System.out.println(content);
 
             return savedRestaurant;
             
