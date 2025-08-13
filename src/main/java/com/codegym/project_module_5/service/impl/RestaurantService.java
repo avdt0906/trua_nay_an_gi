@@ -8,6 +8,7 @@ import com.codegym.project_module_5.repository.IRestaurantRepository;
 import com.codegym.project_module_5.repository.IRoleRepository;
 import com.codegym.project_module_5.repository.IUserRepository;
 import com.codegym.project_module_5.service.IRestaurantService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -15,145 +16,114 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 import java.util.Set;
 
-/**
- * Tại phương thức registerRestaurant
- * ta có 2 param request, currentUsername
- * request là đối tượng RestaurantRegisterRequest
- * currentUsername là username của người dùng hiện tại
- * phương thức này sẽ tạo ra một đối tượng Restaurant mới
- * và lưu vào database
- * sau đó gửi email thông báo đăng ký nhà hàng thành công
- * có param Email người nhận
- * có param Tên nhà hàng
- */
+@Slf4j
 @Service
 public class RestaurantService implements IRestaurantService {
 
+    @Autowired
+    private IRestaurantRepository iRestaurantRepository;
+
+    @Autowired
+    private IUserRepository iUserRepository;
+
+    @Autowired
+    private IRoleRepository iRoleRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     private final EmailService emailService;
-    @Autowired
-    IRestaurantRepository restaurantRepository;
 
-    @Autowired
-    IUserRepository userRepository;
-
-    @Autowired
-    IRoleRepository roleRepository;
-
-    @Autowired
-    PasswordEncoder passwordEncoder;
-
-    RestaurantService(EmailService emailService) {
+    public RestaurantService(EmailService emailService) {
         this.emailService = emailService;
     }
 
     @Override
-    public Iterable<Restaurant> findAll() {
-        return restaurantRepository.findAll();
-    }
-
-    @Override
-    public Optional<Restaurant> findById(Long id) {
-        return restaurantRepository.findById(id);
-    }
-
-    @Override
-    public void save(Restaurant restaurant) {
-        restaurantRepository.save(restaurant);
-    }
-
-    @Override
     public Optional<Restaurant> findByUsername(String username) {
-        return restaurantRepository.findByUser_Username(username);
-    }
-
-    @Override
-    public boolean approveRestaurant(Long restaurantId) {
-        Optional<Restaurant> restaurantOptional = restaurantRepository.findById(restaurantId);
-        if (restaurantOptional.isPresent()) {
-            Restaurant restaurant = restaurantOptional.get();
-            restaurant.setIsApproved(true);
-            restaurantRepository.save(restaurant);
-
-            String toEmail = restaurant.getUser().getEmail();
-            String restaurantName = restaurant.getName();
-            emailService.sendApprovalEmail(toEmail, restaurantName);
-            return true;
-        }
-        return false;
-    }
-
-    @Override
-    public boolean rejectRestaurant(Long restaurantId) {
-        Optional<Restaurant> restaurantOptional = restaurantRepository.findById(restaurantId);
-        if (restaurantOptional.isPresent()) {
-            Restaurant restaurant = restaurantOptional.get();
-            restaurant.setIsApproved(false);
-            restaurantRepository.save(restaurant);
-
-            String toEmail = restaurant.getUser().getEmail();
-            String restaurantName = restaurant.getName();
-            emailService.sendRejectionEmail(toEmail, restaurantName);
-            return true;
-        }
-        return false;
-    }
-
-    @Override
-    public boolean toggleRestaurantApproval(Long restaurantId) {
-        Optional<Restaurant> restaurantOptional = restaurantRepository.findById(restaurantId);
-        if (restaurantOptional.isPresent()) {
-            Restaurant restaurant = restaurantOptional.get();
-            restaurant.setIsApproved(!restaurant.getIsApproved());
-            restaurantRepository.save(restaurant);
-            return true;
-        }
-        return false;
+        return iRestaurantRepository.findByUsername(username);
     }
 
     @Override
     public Restaurant registerRestaurant(RestaurantRegisterRequest request, String currentUsername) {
 
-        Optional<Restaurant> existingRestaurant = findByUsername(currentUsername);
-        if (existingRestaurant.isPresent()) {
-            throw new RuntimeException("Bạn đã có nhà hàng rồi!");
+        if (request == null) {
+            throw new IllegalArgumentException("Request data cannot be null");
         }
-
-
+        
         if (!request.getPassword().equals(request.getConfirmPassword())) {
-            throw new RuntimeException("Mật khẩu xác nhận không khớp!");
+            throw new IllegalArgumentException("Mật khẩu không khớp với xác nhận mật khẩu");
         }
 
-
-        Optional<User> currentUser = userRepository.findByUsername(currentUsername);
-        if (currentUser.isEmpty()) {
-            throw new RuntimeException("Không tìm thấy người dùng!");
+        if (iUserRepository.existsByEmail(request.getEmail())) {
+            throw new IllegalArgumentException("Email đã tồn tại trong hệ thống");
         }
 
-        User user = currentUser.get();
-
-
-        Optional<Role> ownerRole = roleRepository.findByName("OWNER");
-        if (ownerRole.isEmpty()) {
-            throw new RuntimeException("Không tìm thấy role OWNER!");
+        if (iUserRepository.existsByUsername(request.getName())) {
+            throw new IllegalArgumentException("Tên đăng nhập đã tồn tại");
         }
 
+        try {
+            User user = new User();
+            user.setUsername(request.getName());
+            user.setEmail(request.getEmail());
+            user.setPassword(passwordEncoder.encode(request.getPassword()));
+            user.setPhone(request.getPhone());
+            user.setFullName(request.getName()); // Add missing fullName field
 
-        user.setEmail(request.getEmail());
-        user.setPassword(passwordEncoder.encode(request.getPassword()));
-        user.setRoles((Set<Role>) ownerRole.get());
-        userRepository.save(user);
+            Role restaurantRole = iRoleRepository.findByName("OWNER")
+                    .orElseThrow(() -> new RuntimeException("Không tìm thấy vai trò OWNER"));
+            user.setRoles(Set.of(restaurantRole));
 
-        Restaurant restaurant = new Restaurant();
-        restaurant.setName(request.getName());
-        restaurant.setUser(user);
-        restaurant.setAddress(request.getAddress());
-        restaurant.setPhone(request.getPhone());
-        restaurant.setDescription(request.getDescription());
-        restaurant.setIsApproved(false);
-        restaurant.setIsOpen(false);
-        restaurant.setIsLocked(false);
-        restaurant.setIsLongTermPartner(false);
+            User savedUser = iUserRepository.save(user);
+            log.info("User created successfully with ID: {}", savedUser.getId());
 
-        return restaurantRepository.save(restaurant);
+            Restaurant restaurant = new Restaurant();
+            restaurant.setName(request.getName());
+            restaurant.setUser(savedUser);
+            restaurant.setAddress(request.getAddress());
+            restaurant.setPhone(request.getPhone());
+            restaurant.setDescription(request.getDescription());
+            restaurant.setIsApproved(false);
+            restaurant.setIsOpen(true);
+            restaurant.setIsLocked(false);
+            restaurant.setIsLongTermPartner(false);
+
+            Restaurant savedRestaurant = iRestaurantRepository.save(restaurant);
+            log.info("Restaurant created successfully with ID: {}", savedRestaurant.getId());
+
+            String subject = "Đăng ký tài khoản thành công";
+            String content = String.format("Xin chào %s,\n\nNhà hàng '%s' của bạn đã đăng ký thành công.",
+                    request.getEmail(), request.getName());
+            
+//            try {
+//                emailService.sendOtpEmail(request.getEmail(), subject, content);
+//                log.info("Email sent successfully to: {}", request.getEmail());
+//            } catch (Exception e) {
+//                log.warn("Failed to send email to: {}, error: {}", request.getEmail(), e.getMessage());
+//            }
+            System.out.println(subject);
+            System.out.println(content);
+
+            return savedRestaurant;
+            
+        } catch (Exception e) {
+            log.error("Error creating restaurant: {}", e.getMessage(), e);
+            throw new RuntimeException("Đăng ký nhà hàng thất bại: " + e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public Iterable<Restaurant> findAll() {
+        return iRestaurantRepository.findAll();
+    }
+
+    @Override
+    public Optional<Restaurant> findById(Long id) {
+        return iRestaurantRepository.findById(id);
+    }
+
+    @Override
+    public void save(Restaurant restaurant) {
+        iRestaurantRepository.save(restaurant);
     }
 }

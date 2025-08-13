@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.security.Principal;
 import java.util.Optional;
 
 @Controller
@@ -30,63 +31,37 @@ public class RestaurantController {
     private IUserService userService;
 
     @GetMapping("/signup")
-    public String showRestaurantRegisterForm(Model model) {
-        String currentUsername = getCurrentUsername();
-        Optional<Restaurant> existingRestaurant = restaurantService.findByUsername(currentUsername);
-
-        if (existingRestaurant.isPresent()) {
-            model.addAttribute("errorMessage", "Bạn đã có nhà hàng rồi!");
-            return "redirect:/restaurants/dashboard";
-        }
-
-        model.addAttribute("restaurantRegisterRequest", new RestaurantRegisterRequest());
+    public String showSignupForm(Model model) {
+        model.addAttribute("restaurant", new RestaurantRegisterRequest());
         return "owner/restaurant/register_restaurant";
     }
 
-
     @PostMapping("/signup")
-    public String registerRestaurant(@Valid @ModelAttribute("restaurantRegisterRequest") RestaurantRegisterRequest request,
-                                   BindingResult bindingResult,
-                                   Model model,
-                                   RedirectAttributes redirectAttributes) {
+    public String registerRestaurant(
+            @Valid @ModelAttribute("restaurant") RestaurantRegisterRequest request,
+            BindingResult bindingResult,
+            Principal principal,
+            Model model) {
 
         if (bindingResult.hasErrors()) {
             return "owner/restaurant/register_restaurant";
         }
 
         try {
-            String currentUsername = getCurrentUsername();
-            Restaurant restaurant = restaurantService.registerRestaurant(request, currentUsername);
-            redirectAttributes.addFlashAttribute("successMessage",
-                "Đăng ký nhà hàng thành công! Nhà hàng của bạn đang chờ admin phê duyệt.");
-            return "redirect:/restaurants/dashboard";
+            String currentUsername = principal != null ? principal.getName() : null;
 
-        } catch (RuntimeException e) {
+            restaurantService.registerRestaurant(request, currentUsername);
+
+            model.addAttribute("successMessage", "Đăng ký nhà hàng thành công!");
+            return "owner/restaurant/dashboard";
+
+        } catch (IllegalArgumentException e) {
             model.addAttribute("errorMessage", e.getMessage());
+            return "owner/restaurant/register_restaurant";
+        } catch (Exception e) {
+            model.addAttribute("errorMessage", "Đăng ký thất bại: " + e.getMessage());
             return "owner/restaurant/register_restaurant";
         }
     }
 
-    @GetMapping("/dashboard")
-    public String showRestaurantDashboard(Model model) {
-        String currentUsername = getCurrentUsername();
-        Optional<Restaurant> restaurant = restaurantService.findByUsername(currentUsername);
-
-        if (restaurant.isPresent()) {
-            model.addAttribute("restaurant", restaurant.get());
-            return "owner/restaurant/dashboard";
-        } else {
-            return "redirect:/restaurants/register";
-        }
-    }
-
-    private String getCurrentUsername() {
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
-        if (principal instanceof UserDetails) {
-            return ((UserDetails) principal).getUsername();
-        }
-
-        return null;
-    }
 }
