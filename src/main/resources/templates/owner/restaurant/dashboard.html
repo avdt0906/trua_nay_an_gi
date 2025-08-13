@@ -84,7 +84,7 @@
 
 <!-- Main Content -->
 <main class="container mt-4">
-    
+
     <!-- Success Message -->
     <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
         <i class="fas fa-check-circle me-2"></i>
@@ -113,20 +113,20 @@
                         <div class="col-md-6">
                             <h6 class="fw-bold text-primary">Tên nhà hàng:</h6>
                             <p class="mb-3" th:text="${restaurant.name}">Tên nhà hàng</p>
-                            
+
                             <h6 class="fw-bold text-primary">Email:</h6>
                             <p class="mb-3" th:text="${restaurant.user.email}">email@example.com</p>
-                            
+
                             <h6 class="fw-bold text-primary">Số điện thoại:</h6>
                             <p class="mb-3" th:text="${restaurant.phone}">Số điện thoại</p>
                         </div>
                         <div class="col-md-6">
                             <h6 class="fw-bold text-primary">Địa chỉ:</h6>
                             <p class="mb-3" th:text="${restaurant.address}">Địa chỉ</p>
-                            
+
                             <h6 class="fw-bold text-primary">Mô tả:</h6>
                             <p class="mb-3" th:text="${restaurant.description}">Mô tả</p>
-                            
+
                             <h6 class="fw-bold text-primary">Trạng thái:</h6>
                             <div class="mb-3">
                                 <span th:if="${restaurant.isApproved}" class="status-badge status-approved">
@@ -141,7 +141,7 @@
                 </div>
             </div>
         </div>
-        
+
         <div class="col-lg-4">
             <div class="card mb-4">
                 <div class="card-header bg-info text-white">
@@ -159,7 +159,7 @@
                             <i class="fas fa-door-closed me-1"></i>Đã đóng
                         </span>
                     </div>
-                    
+
                     <div class="d-flex justify-content-between align-items-center mb-3">
                         <span>Đối tác dài hạn:</span>
                         <span th:if="${restaurant.is_long_term_partner}" class="badge bg-warning">
@@ -169,7 +169,7 @@
                             <i class="fas fa-star-o me-1"></i>Không
                         </span>
                     </div>
-                    
+
                     <div class="d-flex justify-content-between align-items-center">
                         <span>Trạng thái khóa:</span>
                         <span th:if="${restaurant.is_locked}" class="badge bg-danger">
@@ -181,7 +181,7 @@
                     </div>
                 </div>
             </div>
-            
+
             <!-- Quick Actions -->
             <div class="card">
                 <div class="card-header bg-success text-white">

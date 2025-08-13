@@ -27,4 +27,14 @@ public class DishService implements IDishService {
     public void save(Dish dish) {
         dishRepository.save(dish);
     }
+
+    @Override
+    public Iterable<Dish> findAllByRestaurantId(Long restaurantId) {
+        return dishRepository.findAllByRestaurantId(restaurantId);
+    }
+
+    @Override
+    public Iterable<Dish> findAllByRestaurantIdAndNameContainingIgnoreCase(Long restaurantId, String name) {
+        return dishRepository.findAllByRestaurantIdAndNameContainingIgnoreCase(restaurantId, name);
+    }
 }
