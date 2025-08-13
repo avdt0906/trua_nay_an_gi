@@ -87,6 +87,7 @@ public class RestaurantService implements IRestaurantService {
             restaurant.setIsLocked(false);
             restaurant.setIsLongTermPartner(false);
 
+
             Restaurant savedRestaurant = iRestaurantRepository.save(restaurant);
             log.info("Restaurant created successfully with ID: {}", savedRestaurant.getId());
 
