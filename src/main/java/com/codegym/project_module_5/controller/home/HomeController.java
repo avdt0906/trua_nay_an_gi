@@ -1,10 +1,10 @@
 package com.codegym.project_module_5.controller.home;
 
-import com.codegym.project_module_5.model.Dish;
-import com.codegym.project_module_5.model.Restaurant;
-import com.codegym.project_module_5.model.User;
-import com.codegym.project_module_5.service.IDishService;
-import com.codegym.project_module_5.service.IUserService;
+import com.codegym.project_module_5.model.restaurant_model.Dish;
+import com.codegym.project_module_5.model.restaurant_model.Restaurant;
+import com.codegym.project_module_5.model.user_model.User;
+import com.codegym.project_module_5.service.restaurant_service.IDishService;
+import com.codegym.project_module_5.service.user_service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;

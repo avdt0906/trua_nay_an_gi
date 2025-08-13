@@ -1,7 +1,7 @@
 package com.codegym.project_module_5.formatter;
 
-import com.codegym.project_module_5.model.Restaurant;
-import com.codegym.project_module_5.service.IRestaurantService;
+import com.codegym.project_module_5.model.restaurant_model.Restaurant;
+import com.codegym.project_module_5.service.restaurant_service.IRestaurantService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.Formatter;
 import org.springframework.stereotype.Component;

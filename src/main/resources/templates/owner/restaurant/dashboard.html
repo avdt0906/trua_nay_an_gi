@@ -65,8 +65,8 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" th:href="@{/restaurants/dishes/add_dish_form}">
-                        <i class="fas fa-plus me-1"></i>Thêm món ăn
+                    <a class="nav-link" th:href="@{/restaurants/dishes/dish_list}">
+                        <i class="fas fa-plus me-1"></i>Menu
                     </a>
                 </li>
                 <!-- Thêm các mục menu khác ở đây -->
@@ -152,30 +152,30 @@
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center mb-3">
                         <span>Trạng thái mở cửa:</span>
-                        <span th:if="${restaurant.is_open}" class="badge bg-success">
+                        <span th:if="${restaurant.isOpen}" class="badge bg-success">
                             <i class="fas fa-door-open me-1"></i>Đang mở
                         </span>
-                        <span th:unless="${restaurant.is_open}" class="badge bg-secondary">
+                        <span th:unless="${restaurant.isOpen}" class="badge bg-secondary">
                             <i class="fas fa-door-closed me-1"></i>Đã đóng
                         </span>
                     </div>
 
                     <div class="d-flex justify-content-between align-items-center mb-3">
                         <span>Đối tác dài hạn:</span>
-                        <span th:if="${restaurant.is_long_term_partner}" class="badge bg-warning">
+                        <span th:if="${restaurant.isLongTermPartner}" class="badge bg-warning">
                             <i class="fas fa-star me-1"></i>Có
                         </span>
-                        <span th:unless="${restaurant.is_long_term_partner}" class="badge bg-light text-dark">
+                        <span th:unless="${restaurant.isLongTermPartner}" class="badge bg-light text-dark">
                             <i class="fas fa-star-o me-1"></i>Không
                         </span>
                     </div>
 
                     <div class="d-flex justify-content-between align-items-center">
                         <span>Trạng thái khóa:</span>
-                        <span th:if="${restaurant.is_locked}" class="badge bg-danger">
+                        <span th:if="${restaurant.isLocked}" class="badge bg-danger">
                             <i class="fas fa-lock me-1"></i>Đã khóa
                         </span>
-                        <span th:unless="${restaurant.is_locked}" class="badge bg-success">
+                        <span th:unless="${restaurant.isLocked}" class="badge bg-success">
                             <i class="fas fa-unlock me-1"></i>Hoạt động
                         </span>
                     </div>

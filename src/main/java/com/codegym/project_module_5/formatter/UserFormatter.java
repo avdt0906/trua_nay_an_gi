@@ -1,7 +1,7 @@
 package com.codegym.project_module_5.formatter;
 
-import com.codegym.project_module_5.model.User;
-import com.codegym.project_module_5.service.IUserService;
+import com.codegym.project_module_5.model.user_model.User;
+import com.codegym.project_module_5.service.user_service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.Formatter;
 import org.springframework.stereotype.Component;
