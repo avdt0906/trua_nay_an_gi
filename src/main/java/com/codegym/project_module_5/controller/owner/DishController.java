@@ -31,6 +31,16 @@ public class DishController {
     @Autowired
     ICategoryRepository categoryRepository;
 
+
+    @GetMapping("/dish_list")
+    public ModelAndView dishList() {
+        ModelAndView mv = new ModelAndView("owner/dish/dish_list");
+        String username = getCurrentUsername();
+        Optional<Restaurant> restaurant = restaurantService.findByUsername(username);
+        Iterable<Dish> dishes = dishService.findAllByRestaurant(restaurant.get().getId());
+        mv.addObject("dishes", dishes);
+        return mv;
+
     @GetMapping
     public String showDishList(Model model, @RequestParam(value = "search", required = false) String search) {
         String username = getCurrentUsername();
@@ -81,4 +91,15 @@ public class DishController {
         }
         return null;
     }
+      
+    @GetMapping("/update_dish_form")
+    public ModelAndView showUpdateDishForm() {
+        ModelAndView mv = new ModelAndView("owner/dish/update_dish_form");
+        Iterable<Category> categories = categoryRepository.findAll();
+        mv.addObject("categories", categories);
+
+        mv.addObject("dish", new Dish());
+        return mv;
+    }
+
 }
