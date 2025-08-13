@@ -65,6 +65,13 @@
                     <!-- Register Form -->
                     <form th:action="@{/restaurants/signup}" method="post" th:object="${restaurant}">
                         
+                        <!-- Hiển thị error message tổng quát -->
+                        <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            <span th:text="${errorMessage}"></span>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                        
                         <!-- Tên nhà hàng -->
                         <div class="mb-3">
                             <label for="name" class="form-label fw-semibold">
@@ -131,6 +138,7 @@
                                    id="address" 
                                    th:field="*{address}" 
                                    placeholder="Nhập địa chỉ nhà hàng">
+                            <div th:if="${#fields.hasErrors('address')}" class="error-message" th:errors="*{address}"></div>
                         </div>
 
                         <!-- Số điện thoại -->
@@ -143,6 +151,7 @@
                                    id="phone" 
                                    th:field="*{phone}" 
                                    placeholder="Nhập số điện thoại">
+                            <div th:if="${#fields.hasErrors('phone')}" class="error-message" th:errors="*{phone}"></div>
                         </div>
 
                         <!-- Mô tả -->
@@ -155,6 +164,7 @@
                                       th:field="*{description}" 
                                       rows="3" 
                                       placeholder="Mô tả về nhà hàng của bạn"></textarea>
+                            <div th:if="${#fields.hasErrors('description')}" class="error-message" th:errors="*{description}"></div>
                         </div>
 
                         <!-- Submit Button -->

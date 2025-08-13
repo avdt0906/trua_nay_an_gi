@@ -35,6 +35,8 @@ public class RestaurantController {
             Model model) {
 
         if (bindingResult.hasErrors()) {
+            // Quan trọng: phải truyền lại object restaurant để hiển thị validation errors
+            model.addAttribute("restaurant", request);
             return "owner/restaurant/register_restaurant";
         }
 
@@ -43,8 +45,7 @@ public class RestaurantController {
 
             restaurantService.registerRestaurant(request, currentUsername);
 
-            model.addAttribute("successMessage", "Đăng ký nhà hàng thành công!");
-            return "redirect:/restaurants/dashboard";
+            return "redirect:/?success=restaurant_registered";
 
         } catch (IllegalArgumentException e) {
             model.addAttribute("errorMessage", e.getMessage());
@@ -59,5 +60,4 @@ public class RestaurantController {
     public String showDashboard(Model model) {
         return "owner/restaurant/dashboard";
     }
-
 }
