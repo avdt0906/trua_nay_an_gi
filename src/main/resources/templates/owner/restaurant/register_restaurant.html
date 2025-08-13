@@ -61,14 +61,9 @@
                         <p class="text-muted">Tạo tài khoản nhà hàng của bạn</p>
                     </div>
 
-                    <!-- Success Message -->
-                    <div th:if="${successMessage}" class="success-message" th:text="${successMessage}"></div>
-
-                    <!-- Error Message -->
-                    <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}"></div>
 
                     <!-- Register Form -->
-                    <form th:action="@{/restaurants/signup}" method="post" th:object="${restaurantRegisterRequest}">
+                    <form th:action="@{/restaurants/signup}" method="post" th:object="${restaurant}">
                         
                         <!-- Tên nhà hàng -->
                         <div class="mb-3">
@@ -92,7 +87,7 @@
                             <input type="email" 
                                    class="form-control" 
                                    id="email" 
-                                   th:field="*{email}" 
+                                   th:field="*{email}"
                                    placeholder="example@restaurant.com"
                                    required>
                             <div th:if="${#fields.hasErrors('email')}" class="error-message" th:errors="*{email}"></div>

@@ -31,8 +31,10 @@ public class DishController {
     @Autowired
     ICategoryRepository categoryRepository;
 
-    @GetMapping
-    public String showDishList(Model model, @RequestParam(value = "search", required = false) String search) {
+
+    @GetMapping("/dish_list")
+    public ModelAndView dishList(Model model, @RequestParam(value = "search", required = false) String search) {
+        ModelAndView mv = new ModelAndView("owner/dish/dish_list");
         String username = getCurrentUsername();
         Optional<Restaurant> restaurantOptional = restaurantService.findByUsername(username);
 
@@ -47,10 +49,10 @@ public class DishController {
             model.addAttribute("dishes", dishes);
             model.addAttribute("restaurant", restaurant);
             model.addAttribute("search", search); // Để giữ lại từ khóa tìm kiếm trên ô input
-            return "owner/dish/list";
+            return mv;
         } else {
             // Nếu chủ quán chưa có nhà hàng, chuyển hướng đến trang đăng ký.
-            return "redirect:/restaurants/signup";
+            return new ModelAndView("redirect:/restaurants/signup");
         }
     }
 
@@ -81,4 +83,15 @@ public class DishController {
         }
         return null;
     }
+
+    @GetMapping("/update_dish_form")
+    public ModelAndView showUpdateDishForm() {
+        ModelAndView mv = new ModelAndView("owner/dish/update_dish_form");
+        Iterable<Category> categories = categoryRepository.findAll();
+        mv.addObject("categories", categories);
+
+        mv.addObject("dish", new Dish());
+        return mv;
+    }
+
 }

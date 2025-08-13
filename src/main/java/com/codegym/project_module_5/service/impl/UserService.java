@@ -73,8 +73,4 @@ public class UserService implements IUserService {
     public boolean existsByEmail(String email) {
         return userRepository.existsByEmail(email);
     }
-//    @Override
-//    public List<User> findAllByRoleName(String roleName) {
-//        return userRepository.findAllByRole_Name(roleName);
-//    }
 }
