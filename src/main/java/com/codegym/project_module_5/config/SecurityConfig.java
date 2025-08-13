@@ -83,10 +83,11 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/css/**", "/js/**", "/images/**").permitAll()
                         .requestMatchers("/", "/home").permitAll()
-                        .requestMatchers("/account/**","/register","/verify-otp").permitAll()
+                        .requestMatchers("/account/**","/register","/verify-otp/profile/").permitAll()
                         .requestMatchers("/admin/**").hasAuthority("ADMIN")
                         .requestMatchers("/restaurants/signup").authenticated()
                         .requestMatchers("/restaurants/**").hasAnyAuthority("OWNER", "ADMIN")
+                        
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
