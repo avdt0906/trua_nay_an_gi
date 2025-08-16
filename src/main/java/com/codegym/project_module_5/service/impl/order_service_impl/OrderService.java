@@ -35,6 +35,11 @@ public class OrderService implements IOrderService {
     }
 
     @Override
+    public void delete(Long id) {
+        orderRepository.deleteById(id);
+    }
+
+    @Override
     public long count() {
         return orderRepository.count();
     }

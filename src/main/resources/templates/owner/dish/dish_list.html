@@ -11,19 +11,23 @@
             background-color: #f8f9fa;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
+
         .navbar {
-            box-shadow: 0 2px 4px rgba(0,0,0,.08);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, .08);
         }
+
         .card {
             border: none;
             border-radius: 0.75rem;
-            box-shadow: 0 4px 8px rgba(0,0,0,.05);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, .05);
             transition: transform .2s, box-shadow .2s;
         }
+
         .card:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 16px rgba(0,0,0,.1);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, .1);
         }
+
         .dish-img {
             height: 180px;
             object-fit: cover;
@@ -33,105 +37,141 @@
 </head>
 <body>
 
-<!-- Navbar -->
-<nav class="navbar navbar-expand-lg navbar-light bg-white sticky-top">
-    <div class="container-fluid">
-        <a class="navbar-brand fw-bold" th:href="@{/restaurants/dashboard}">
-            <i class="fas fa-utensils me-2 text-primary"></i>Restaurant Panel
-        </a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#restaurantNavbar" aria-controls="restaurantNavbar" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="restaurantNavbar">
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                <li class="nav-item">
-                    <a class="nav-link" th:href="@{/restaurants/dashboard}">
-                        <i class="fas fa-tachometer-alt me-1"></i>Dashboard
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" th:href="@{/restaurants/dishes}">
-                        <i class="fas fa-list me-1"></i>Danh sách món ăn
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" th:href="@{/restaurants/dishes/add_dish_form}">
-                        <i class="fas fa-plus me-1"></i>Thêm món ăn
-                    </a>
-                </li>
-            </ul>
-            <ul class="navbar-nav ms-auto">
-                <li class="nav-item">
-                    <a th:href="@{/logout}" class="btn btn-outline-danger">
-                        <i class="fas fa-sign-out-alt me-1"></i>Đăng xuất
-                    </a>
-                </li>
-            </ul>
-        </div>
-    </div>
-</nav>
+<!-- Sử dụng Navbar Fragment -->
+<div th:replace="~{owner/fragments/navbar :: navbar}"></div>
 
 <!-- Main Content -->
 <main class="container mt-4">
-
-    <!-- Title -->
-    <div class="row mb-4">
-        <div class="col-12">
-            <h1 class="h3 mb-2">Danh sách món ăn</h1>
-            <p class="text-muted">Quản lý tất cả món ăn trong nhà hàng của bạn.</p>
-        </div>
-    </div>
-
-    <!-- Search Form -->
-    <form th:action="@{/restaurants/dishes/dish_list}" method="get" class="mb-4">
-        <div class="input-group">
-            <input type="text" class="form-control" placeholder="Tìm kiếm theo tên món ăn..." name="search" th:value="${search}">
-            <button class="btn btn-outline-secondary" type="submit">
-                <i class="fas fa-search"></i>
-            </button>
-        </div>
-    </form>
-
-    <!-- Dish List -->
-    <div class="row g-4" th:if="${dishes}">
-        <div class="col-md-4" th:each="dish : ${dishes}">
-            <div class="card h-100">
-<!--                <img th:src="${dish.imageUrl}" alt="Dish Image" class="dish-img">-->
-                <div class="card-body">
-                    <h5 class="card-title fw-bold" th:text="${dish.name}">Tên món ăn</h5>
-                    <p class="card-text text-muted mb-2" th:text="${dish.description}">Mô tả món ăn</p>
-                    <span class="badge bg-primary me-1" th:text="${dish.category}">Danh mục</span>
-                    <span class="badge bg-success" th:if="${dish.isAvailable}">Có sẵn</span>
-                    <span class="badge bg-secondary" th:unless="${dish.isAvailable}">Hết hàng</span>
+    <div class="row" th:if="${restaurant}">
+        <div class="col-lg-8">
+            <!-- Search Form -->
+            <form th:action="@{/restaurants/dishes/dish_list}" method="get" class="mb-4">
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="Tìm kiếm theo tên món ăn..." name="search"
+                           th:value="${search}">
+                    <button class="btn btn-outline-secondary" type="submit">
+                        <i class="fas fa-search"></i>
+                    </button>
                 </div>
-<!--                <div class="card-footer d-flex justify-content-between align-items-center">-->
-<!--                    <span class="fw-bold text-danger" th:text="${#numbers.formatDecimal(dish.price, 0, 'COMMA', 0, 'POINT')} + ' đ'">100,000 đ</span>-->
-<!--                    <div class="btn-group">-->
-<!--                        <a th:href="@{'/restaurants/dishes/edit/' + ${dish.id}}" class="btn btn-sm btn-outline-info">-->
-<!--                            <i class="fas fa-edit"></i>-->
-<!--                        </a>-->
-<!--                        <a th:href="@{'/restaurants/dishes/delete/' + ${dish.id}}" class="btn btn-sm btn-outline-danger"-->
-<!--                           onclick="return confirm('Bạn có chắc muốn xóa món này?')">-->
-<!--                            <i class="fas fa-trash"></i>-->
-<!--                        </a>-->
-<!--                    </div>-->
-<!--                </div>-->
+            </form>
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-store me-2"></i>Danh sách món ăn
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="row g-4" th:if="${dishes}">
+                            <div class="col-md-4" th:each="dish : ${dishes}">
+                                <div class="card h-100">
+                                    <!--                <img th:src="${dish.imageUrl}" alt="Dish Image" class="dish-img">-->
+                                    <div class="card-body">
+                                        <h5 class="card-title fw-bold" th:text="${dish.name}">Tên món ăn</h5>
+                                        <p class="card-text text-muted mb-2" th:text="${dish.description}">Mô tả món
+                                            ăn</p>
+                                        <span class="badge bg-primary me-1" th:text="${dish.category.name}"></span>
+                                        <span class="badge bg-success" th:if="${dish.isAvailable}">Có sẵn</span>
+                                        <span class="badge bg-secondary" th:unless="${dish.isAvailable}">Hết hàng</span><br>
+                                        <button class="btn btn-danger btn-sm mt-2">
+                                            <a class="nav-link" th:href="@{'/restaurants/dishes/delete_dish/' + ${dish.id}}">Xóa
+                                            </a>
+                                        </button>
+                                    </div>
+                                    <!--                <div class="card-footer d-flex justify-content-between align-items-center">-->
+                                    <!--                    <span class="fw-bold text-danger" th:text="${#numbers.formatDecimal(dish.price, 0, 'COMMA', 0, 'POINT')} + ' đ'">100,000 đ</span>-->
+                                    <!--                    <div class="btn-group">-->
+                                    <!--                        <a th:href="@{'/restaurants/dishes/edit/' + ${dish.id}}" class="btn btn-sm btn-outline-info">-->
+                                    <!--                            <i class="fas fa-edit"></i>-->
+                                    <!--                        </a>-->
+                                    <!--                        <a th:href="@{'/restaurants/dishes/delete/' + ${dish.id}}" class="btn btn-sm btn-outline-danger"-->
+                                    <!--                           onclick="return confirm('Bạn có chắc muốn xóa món này?')">-->
+                                    <!--                            <i class="fas fa-trash"></i>-->
+                                    <!--                        </a>-->
+                                    <!--                    </div>-->
+                                    <!--                </div>-->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Empty List Message -->
+                <div class="row" th:unless="${dishes}">
+                    <div class="col-12 text-center">
+                        <i class="fas fa-utensil-spoon fa-4x text-muted mb-3"></i>
+                        <h4 class="text-muted">Chưa có món ăn nào</h4>
+                        <p class="text-muted">Hãy thêm món ăn để bắt đầu phục vụ khách hàng!</p>
+                        <a th:href="@{/restaurants/dishes/add_dish_form}" class="btn btn-primary btn-lg">
+                            <i class="fas fa-plus me-2"></i>Thêm món ăn mới
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card mb-4">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-chart-bar me-2"></i>Thống kê
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <span>Trạng thái mở cửa:</span>
+                        <span th:if="${restaurant.isOpen}" class="badge bg-success">
+                            <i class="fas fa-door-open me-1"></i>Đang mở
+                        </span>
+                        <span th:unless="${restaurant.isOpen}" class="badge bg-secondary">
+                            <i class="fas fa-door-closed me-1"></i>Đã đóng
+                        </span>
+                    </div>
+
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <span>Đối tác dài hạn:</span>
+                        <span th:if="${restaurant.isLongTermPartner}" class="badge bg-warning">
+                            <i class="fas fa-star me-1"></i>Có
+                        </span>
+                        <span th:unless="${restaurant.isLongTermPartner}" class="badge bg-light text-dark">
+                            <i class="fas fa-star-o me-1"></i>Không
+                        </span>
+                    </div>
+
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span>Trạng thái khóa:</span>
+                        <span th:if="${restaurant.isLocked}" class="badge bg-danger">
+                            <i class="fas fa-lock me-1"></i>Đã khóa
+                        </span>
+                        <span th:unless="${restaurant.isLocked}" class="badge bg-success">
+                            <i class="fas fa-unlock me-1"></i>Hoạt động
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-bolt me-2"></i>Thao tác nhanh
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <a th:href="@{/restaurants/dishes/add_dish_form}" class="btn btn-outline-primary">
+                            <i class="fas fa-plus me-2"></i>Thêm món ăn mới
+                        </a>
+                        <a href="#" class="btn btn-outline-info">
+                            <i class="fas fa-edit me-2"></i>Cập nhật thông tin
+                        </a>
+                        <a href="#" class="btn btn-outline-warning">
+                            <i class="fas fa-cog me-2"></i>Cài đặt nhà hàng
+                        </a>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-
-    <!-- Empty List Message -->
-    <div class="row" th:unless="${dishes}">
-        <div class="col-12 text-center">
-            <i class="fas fa-utensil-spoon fa-4x text-muted mb-3"></i>
-            <h4 class="text-muted">Chưa có món ăn nào</h4>
-            <p class="text-muted">Hãy thêm món ăn để bắt đầu phục vụ khách hàng!</p>
-            <a th:href="@{/restaurants/dishes/add_dish_form}" class="btn btn-primary btn-lg">
-                <i class="fas fa-plus me-2"></i>Thêm món ăn mới
-            </a>
-        </div>
-    </div>
-
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
