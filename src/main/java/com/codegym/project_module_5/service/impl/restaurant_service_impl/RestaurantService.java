@@ -114,4 +114,9 @@ public class RestaurantService implements IRestaurantService {
     public void save(Restaurant restaurant) {
         iRestaurantRepository.save(restaurant);
     }
+
+    @Override
+    public void delete(Long id) {
+        iRestaurantRepository.deleteById(id);
+    }
 }

@@ -11,10 +11,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.Optional;
@@ -72,7 +69,7 @@ public class DishController {
         Optional<Restaurant> restaurant = restaurantService.findByUsername(username);
         dish.setRestaurant(restaurant.get());
         dishService.save(dish);
-        ModelAndView mv = new ModelAndView("redirect:/restaurants/dishes");
+        ModelAndView mv = new ModelAndView("redirect:/restaurants/dishes/dish_list");
         return mv;
     }
 
@@ -91,6 +88,13 @@ public class DishController {
         mv.addObject("categories", categories);
 
         mv.addObject("dish", new Dish());
+        return mv;
+    }
+
+    @GetMapping("/delete_dish/{id}")
+    public ModelAndView deleteDish(@PathVariable("id") Long id) {
+        dishService.delete(id);
+        ModelAndView mv = new ModelAndView("redirect:/restaurants/dishes/dish_list");
         return mv;
     }
 
