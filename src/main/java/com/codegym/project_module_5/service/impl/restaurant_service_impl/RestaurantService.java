@@ -1,6 +1,7 @@
 package com.codegym.project_module_5.service.impl.restaurant_service_impl;
 
 import com.codegym.project_module_5.model.restaurant_model.Restaurant;
+import com.codegym.project_module_5.model.restaurant_model.Coupon;
 import com.codegym.project_module_5.model.user_model.Role;
 import com.codegym.project_module_5.model.user_model.User;
 import com.codegym.project_module_5.model.dto.request.RestaurantRegisterRequest;
@@ -14,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -113,5 +115,10 @@ public class RestaurantService implements IRestaurantService {
     @Override
     public void save(Restaurant restaurant) {
         iRestaurantRepository.save(restaurant);
+    }
+
+    @Override
+    public List<Coupon> getCouponsByRestaurantId(Long restaurantId) {
+        return iRestaurantRepository.findCouponsByRestaurantId(restaurantId);
     }
 }
