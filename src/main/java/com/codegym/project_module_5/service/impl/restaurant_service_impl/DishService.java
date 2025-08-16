@@ -29,6 +29,11 @@ public class DishService implements IDishService {
     }
 
     @Override
+    public void delete(Long id) {
+        dishRepository.deleteById(id);
+    }
+
+    @Override
     public Iterable<Dish> findAllByRestaurantId(Long restaurantId) {
         return dishRepository.findAllByRestaurantId(restaurantId);
     }

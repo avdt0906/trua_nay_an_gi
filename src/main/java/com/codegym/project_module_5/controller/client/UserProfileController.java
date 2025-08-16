@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.codegym.project_module_5.model.dto.request.UserProfileRequest;
-import com.codegym.project_module_5.service.impl.FileStorageService;
+import com.codegym.project_module_5.service.impl.user_service_impl.FileStorageService;
 
 import lombok.RequiredArgsConstructor;
 

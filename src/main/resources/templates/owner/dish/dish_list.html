@@ -70,9 +70,13 @@
                                         <h5 class="card-title fw-bold" th:text="${dish.name}">Tên món ăn</h5>
                                         <p class="card-text text-muted mb-2" th:text="${dish.description}">Mô tả món
                                             ăn</p>
-                                        <span class="badge bg-primary me-1" th:text="${dish.category}">Danh mục</span>
+                                        <span class="badge bg-primary me-1" th:text="${dish.category.name}"></span>
                                         <span class="badge bg-success" th:if="${dish.isAvailable}">Có sẵn</span>
-                                        <span class="badge bg-secondary" th:unless="${dish.isAvailable}">Hết hàng</span>
+                                        <span class="badge bg-secondary" th:unless="${dish.isAvailable}">Hết hàng</span><br>
+                                        <button class="btn btn-danger btn-sm mt-2">
+                                            <a class="nav-link" th:href="@{'/restaurants/dishes/delete_dish/' + ${dish.id}}">Xóa
+                                            </a>
+                                        </button>
                                     </div>
                                     <!--                <div class="card-footer d-flex justify-content-between align-items-center">-->
                                     <!--                    <span class="fw-bold text-danger" th:text="${#numbers.formatDecimal(dish.price, 0, 'COMMA', 0, 'POINT')} + ' đ'">100,000 đ</span>-->
