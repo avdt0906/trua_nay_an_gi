@@ -18,6 +18,15 @@
             <h2>Login to Your Account</h2>
         </div>
         <div class="auth-body">
+            <div th:if="${param.error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                Sai username hoặc password!
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+            
+            <div th:if="${param.logout}" class="alert alert-info alert-dismissible fade show" role="alert">
+                Bạn đã đăng xuất thành công.
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
             <form th:action="@{/account/login}" method="post">
                 <div class="mb-3">
                     <label for="username" class="form-label">Username</label>

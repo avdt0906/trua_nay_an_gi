@@ -36,7 +36,7 @@ public class RegisterController {
         // Kiểm tra email đã tồn tại
         if (userService.existsByEmail(request.getEmail())) {
             result.rejectValue("email", "error.email", "Email đã được sử dụng");
-            return "/login/register";
+            return "account/register";
         }
 
         otpService.generateAndSendOtp(request.getEmail(), request.getFullName());
