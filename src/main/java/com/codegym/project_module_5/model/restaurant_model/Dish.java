@@ -9,6 +9,7 @@ import lombok.*;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(name = "dishes")
 public class Dish {
     @Id
     @GeneratedValue (strategy = GenerationType.IDENTITY)
