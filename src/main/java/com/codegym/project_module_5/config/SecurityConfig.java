@@ -91,12 +91,13 @@ public class SecurityConfig {
                         .loginPage("/account/login")
                         .loginProcessingUrl("/account/login")
                         .successHandler(customAuthenticationSuccessHandler)
-                        .failureUrl("/login?error")
+                        .defaultSuccessUrl("/home", true)
+                        .failureUrl("/account/login?error=true")
                         .permitAll()
                 )
                 .logout(logout -> logout
                         .logoutUrl("/logout")
-                        .logoutSuccessUrl("/login?logout")
+                        .logoutSuccessUrl("/account/login?logout=true")
                         .permitAll()
                 );
         return http.build();
