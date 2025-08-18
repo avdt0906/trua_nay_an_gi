@@ -18,7 +18,7 @@ import java.util.Optional;
 
 @Controller
 @RequestMapping("/restaurants/dishes")
-public class DishController {
+public class DishRestaurantController {
     @Autowired
     IDishService dishService;
 
