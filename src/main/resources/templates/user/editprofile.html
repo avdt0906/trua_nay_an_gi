@@ -2,67 +2,103 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="vi">
 <head>
     <meta charset="UTF-8">
-    <title>Chỉnh sửa hồ sơ</title>
-    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chỉnh sửa hồ sơ cá nhân</title>
+    <link rel="stylesheet" th:href="@{/css/profile.css}">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
 
-<div class="container">
+<div class="profile-container">
 
-    <!-- AVATAR + ĐỔI ẢNH -->
-    <section class="card text-center" style="margin-bottom: 20px;">
+    <!-- Header with back button -->
+    <header class="profile-header">
+        <a href="#" class="back-button">
+            <i class="fas fa-arrow-left"></i>
+        </a>
+        <h1>Chỉnh sửa hồ sơ</h1>
+    </header>
+
+    <!-- AVATAR SECTION -->
+    <section class="profile-avatar-section">
         <form th:action="@{/profile/update-avatar}" method="post" enctype="multipart/form-data" id="avatarForm">
-            <div class="avatar-container">
-                <img id="avatarPreview"
-                     th:src="${#strings.isEmpty(user.avatarUrl) ? '/uploads/avatars/default.png' : user.avatarUrl}"
-                     alt="Avatar" class="avatar-img">
-                <label class="btn btn-secondary" for="avatarFile">Đổi ảnh</label>
+            <div class="avatar-upload">
+                <div class="avatar-preview-container">
+                    <img id="avatarPreview"
+                         th:src="${#strings.isEmpty(user.avatarUrl) ? '/uploads/avatars/default.png' : user.avatarUrl}"
+                         alt="Avatar" class="avatar-img">
+                    <div class="avatar-overlay">
+                        <i class="fas fa-camera"></i>
+                    </div>
+                </div>
                 <input id="avatarFile" type="file" name="avatarFile" accept="image/*" style="display: none;">
             </div>
 
-            <!-- CSRF token chỉ xuất hiện khi _csrf tồn tại -->
+            <!-- CSRF token -->
             <input type="hidden"
                    th:if="${_csrf != null}"
                    th:name="${_csrf.parameterName}"
                    th:value="${_csrf.token}">
         </form>
 
-        <div th:if="${param.avatarUpdated}" class="alert success">Ảnh đại diện đã được cập nhật.</div>
-        <div th:if="${param.avatarError}" class="alert error">Có lỗi khi cập nhật ảnh.</div>
+        <div th:if="${param.avatarUpdated}" class="alert alert-success">
+            <i class="fas fa-check-circle"></i> Ảnh đại diện đã được cập nhật
+        </div>
+        <div th:if="${param.avatarError}" class="alert alert-error">
+            <i class="fas fa-exclamation-circle"></i> Có lỗi khi cập nhật ảnh
+        </div>
     </section>
 
-    <!-- THÔNG TIN CÁ NHÂN -->
-    <section class="card">
-        <form th:action="@{/profile/update}" th:object="${user}" method="post" class="form-grid">
+    <!-- PROFILE INFORMATION SECTION -->
+    <section class="profile-info-section">
+        <form th:action="@{/profile/update}" th:object="${user}" method="post" class="profile-form">
 
             <div class="form-group">
                 <label for="fullName">Họ tên</label>
-                <input id="fullName" type="text" th:field="*{fullName}" required>
+                <div class="input-with-icon">
+                    <i class="fas fa-user"></i>
+                    <input id="fullName" type="text" th:field="*{fullName}" placeholder="Nhập họ và tên" required>
+                </div>
             </div>
 
             <div class="form-group">
                 <label for="phone">Số điện thoại</label>
-                <input id="phone" type="text" th:field="*{phone}">
+                <div class="input-with-icon">
+                    <i class="fas fa-phone"></i>
+                    <input id="phone" type="text" th:field="*{phone}" placeholder="Nhập số điện thoại">
+                </div>
             </div>
 
             <div class="form-group">
                 <label for="email">Email</label>
-                <input id="email" type="email" th:field="*{email}" readonly>
+                <div class="input-with-icon">
+                    <i class="fas fa-envelope"></i>
+                    <input id="email" type="email" th:field="*{email}" readonly class="readonly-input">
+                </div>
             </div>
 
-            <!-- CSRF token chỉ xuất hiện khi _csrf tồn tại -->
+            <!-- CSRF token -->
             <input type="hidden"
                    th:if="${_csrf != null}"
                    th:name="${_csrf.parameterName}"
                    th:value="${_csrf.token}">
 
             <div class="form-actions">
-                <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
-                <button type="reset" class="btn btn-light">Huỷ</button>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> Lưu thay đổi
+                </button>
+                <button type="reset" class="btn btn-light">
+                    <i class="fas fa-undo"></i> Đặt lại
+                </button>
             </div>
 
-            <div th:if="${param.success}" class="alert success">Cập nhật thông tin thành công.</div>
-            <div th:if="${param.error}" class="alert error">Cập nhật thất bại. Vui lòng thử lại.</div>
+            <div th:if="${param.success}" class="alert alert-success">
+                <i class="fas fa-check-circle"></i> Cập nhật thông tin thành công
+            </div>
+            <div th:if="${param.error}" class="alert alert-error">
+                <i class="fas fa-exclamation-circle"></i> Cập nhật thất bại. Vui lòng thử lại
+            </div>
         </form>
     </section>
 
@@ -72,13 +108,31 @@
     const fileInput = document.getElementById('avatarFile');
     const previewImg = document.getElementById('avatarPreview');
     const avatarForm = document.getElementById('avatarForm');
+    const avatarContainer = document.querySelector('.avatar-preview-container');
 
-    fileInput.addEventListener('change', function () {
+    // Change avatar on click
+    avatarContainer.addEventListener('click', function() {
+        fileInput.click();
+    });
+
+    // Preview new avatar when selected
+    fileInput.addEventListener('change', function() {
         if (this.files && this.files[0]) {
             const reader = new FileReader();
-            reader.onload = e => previewImg.src = e.target.result;
+            reader.onload = e => {
+                previewImg.src = e.target.result;
+                // Add slight animation
+                previewImg.style.transform = 'scale(0.95)';
+                setTimeout(() => {
+                    previewImg.style.transform = 'scale(1)';
+                }, 100);
+            };
             reader.readAsDataURL(this.files[0]);
-            avatarForm.submit();
+            
+            // Submit form after slight delay for better UX
+            setTimeout(() => {
+                avatarForm.submit();
+            }, 300);
         }
     });
 </script>
