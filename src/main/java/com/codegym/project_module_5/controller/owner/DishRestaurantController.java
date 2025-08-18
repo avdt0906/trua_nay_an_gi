@@ -81,13 +81,26 @@ public class DishRestaurantController {
         return null;
     }
 
-    @GetMapping("/update_dish_form")
-    public ModelAndView showUpdateDishForm() {
-        ModelAndView mv = new ModelAndView("owner/dish/update_dish_form");
-        Iterable<Category> categories = categoryRepository.findAll();
-        mv.addObject("categories", categories);
+    @GetMapping("/edit_dish_form/{id}")
+    public ModelAndView showEditDishForm(@PathVariable("id") Long id) {
+        Optional<Dish> dishOptional = dishService.findById(id);
+        if (dishOptional.isPresent()) {
+            Dish dish = dishOptional.get();
+            ModelAndView mv = new ModelAndView("owner/dish/edit_dish_form");
+            Iterable<Category> categories = categoryRepository.findAll();
+            mv.addObject("categories", categories);
+            mv.addObject("dish", dish);
+            return mv;
+        } else {
+            ModelAndView mv = new ModelAndView("redirect:/restaurants/dishes/dish_list");
+            return mv;
+        }
+    }
 
-        mv.addObject("dish", new Dish());
+    @PostMapping("/edit_dish")
+    public ModelAndView editDish(@ModelAttribute("dish") Dish dish){
+        dishService.save(dish);
+        ModelAndView mv = new ModelAndView("redirect:/restaurants/dishes/dish_list");
         return mv;
     }
 
