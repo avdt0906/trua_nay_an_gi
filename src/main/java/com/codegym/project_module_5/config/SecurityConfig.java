@@ -57,19 +57,6 @@ public class SecurityConfig {
                         () -> new RuntimeException("Lỗi: Không tìm thấy vai trò ADMIN.")
                 );
             }
-//            if (userRepo.findByUsername("admin").isEmpty()) {
-//                Role adminRole = roleRepo.findByName("ADMIN").orElseThrow(
-//                        () -> new RuntimeException("Lỗi: Không tìm thấy vai trò ADMIN.")
-//                );
-//                User admin = new User();
-//                admin.setUsername("admin");
-//                admin.setPassword(passwordEncoder.encode("123456"));
-//                admin.setEmail("admin@codegym.vn");
-//                admin.setFullName("Admin");
-//                admin.setPhone("0987654321");
-//                admin.setRoles(Set.of(adminRole));
-//                userRepo.save(admin);
-//            }
         };
     }
     @Bean
@@ -91,7 +78,6 @@ public class SecurityConfig {
                         .loginPage("/account/login")
                         .loginProcessingUrl("/account/login")
                         .successHandler(customAuthenticationSuccessHandler)
-                        .defaultSuccessUrl("/home", true)
                         .failureUrl("/account/login?error=true")
                         .permitAll()
                 )

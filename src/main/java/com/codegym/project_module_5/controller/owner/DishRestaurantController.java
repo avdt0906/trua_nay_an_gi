@@ -30,7 +30,7 @@ public class DishRestaurantController {
 
 
     @GetMapping("/dish_list")
-    public ModelAndView dishList(Model model, @RequestParam(value = "search", required = false) String search) {
+    public ModelAndView dishList(@RequestParam(value = "search", required = false) String search) {
         ModelAndView mv = new ModelAndView("owner/dish/dish_list");
         String username = getCurrentUsername();
         Optional<Restaurant> restaurantOptional = restaurantService.findByUsername(username);
@@ -43,9 +43,9 @@ public class DishRestaurantController {
             } else {
                 dishes = dishService.findAllByRestaurantId(restaurant.getId());
             }
-            model.addAttribute("dishes", dishes);
-            model.addAttribute("restaurant", restaurant);
-            model.addAttribute("search", search); // Để giữ lại từ khóa tìm kiếm trên ô input
+            mv.addObject("dishes", dishes);
+            mv.addObject("restaurant", restaurant);
+            mv.addObject("search", search); // Để giữ lại từ khóa tìm kiếm trên ô input
             return mv;
         } else {
             // Nếu chủ quán chưa có nhà hàng, chuyển hướng đến trang đăng ký.
