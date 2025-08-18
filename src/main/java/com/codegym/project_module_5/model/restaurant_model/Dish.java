@@ -22,6 +22,9 @@ public class Dish {
     @NotNull
     private Double price;
     private String description;
+
+//    @Lob
+//    @Column(columnDefinition="LONGBLOB")
     private String pictureUrl;
     @ManyToOne
     @JoinColumn(name = "tag_id")
