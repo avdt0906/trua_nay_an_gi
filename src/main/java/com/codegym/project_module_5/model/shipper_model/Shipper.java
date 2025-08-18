@@ -12,7 +12,6 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "shippers")
 public class Shipper {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -9,7 +9,6 @@ import lombok.*;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "order_status")
 public class OrderStatus {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

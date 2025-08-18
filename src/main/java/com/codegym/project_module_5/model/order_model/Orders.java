@@ -13,7 +13,6 @@ import lombok.*;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "orders")
 public class Orders {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
