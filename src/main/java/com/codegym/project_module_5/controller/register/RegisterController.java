@@ -33,10 +33,14 @@ public class RegisterController {
             model.addAttribute("registerRequest", request);
             return "account/register";
         }
+        if (userService.existsByUsername(request.getUsername())) {
+            result.rejectValue("username", "error.username", "Tên đăng nhập đã được sử dụng");
+            return "account/register";
+        }
         // Kiểm tra email đã tồn tại
         if (userService.existsByEmail(request.getEmail())) {
             result.rejectValue("email", "error.email", "Email đã được sử dụng");
-            return "/login/register";
+            return "account/register";
         }
 
         otpService.generateAndSendOtp(request.getEmail(), request.getFullName());
@@ -68,7 +72,7 @@ public class RegisterController {
         userService.register(request);
         session.removeAttribute("pendingRegister");
 
-        return "account/login";
+        return "redirect/login";
     }
 
 }

@@ -85,6 +85,11 @@ public class UserService implements IUserService {
         return userRepository.existsByEmail(email);
     }
 
+    @Override
+    public boolean existsByUsername(String username) {
+        return userRepository.existsByUsername(username);
+    }
+
   public void updateAvatar(String username, String avatarUrl) {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not found"));

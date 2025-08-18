@@ -13,4 +13,5 @@ public interface IUserService extends IGeneralService<User> {
     User register(RegisterRequest request);
     List<User> findAllByRoleName(String roleName);
     boolean existsByEmail(String username);
+    boolean existsByUsername(String username);
 }

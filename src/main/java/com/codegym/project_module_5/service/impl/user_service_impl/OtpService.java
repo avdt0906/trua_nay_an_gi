@@ -46,9 +46,10 @@ public class OtpService {
                     System.out.println("Found OTP in DB: " + vc);
                     if (vc.getExpiresAt().before(new Timestamp(System.currentTimeMillis()))) {
                         System.out.println("OTP expired");
+                        verificationCodeRepository.deleteByEmail(email.trim());
                         return false;
                     }
-                    verificationCodeRepository.deleteByEmail(email);
+                    verificationCodeRepository.deleteByEmail(email.trim());
                     return true;
                 })
                 .orElseGet(() -> {
