@@ -114,8 +114,8 @@
                 </button>
             </div>
             <div class="col-lg-6">
-                <img th:src="${dish.pictureUrl != null and dish.pictureUrl != '' ? 'images/dish/eat_food/' + dish.pictureUrl : '/images/dish/cua_rang_me.jpg'}"
-                     th:alt="${dish.name}" class="dish-image"/>
+                <img th:src="@{'/images/dish/eat_food/' + ${dish.getPictureUrl()}}" th:alt="${dish.name}"
+                     style="max-width:400px; height:auto;" />
             </div>
         </div>
     </div>

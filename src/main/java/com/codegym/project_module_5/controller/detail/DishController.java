@@ -5,13 +5,19 @@ import com.codegym.project_module_5.model.restaurant_model.Coupon;
 import com.codegym.project_module_5.model.restaurant_model.Restaurant;
 import com.codegym.project_module_5.service.impl.restaurant_service_impl.DishService;
 import com.codegym.project_module_5.service.restaurant_service.IRestaurantService;
+import jakarta.annotation.Resource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
 
@@ -57,4 +63,17 @@ public class DishController {
         
         return "redirect:/home";
     }
+
+//    @GetMapping("/image/{id}")
+//    @ResponseBody
+//    public ResponseEntity<byte[]> loadImage(@PathVariable Long id) throws IOException {
+//        Dish dish = dishService.findById(id).orElse(null);
+//        if (dish == null || dish.getPictureUrl() == null) {
+//            return ResponseEntity.notFound().build();
+//        }
+//
+//        return ResponseEntity.ok()
+//                .header(HttpHeaders.CONTENT_TYPE, "image/jpeg")
+//                .body(dish.getPictureUrl());
+//    }
 }
