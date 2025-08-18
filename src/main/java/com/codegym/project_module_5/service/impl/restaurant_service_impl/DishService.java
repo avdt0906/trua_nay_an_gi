@@ -6,6 +6,7 @@ import com.codegym.project_module_5.service.restaurant_service.IDishService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -51,5 +52,15 @@ public class DishService implements IDishService {
     @Override
     public Iterable<Dish> searchAvailableDishesByName(String name) {
         return dishRepository.findAllByNameContainingIgnoreCaseAndRestaurantIsApprovedTrueAndRestaurantIsLockedFalse(name);
+    }
+
+    @Override
+    public List<Dish> findSimilarDishesByCategory(Long categoryId, Long excludeDishId) {
+        return dishRepository.findSimilarDishesByCategory(categoryId, excludeDishId);
+    }
+
+    @Override
+    public List<Dish> findPopularDishesByRestaurant(Long restaurantId, Long excludeDishId) {
+        return dishRepository.findPopularDishesByRestaurant(restaurantId, excludeDishId);
     }
 }

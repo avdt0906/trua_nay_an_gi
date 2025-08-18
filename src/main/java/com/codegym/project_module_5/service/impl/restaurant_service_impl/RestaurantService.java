@@ -121,7 +121,9 @@ public class RestaurantService implements IRestaurantService {
 
     public List<Coupon> getCouponsByRestaurantId(Long restaurantId) {
         return iRestaurantRepository.findCouponsByRestaurantId(restaurantId);
+        }
 
+    @Override
     public void delete(Long id) {
         iRestaurantRepository.deleteById(id);
 

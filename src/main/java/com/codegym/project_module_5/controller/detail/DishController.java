@@ -3,8 +3,7 @@ package com.codegym.project_module_5.controller.detail;
 import com.codegym.project_module_5.model.restaurant_model.Dish;
 import com.codegym.project_module_5.model.restaurant_model.Coupon;
 import com.codegym.project_module_5.model.restaurant_model.Restaurant;
-import com.codegym.project_module_5.service.impl.dish_detail_service_impl.DishDetailService;
-import com.codegym.project_module_5.service.restaurant_service.ICategoryService;
+import com.codegym.project_module_5.service.impl.restaurant_service_impl.DishService;
 import com.codegym.project_module_5.service.restaurant_service.IRestaurantService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -23,10 +22,10 @@ import java.util.Optional;
 * */
 @Controller
 @RequestMapping("/dish")
-public class DetailController {
+public class DishController {
     
     @Autowired
-    private DishDetailService dishDetailService;
+    private DishService dishService;
     
     @Autowired
     private IRestaurantService restaurantService;
@@ -34,7 +33,7 @@ public class DetailController {
     @GetMapping("/{id}")
     public String showDishDetail(@PathVariable Long id, Model model) {
         
-        Optional<Dish> dishOptional = dishDetailService.findById(id);
+        Optional<Dish> dishOptional = dishService.findById(id);
         
         if (dishOptional.isPresent()) {
             Dish dish = dishOptional.get();
@@ -43,9 +42,9 @@ public class DetailController {
 
             List<Coupon> coupons = restaurantService.getCouponsByRestaurantId(restaurant.getId());
 
-            List<Dish> similarDishes = dishDetailService.findSimilarDishesByCategory(dish.getCategory().getId(), dish.getId());
+            List<Dish> similarDishes = dishService.findSimilarDishesByCategory(dish.getCategory().getId(), dish.getId());
 
-            List<Dish> popularDishes = dishDetailService.findPopularDishesByRestaurant(restaurant.getId(), dish.getId());
+            List<Dish> popularDishes = dishService.findPopularDishesByRestaurant(restaurant.getId(), dish.getId());
             
             model.addAttribute("dish", dish);
             model.addAttribute("restaurant", restaurant);
