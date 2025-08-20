@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<!--/* Navbar Fragment cho User/Client
+    Đường dẫn mới: templates/user/fragments/_navbar.html
+    Cách gọi: th:replace="~{user/fragments/_navbar :: navbar}"
+*/-->
+<nav class="navbar navbar-expand-lg bg-white border-bottom sticky-top shadow-sm" th:fragment="navbar">
+    <div class="container">
+        <!-- Logo -->
+        <a class="navbar-brand d-flex align-items-center" href="/">
+            <img src="/images/logo/logo_thiet_ke.png" alt="Logo" width="40" height="40" class="me-2 rounded-circle">
+            <span class="fw-bold" style="color: #ff4d4f;">FoodDelivery</span>
+        </a>
+
+        <!-- Nút Toggler cho mobile -->
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <!-- Các mục menu -->
+        <div class="collapse navbar-collapse" id="mainNavbar">
+            <!-- Menu chính (căn giữa) -->
+            <ul class="navbar-nav mx-auto">
+                <li class="nav-item"><a class="nav-link" href="#">Đồ ăn</a></li>
+                <li class="nav-item"><a class="nav-link" href="#">Thực phẩm</a></li>
+                <li class="nav-item"><a class="nav-link" href="#">Bia & Rượu</a></li>
+            </ul>
+
+            <!-- Các nút chức năng (căn phải) -->
+            <div class="d-flex align-items-center gap-3">
+                <!-- Form tìm kiếm -->
+                <form th:action="@{/}" method="get" class="d-flex">
+                    <input class="form-control form-control-sm me-1" type="search" placeholder="Tìm món..." name="search" th:value="${search}">
+                    <button class="btn btn-sm btn-outline-danger" type="submit"><i class="fas fa-search"></i></button>
+                </form>
+
+                <!-- Giỏ hàng -->
+                <a th:href="@{/cart}" class="btn btn-outline-dark position-relative">
+                    <i class="fas fa-shopping-cart"></i>
+                    <!-- Số lượng sản phẩm trong giỏ hàng -->
+                    <span id="cart-item-count" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                          th:text="${session.cart != null ? session.cart.size() : '0'}">
+                        0
+                    </span>
+                </a>
+
+                <!-- Xác thực người dùng -->
+                <div th:if="${!isAuthenticated}">
+                    <a th:href="@{/account/login}" class="btn btn-outline-danger">Đăng nhập</a>
+                    <a th:href="@{/register}" class="btn btn-danger">Đăng ký</a>
+                </div>
+
+                <div class="dropdown" th:if="${isAuthenticated}">
+                    <a class="d-flex align-items-center text-decoration-none dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <img th:src="${#strings.isEmpty(currentUser?.avatarUrl) ? '/images/logo_nguoi_dung.png' : currentUser.avatarUrl}"
+                             alt="avatar" width="30" height="30" class="rounded-circle me-2">
+                        <span th:text="${currentUser != null ? currentUser.fullName : 'Tài khoản'}"></span>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" th:href="@{/profile/edit}">Trang cá nhân</a></li>
+                        <li><a class="dropdown-item" th:href="@{/addresses}">Địa chỉ của tôi</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" th:href="@{/logout}">Đăng xuất</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
+
+</body>
+</html>

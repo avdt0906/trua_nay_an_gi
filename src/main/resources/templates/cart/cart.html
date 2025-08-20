@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Giỏ hàng của bạn</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body style="background-color: #f8f9fa;">
+
+<div th:replace="~{user/fragments/_navbar :: navbar}"></div>
+
+<main class="container py-5">
+    <h2 class="mb-4 fw-bold">Giỏ hàng của bạn</h2>
+
+    <div id="cart-container">
+        <!-- Thông báo giỏ hàng trống -->
+        <div th:if="${cartItems == null or #lists.isEmpty(cartItems)}" id="empty-cart-message" class="text-center p-5 bg-white rounded shadow-sm">
+            <i class="fas fa-shopping-cart fa-4x text-muted mb-3"></i>
+            <h4 class="text-muted">Giỏ hàng của bạn đang trống</h4>
+            <a href="/" class="btn btn-danger mt-3"><i class="fas fa-store me-2"></i> Quay lại trang chủ</a>
+        </div>
+
+        <!-- Nội dung giỏ hàng -->
+        <div class="row" th:if="${cartItems != null and not #lists.isEmpty(cartItems)}" id="cart-content">
+            <div class="col-lg-8">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body" id="cart-items-container">
+                        <!-- Dữ liệu giỏ hàng -->
+                        <div th:each="item : ${cartItems}" class="d-flex align-items-center border-bottom py-3 cart-item-row" th:data-item-id="${item.id}" th:data-item-price="${item.dish.price}">
+                            <img th:src="@{'/images/dish/eat_food/' + ${item.dish.pictureUrl}}" class="rounded me-3" style="width: 80px; height: 80px; object-fit: cover;" alt="Dish Image">
+                            <div class="flex-grow-1">
+                                <h6 class="mb-1" th:text="${item.dish.name}"></h6>
+                                <small class="text-muted" th:text="${item.dish.restaurant.name}"></small>
+                            </div>
+                            <div class="text-center" style="width: 120px;">
+                                <input type="number" class="form-control form-control-sm text-center quantity-input" th:value="${item.quantity}" min="1">
+                            </div>
+                            <div class="text-end fw-bold item-subtotal" style="width: 100px;" th:text="${#numbers.formatDecimal(item.dish.price * item.quantity, 0, 'COMMA', 0, 'POINT')} + 'đ'"></div>
+                            <!-- Nút xóa giờ sẽ mở Modal -->
+                            <button class="btn btn-sm btn-outline-danger ms-3 remove-item-btn"
+                                    th:data-item-id="${item.id}"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#confirmDeleteModal">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <!-- Phần tổng kết giữ nguyên -->
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title mb-3">Tổng cộng</h5>
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item d-flex justify-content-between">
+                                <span>Tạm tính</span>
+                                <span id="cart-subtotal" th:text="${#numbers.formatDecimal(totalPrice, 0, 'COMMA', 0, 'POINT')} + 'đ'"></span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between">
+                                <span>Phí giao hàng</span>
+                                <span id="shipping-fee">15.000đ</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between fw-bold fs-5">
+                                <span>Thành tiền</span>
+                                <span id="cart-total" th:text="${#numbers.formatDecimal(totalPrice + 15000, 0, 'COMMA', 0, 'POINT')} + 'đ'"></span>
+                            </li>
+                        </ul>
+                        <div class="d-grid mt-4">
+                            <a href="#" class="btn btn-danger btn-lg">Tiến hành thanh toán</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<!-- *** MODAL XÁC NHẬN XÓA *** -->
+<div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmDeleteModalLabel">Xác nhận xóa</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Bạn có chắc chắn muốn xóa sản phẩm này khỏi giỏ hàng?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                <button type="button" class="btn btn-danger" id="confirm-delete-btn">Xóa</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script th:src="@{/js/cart/cart.js}"></script>
+<script th:src="@{/js/cart/cart-page.js}"></script>
+</body>
+</html>

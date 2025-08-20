@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -24,12 +25,8 @@ public class SecurityConfig {
     private UserDetailsServiceImpl userDetailsService;
 
     @Autowired
+    @Lazy
     private AuthenticationSuccessHandler customAuthenticationSuccessHandler;
-
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder(12);
-    }
 
     @Bean
     public DaoAuthenticationProvider authenticationProvider() {
@@ -38,6 +35,12 @@ public class SecurityConfig {
         authProvider.setPasswordEncoder(passwordEncoder());
         return authProvider;
     }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder(12);
+    }
+
 
     @Bean
     CommandLineRunner init(IRoleRepository roleRepo, IUserRepository userRepo, PasswordEncoder passwordEncoder) {
@@ -66,12 +69,16 @@ public class SecurityConfig {
                 .authenticationProvider(authenticationProvider())
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/css/**", "/js/**", "/images/**").permitAll()
-                        .requestMatchers("/", "/home").permitAll()
+                        .requestMatchers("/", "/home", "/dish/**").permitAll()
                         .requestMatchers("/account/**","/register","/verify-otp/profile/").permitAll()
+
+                        // *** THÊM DÒNG NÀY ĐỂ CHO PHÉP TRUY CẬP GIỎ HÀNG ***
+                        .requestMatchers("/cart/**").permitAll()
+
                         .requestMatchers("/admin/**").hasAuthority("ADMIN")
                         .requestMatchers("/restaurants/signup").authenticated()
                         .requestMatchers("/restaurants/**").hasAnyAuthority("OWNER", "ADMIN")
-                        
+
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
