@@ -2,7 +2,9 @@ package com.codegym.project_module_5.controller.detail;
 
 import com.codegym.project_module_5.model.restaurant_model.Dish;
 import com.codegym.project_module_5.model.restaurant_model.Coupon;
+import com.codegym.project_module_5.model.restaurant_model.DishOption;
 import com.codegym.project_module_5.model.restaurant_model.Restaurant;
+import com.codegym.project_module_5.service.impl.dish_option_impl.DishOptionService;
 import com.codegym.project_module_5.service.impl.restaurant_service_impl.DishService;
 import com.codegym.project_module_5.service.restaurant_service.IRestaurantService;
 import jakarta.annotation.Resource;
@@ -29,6 +31,8 @@ import java.util.Optional;
 @Controller
 @RequestMapping("/dish")
 public class DishController {
+    @Autowired
+    private DishOptionService dishOptionService;
     
     @Autowired
     private DishService dishService;
@@ -51,8 +55,11 @@ public class DishController {
             List<Dish> similarDishes = dishService.findSimilarDishesByCategory(dish.getCategory().getId(), dish.getId());
 
             List<Dish> popularDishes = dishService.findPopularDishesByRestaurant(restaurant.getId(), dish.getId());
-            
+
+            List<DishOption> dishOptionsList = dishOptionService.findDishOptionByDishId(id);
+
             model.addAttribute("dish", dish);
+            model.addAttribute("dishOptions", dishOptionsList);
             model.addAttribute("restaurant", restaurant);
             model.addAttribute("coupons", coupons);
             model.addAttribute("similarDishes", similarDishes);
@@ -63,17 +70,4 @@ public class DishController {
         
         return "redirect:/home";
     }
-
-//    @GetMapping("/image/{id}")
-//    @ResponseBody
-//    public ResponseEntity<byte[]> loadImage(@PathVariable Long id) throws IOException {
-//        Dish dish = dishService.findById(id).orElse(null);
-//        if (dish == null || dish.getPictureUrl() == null) {
-//            return ResponseEntity.notFound().build();
-//        }
-//
-//        return ResponseEntity.ok()
-//                .header(HttpHeaders.CONTENT_TYPE, "image/jpeg")
-//                .body(dish.getPictureUrl());
-//    }
 }
