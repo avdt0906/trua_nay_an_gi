@@ -140,7 +140,7 @@
                     <div class="col-md-6">
                         <p><strong>Nhà hàng:</strong> <span th:text="${restaurant.name}">Tên nhà hàng</span></p>
                         <p><strong>Địa chỉ:</strong> <span th:text="${restaurant.address}">Địa chỉ</span></p>
-                        <p><strong>Trạng thái:</strong> 
+                        <p><strong>Trạng thái:</strong>
                             <span class="badge bg-success" th:if="${restaurant.isOpen}">Đang mở</span>
                             <span class="badge bg-danger" th:unless="${restaurant.isOpen}">Đã đóng</span>
                         </p>
@@ -152,26 +152,6 @@
                 </div>
             </div>
 
-            <!-- Danh sách ảnh món ăn -->
-            <div class="dish-info-card">
-                <h3 class="mb-4">
-                    <i class="fas fa-images text-primary me-2"></i>
-                    Hình ảnh món ăn
-                </h3>
-                <div class="row">
-                    <div class="col-md-6">
-                        <img th:src="${dish.pictureUrl != null and dish.pictureUrl != '' ? 'images/dish/eat_food/' + dish.pictureUrl : '/images/dish/cua_rang_me.jpg'}"
-                             th:alt="${dish.name}" class="img-fluid rounded"/>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="alert alert-info">
-                            <h6><i class="fas fa-info-circle me-2"></i>Thông tin ảnh</h6>
-                            <p class="mb-2"><strong>Ảnh chính:</strong> <span th:text="${dish.pictureUrl != null and dish.pictureUrl != '' ? 'Đã tải từ database: ' + dish.pictureUrl : 'Sử dụng ảnh mặc định'}">Trạng thái ảnh</span></p>
-                            <p class="mb-0"><small class="text-muted">Nhà hàng có thể thêm nhiều ảnh khác để hiển thị chi tiết hơn về món ăn.</small></p>
-                        </div>
-                    </div>
-                </div>
-            </div>
 
             <!-- Danh sách coupon -->
             <div class="dish-info-card" th:if="${!coupons.isEmpty()}">
@@ -185,15 +165,15 @@
                             <h5 class="mb-2" th:text="${coupon.name}">Tên coupon</h5>
                             <p class="mb-2" th:text="${coupon.description}">Mô tả coupon</p>
                             <div class="d-flex justify-content-between align-items-center">
-                                <span th:if="${coupon.fixedDiscount != null}" 
+                                <span th:if="${coupon.fixedDiscount != null}"
                                       th:text="'Giảm ₫' + ${#numbers.formatDecimal(coupon.fixedDiscount, 0, 'COMMA', 0, 'POINT')}">
                                     Giảm ₫0
                                 </span>
-                                <span th:if="${coupon.percentDiscount != null}" 
+                                <span th:if="${coupon.percentDiscount != null}"
                                       th:text="'Giảm ' + ${coupon.percentDiscount} + '%'">
                                     Giảm 0%
                                 </span>
-                                <span th:if="${coupon.minOrder != null}" 
+                                <span th:if="${coupon.minOrder != null}"
                                       th:text="'Đơn tối thiểu: ₫' + ${#numbers.formatDecimal(coupon.minOrder, 0, 'COMMA', 0, 'POINT')}">
                                     Đơn tối thiểu: ₫0
                                 </span>
@@ -232,7 +212,7 @@
                 <div class="row">
                     <div class="col-12 mb-3" th:each="similarDish : ${similarDishes}">
                         <div class="similar-dish-card">
-                            <img th:src="${similarDish.pictureUrl != null and similarDish.pictureUrl != '' ? 'images/dish/eat_food/' + similarDish.pictureUrl : '/images/dish/cua_rang_me.jpg'}" 
+                            <img th:src="@{'/images/dish/eat_food/' + ${similarDish.pictureUrl}}"
                                  th:alt="${similarDish.name}" class="similar-dish-image"/>
                             <div class="p-3">
                                 <h6 class="mb-1" th:text="${similarDish.name}">Tên món</h6>
@@ -255,7 +235,7 @@
                 <div class="row">
                     <div class="col-12 mb-3" th:each="popularDish : ${popularDishes}">
                         <div class="similar-dish-card">
-                            <img th:src="${popularDish.pictureUrl != null and popularDish.pictureUrl != '' ? 'images/dish/eat_food/' + popularDish.pictureUrl : '/images/dish/cua_rang_me.jpg'}" 
+                            <img th:src="@{'/images/dish/eat_food/' + ${popularDish.pictureUrl}}"
                                  th:alt="${popularDish.name}" class="similar-dish-image"/>
                             <div class="p-3">
                                 <h6 class="mb-1" th:text="${popularDish.name}">Tên món</h6>
