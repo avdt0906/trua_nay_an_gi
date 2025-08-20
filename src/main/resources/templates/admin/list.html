@@ -44,6 +44,16 @@
       </a>
     </div>
 
+    <!-- Flash Messages -->
+    <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
+      <span th:text="${successMessage}"></span>
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
+      <span th:text="${errorMessage}"></span>
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+
     <div th:if="${owners.isEmpty()}">
       <div class="alert alert-info" role="alert">
         Chưa có chủ nhà hàng nào được đăng ký.
@@ -70,10 +80,9 @@
             <td th:text="${owner.username}"></td>
             <td th:text="${owner.email}"></td>
             <td>
-              <!-- Hiển thị trạng thái dựa trên dữ liệu từ restaurantMap -->
               <div th:if="${restaurant != null}">
-                <span th:if="${restaurant.is_locked}" class="badge bg-danger">Đã bị khóa</span>
-                <span th:unless="${restaurant.is_locked}" class="badge bg-success">Đang hoạt động</span>
+                <span th:if="${restaurant.isLocked}" class="badge bg-danger">Đã bị khóa</span>
+                <span th:unless="${restaurant.isLocked}" class="badge bg-success">Đang hoạt động</span>
               </div>
               <div th:unless="${restaurant != null}">
                 <span class="badge bg-secondary">Chưa có</span>
@@ -89,9 +98,15 @@
               <a href="#" class="btn btn-sm btn-danger btn-action" title="Xóa">
                 <i class="fas fa-trash"></i>
               </a>
-              <a href="@/admin/" class="btn btn-sm btn-warning btn-action" title="Khóa/Mở khóa Nhà hàng">
-                <i class="fas fa-store-slash"></i>
-              </a>
+              <!-- Button to trigger modal -->
+              <button th:if="${restaurant != null}" type="button" class="btn btn-sm btn-warning btn-action"
+                      th:data-action="@{/admin/restaurant/toggle-lock/{id}(id=${restaurant.id})}"
+                      th:data-restaurant-name="${restaurant.name}"
+                      th:data-is-locked="${restaurant.isLocked}"
+                      th:title="${restaurant.isLocked ? 'Mở khóa Nhà hàng' : 'Khóa Nhà hàng'}"
+                      data-bs-toggle="modal" data-bs-target="#confirmModal">
+                <i class="fas" th:classappend="${restaurant.isLocked ? 'fa-lock-open' : 'fa-lock'}"></i>
+              </button>
             </td>
           </tr>
           </tbody>
@@ -101,6 +116,60 @@
   </div>
 </main>
 
+<!-- Confirmation Modal -->
+<div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="confirmModalLabel">Xác nhận hành động</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body" id="confirmModalBody">
+        <!-- Content will be set by JavaScript -->
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+        <form id="confirmActionForm" method="post" class="d-inline">
+          <button type="submit" class="btn btn-warning" id="confirmActionButton">Xác nhận</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  const confirmModal = document.getElementById('confirmModal');
+  if (confirmModal) {
+    confirmModal.addEventListener('show.bs.modal', function (event) {
+      // Button that triggered the modal
+      const button = event.relatedTarget;
+
+      // Extract info from data-* attributes
+      const actionUrl = button.getAttribute('data-action');
+      const restaurantName = button.getAttribute('data-restaurant-name');
+      const isLocked = button.getAttribute('data-is-locked') === 'true';
+
+      // Update the modal's content
+      const modalBody = confirmModal.querySelector('#confirmModalBody');
+      const confirmButton = confirmModal.querySelector('#confirmActionButton');
+      const confirmForm = confirmModal.querySelector('#confirmActionForm');
+
+      if (isLocked) {
+        modalBody.textContent = `Bạn có chắc chắn muốn MỞ KHÓA nhà hàng "${restaurantName}"?`;
+        confirmButton.classList.remove('btn-warning');
+        confirmButton.classList.add('btn-success');
+        confirmButton.textContent = 'Mở khóa';
+      } else {
+        modalBody.textContent = `Bạn có chắc chắn muốn KHÓA nhà hàng "${restaurantName}"?`;
+        confirmButton.classList.remove('btn-success');
+        confirmButton.classList.add('btn-warning');
+        confirmButton.textContent = 'Khóa';
+      }
+
+      confirmForm.setAttribute('action', actionUrl);
+    });
+  }
+</script>
 </body>
 </html>

@@ -115,8 +115,19 @@ public class AdminController {
     @PostMapping("/owner/lock")
     public String postMethodName(@RequestBody String entity) {
         //TODO: process POST request
-        
+
         return entity;
     }
-    
+    @PostMapping("/restaurant/toggle-lock/{id}")
+    public String toggleRestaurantLock(@PathVariable("id") Long restaurantId, RedirectAttributes redirectAttributes) {
+        try {
+            Restaurant updatedRestaurant = restaurantService.toggleLockStatus(restaurantId);
+            String status = updatedRestaurant.getIsLocked() ? "khóa" : "mở khóa";
+            String message = "Đã " + status + " nhà hàng '" + updatedRestaurant.getName() + "' thành công.";
+            redirectAttributes.addFlashAttribute("successMessage", message);
+        } catch (IllegalArgumentException e) {
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+        }
+        return "redirect:/admin/list";
+    }
 }

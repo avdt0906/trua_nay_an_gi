@@ -52,7 +52,7 @@ public class RestaurantService implements IRestaurantService {
         if (request == null) {
             throw new IllegalArgumentException("Request data cannot be null");
         }
-        
+
         if (!request.getPassword().equals(request.getConfirmPassword())) {
             throw new IllegalArgumentException("Mật khẩu không khớp với xác nhận mật khẩu");
         }
@@ -95,7 +95,7 @@ public class RestaurantService implements IRestaurantService {
             log.info("Restaurant created successfully with ID: {}", savedRestaurant.getId());
 
             return savedRestaurant;
-            
+
         } catch (Exception e) {
             log.error("Error creating restaurant: {}", e.getMessage(), e);
             throw new RuntimeException("Đăng ký nhà hàng thất bại: " + e.getMessage(), e);
@@ -123,6 +123,14 @@ public class RestaurantService implements IRestaurantService {
         return iRestaurantRepository.findCouponsByRestaurantId(restaurantId);
         }
 
+
+    @Override
+    public Restaurant toggleLockStatus(Long restaurantId) {
+        Restaurant restaurant = iRestaurantRepository.findById(restaurantId)
+                .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy nhà hàng với ID: " + restaurantId));
+        restaurant.setIsLocked(!restaurant.getIsLocked());
+        return iRestaurantRepository.save(restaurant);
+    }
     @Override
     public void delete(Long id) {
         iRestaurantRepository.deleteById(id);
