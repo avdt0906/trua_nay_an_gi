@@ -22,7 +22,14 @@ public class RestaurantRegisterRequest {
     
     @NotBlank(message = "Xác nhận mật khẩu không được để trống")
     private String confirmPassword;
+    
+    @NotBlank(message = "Địa chỉ không được để trống")
     private String address;
+    
+    @NotBlank(message = "Số điện thoại không được để trống")
+    @Pattern(regexp = "^[0-9]{10,11}$", message = "Số điện thoại phải có 10-11 chữ số")
     private String phone;
+    
+    @NotBlank(message = "Mô tả không được để trống")
     private String description;
 }

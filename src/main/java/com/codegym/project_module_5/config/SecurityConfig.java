@@ -1,10 +1,9 @@
 package com.codegym.project_module_5.config;
 
-import com.codegym.project_module_5.model.Role;
-import com.codegym.project_module_5.model.User;
-import com.codegym.project_module_5.repository.IRoleRepository;
-import com.codegym.project_module_5.repository.IUserRepository;
-import com.codegym.project_module_5.service.impl.UserDetailsServiceImpl;
+import com.codegym.project_module_5.model.user_model.Role;
+import com.codegym.project_module_5.repository.user_repository.IRoleRepository;
+import com.codegym.project_module_5.repository.user_repository.IUserRepository;
+import com.codegym.project_module_5.service.impl.user_service_impl.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
@@ -16,8 +15,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
-
-import java.util.Set;
 
 @Configuration
 @EnableWebSecurity
@@ -60,19 +57,6 @@ public class SecurityConfig {
                         () -> new RuntimeException("Lỗi: Không tìm thấy vai trò ADMIN.")
                 );
             }
-//            if (userRepo.findByUsername("admin").isEmpty()) {
-//                Role adminRole = roleRepo.findByName("ADMIN").orElseThrow(
-//                        () -> new RuntimeException("Lỗi: Không tìm thấy vai trò ADMIN.")
-//                );
-//                User admin = new User();
-//                admin.setUsername("admin");
-//                admin.setPassword(passwordEncoder.encode("123456"));
-//                admin.setEmail("admin@codegym.vn");
-//                admin.setFullName("Admin");
-//                admin.setPhone("0987654321");
-//                admin.setRoles(Set.of(adminRole));
-//                userRepo.save(admin);
-//            }
         };
     }
     @Bean
@@ -83,22 +67,23 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/css/**", "/js/**", "/images/**").permitAll()
                         .requestMatchers("/", "/home").permitAll()
-                        .requestMatchers("/account/**","/register","/verify-otp").permitAll()
+                        .requestMatchers("/account/**","/register","/verify-otp/profile/").permitAll()
                         .requestMatchers("/admin/**").hasAuthority("ADMIN")
                         .requestMatchers("/restaurants/signup").authenticated()
                         .requestMatchers("/restaurants/**").hasAnyAuthority("OWNER", "ADMIN")
+                        
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
                         .loginPage("/account/login")
                         .loginProcessingUrl("/account/login")
                         .successHandler(customAuthenticationSuccessHandler)
-                        .failureUrl("/login?error")
+                        .failureUrl("/account/login?error=true")
                         .permitAll()
                 )
                 .logout(logout -> logout
                         .logoutUrl("/logout")
-                        .logoutSuccessUrl("/login?logout")
+                        .logoutSuccessUrl("/account/login?logout=true")
                         .permitAll()
                 );
         return http.build();

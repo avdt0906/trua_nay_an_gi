@@ -1,9 +1,12 @@
 package com.codegym.project_module_5.controller.owner;
 
 import com.codegym.project_module_5.model.dto.request.RestaurantRegisterRequest;
-import com.codegym.project_module_5.service.IRestaurantService;
+import com.codegym.project_module_5.model.restaurant_model.Restaurant;
+import com.codegym.project_module_5.service.restaurant_service.IRestaurantService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -11,8 +14,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.ModelAndView;
 
 import java.security.Principal;
+import java.util.Optional;
 
 @Controller
 @RequestMapping("/restaurants")
@@ -35,6 +40,8 @@ public class RestaurantController {
             Model model) {
 
         if (bindingResult.hasErrors()) {
+            // Quan trọng: phải truyền lại object restaurant để hiển thị validation errors
+            model.addAttribute("restaurant", request);
             return "owner/restaurant/register_restaurant";
         }
 
@@ -43,8 +50,7 @@ public class RestaurantController {
 
             restaurantService.registerRestaurant(request, currentUsername);
 
-            model.addAttribute("successMessage", "Đăng ký nhà hàng thành công!");
-            return "redirect:/restaurants/dashboard";
+            return "redirect:/?success=restaurant_registered";
 
         } catch (IllegalArgumentException e) {
             model.addAttribute("errorMessage", e.getMessage());
@@ -56,8 +62,18 @@ public class RestaurantController {
     }
 
     @GetMapping("/dashboard")
-    public String showDashboard(Model model) {
-        return "owner/restaurant/dashboard";
+    public ModelAndView showDashboard() {
+        ModelAndView mv = new ModelAndView("owner/restaurant/dashboard");
+        Optional<Restaurant> restaurant = restaurantService.findByUsername(getCurrentUsername());
+        mv.addObject("restaurant", restaurant.get());
+        return mv;
     }
 
+    private String getCurrentUsername() {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (principal instanceof UserDetails) {
+            return ((UserDetails) principal).getUsername();
+        }
+        return null;
+    }
 }

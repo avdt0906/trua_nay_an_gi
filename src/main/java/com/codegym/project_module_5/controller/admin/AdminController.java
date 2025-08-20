@@ -1,22 +1,24 @@
 package com.codegym.project_module_5.controller.admin;
 
-import com.codegym.project_module_5.model.Restaurant;
-import com.codegym.project_module_5.model.User;
-import com.codegym.project_module_5.service.IOrderService;
-import com.codegym.project_module_5.service.IRestaurantService;
-import com.codegym.project_module_5.service.IUserService;
+import com.codegym.project_module_5.model.restaurant_model.Restaurant;
+import com.codegym.project_module_5.model.shipper_model.Shipper;
+import com.codegym.project_module_5.model.user_model.User;
+import com.codegym.project_module_5.service.order_service.IOrderService;
+import com.codegym.project_module_5.service.restaurant_service.IRestaurantService;
+import com.codegym.project_module_5.service.shipper_service.IShipperService;
+import com.codegym.project_module_5.service.user_service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+
 
 @Controller
 @RequestMapping("/admin")
@@ -107,5 +109,24 @@ public class AdminController {
         model.addAttribute("activePage", "list"); // Giữ cho mục "Quản lý Chủ quán" active
 
         return "admin/owner_detail";
+    }
+
+    @PostMapping("/owner/lock")
+    public String postMethodName(@RequestBody String entity) {
+        //TODO: process POST request
+
+        return entity;
+    }
+    @PostMapping("/restaurant/toggle-lock/{id}")
+    public String toggleRestaurantLock(@PathVariable("id") Long restaurantId, RedirectAttributes redirectAttributes) {
+        try {
+            Restaurant updatedRestaurant = restaurantService.toggleLockStatus(restaurantId);
+            String status = updatedRestaurant.getIsLocked() ? "khóa" : "mở khóa";
+            String message = "Đã " + status + " nhà hàng '" + updatedRestaurant.getName() + "' thành công.";
+            redirectAttributes.addFlashAttribute("successMessage", message);
+        } catch (IllegalArgumentException e) {
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+        }
+        return "redirect:/admin/list";
     }
 }

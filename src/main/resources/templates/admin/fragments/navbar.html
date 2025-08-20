@@ -25,7 +25,12 @@
                         <i class="fas fa-users-cog me-1"></i>Quản lý Chủ quán
                     </a>
                 </li>
-                <!-- Bạn có thể thêm các mục menu khác ở đây -->
+                <li class="nav-item">
+                    <!-- Sử dụng biến 'activePage' để thêm class 'active' -->
+                    <a class="nav-link" th:classappend="${activePage == 'shipper'} ? 'active'" th:href="@{/admin/shippers}">
+                        <i class="fas fa-users-cog me-1"></i>Quản lý Đối tác vận chuyển
+                    </a>
+                </li>
             </ul>
             <ul class="navbar-nav ms-auto">
                 <li class="nav-item">
