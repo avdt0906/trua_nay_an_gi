@@ -1,8 +1,13 @@
 package com.codegym.project_module_5.config;
 
+import com.codegym.project_module_5.model.user_model.User;
+import com.codegym.project_module_5.service.impl.cart_service_impl.CartService;
+import com.codegym.project_module_5.service.user_service.IUserService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
@@ -10,13 +15,23 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.util.Collection;
+import java.util.Map;
 
 @Component
 public class CustomAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
 
+    @Autowired
+    private IUserService userService;
+
+    @Autowired
+    private CartService cartService;
+
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
                                         Authentication authentication) throws IOException, ServletException {
+
+        mergeSessionCart(request, authentication);
+
         String redirectUrl = "/home";
         Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
         for (GrantedAuthority grantedAuthority : authorities) {
@@ -29,5 +44,20 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
             }
         }
         response.sendRedirect(request.getContextPath() + redirectUrl);
+    }
+
+    private void mergeSessionCart(HttpServletRequest request, Authentication authentication) {
+        HttpSession session = request.getSession(false);
+        if (session != null) {
+             Map<Long, Integer> sessionCart = (Map<Long, Integer>) session.getAttribute("cart");
+
+            if (sessionCart != null && !sessionCart.isEmpty()) {
+                String username = authentication.getName();
+                User user = userService.findByUsername(username)
+                        .orElseThrow(() -> new RuntimeException("User not found after login"));
+        cartService.mergeSessionCartWithDbCart(sessionCart, user);
+     session.removeAttribute("cart");
+            }
+        }
     }
 }
