@@ -109,13 +109,18 @@
                     <span class="badge bg-success" th:if="${dish.isAvailable}">Có sẵn</span>
                     <span class="badge bg-danger" th:unless="${dish.isAvailable}">Hết hàng</span>
                 </div>
+                <!-- ADJUSTMENT: Button state is now synchronized with dish availability. If unavailable, it's disabled and has a different style. -->
                 <button class="order-btn" th:if="${dish.isAvailable}">
                     <i class="fas fa-shopping-cart me-2"></i>Đặt hàng ngay
                 </button>
+                <button class="order-btn btn-unavailable" th:unless="${dish.isAvailable}" disabled>
+                    <i class="fas fa-ban me-2"></i>Hiện không thể đặt
+                </button>
             </div>
-            <div class="col-lg-6">
+            <div class="col-lg-6 text-center">
+                <!-- ADJUSTMENT: Wrapped image in a div for better centering and added a fallback in case the image fails to load (using onerror) -->
                 <img th:src="@{'/images/dish/eat_food/' + ${dish.getPictureUrl()}}" th:alt="${dish.name}"
-                     style="max-width:400px; height:auto;" />
+                     onerror="this.onerror=null; this.src='/images/dish/placeholder.jpg';" class="dish-image" />
             </div>
         </div>
     </div>
@@ -152,31 +157,54 @@
                 </div>
             </div>
 
-
-            <!-- Danh sách coupon -->
-            <div class="dish-info-card" th:if="${!coupons.isEmpty()}">
+            <div class="dish-info-card" th:if="${dishOptions != null and !dishOptions.isEmpty()}">
                 <h3 class="mb-4">
-                    <i class="fas fa-tags text-primary me-2"></i>
-                    Khuyến mãi hôm nay
+                    <i class="fas fa-plus-circle text-success me-2"></i>
+                    Topping & Lựa chọn thêm
                 </h3>
+                <div class="list-group">
+                    <div class="list-group-item d-flex justify-content-between align-items-center"
+                         th:each="option : ${dishOptions}">
+                        <!-- Thông tin bên trái -->
+                        <div>
+                            <h6 class="mb-1 fw-bold" th:text="${option.name}">Tên topping</h6>
+                            <small class="text-muted" th:text="${option.description}">Mô tả topping</small>
+                        </div>
+
+                        <!-- Giá + trạng thái + nút thêm -->
+                        <div class="d-flex align-items-center gap-2">
+                <span class="badge bg-danger rounded-pill"
+                      th:text="'₫' + ${#numbers.formatDecimal(option.price, 0, 'COMMA', 0, 'POINT')}">₫0</span>
+                            <span class="badge bg-success" th:if="${option.isAvailable}">Còn</span>
+                            <span class="badge bg-secondary" th:unless="${option.isAvailable}">Hết</span>
+
+                            <!-- Nút thêm -->
+                            <button type="button" class="btn btn-sm btn-outline-primary ms-2"
+                                    th:if="${option.isAvailable}">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Món dành riêng cho bạn -->
+            <div class="dish-info-card" th:if="${!similarDishes.isEmpty()}">
+                <h5 class="mb-3">
+                    <i class="fas fa-heart text-danger me-2"></i>
+                    Món dành riêng cho bạn
+                </h5>
                 <div class="row">
-                    <div class="col-md-6 mb-3" th:each="coupon : ${coupons}">
-                        <div class="coupon-card">
-                            <h5 class="mb-2" th:text="${coupon.name}">Tên coupon</h5>
-                            <p class="mb-2" th:text="${coupon.description}">Mô tả coupon</p>
-                            <div class="d-flex justify-content-between align-items-center">
-                                <span th:if="${coupon.fixedDiscount != null}"
-                                      th:text="'Giảm ₫' + ${#numbers.formatDecimal(coupon.fixedDiscount, 0, 'COMMA', 0, 'POINT')}">
-                                    Giảm ₫0
-                                </span>
-                                <span th:if="${coupon.percentDiscount != null}"
-                                      th:text="'Giảm ' + ${coupon.percentDiscount} + '%'">
-                                    Giảm 0%
-                                </span>
-                                <span th:if="${coupon.minOrder != null}"
-                                      th:text="'Đơn tối thiểu: ₫' + ${#numbers.formatDecimal(coupon.minOrder, 0, 'COMMA', 0, 'POINT')}">
-                                    Đơn tối thiểu: ₫0
-                                </span>
+                    <div class="col-md-6 mb-3" th:each="similarDish : ${similarDishes}">
+                        <div class="similar-dish-card">
+                            <img th:src="@{'/images/dish/eat_food/' + ${similarDish.pictureUrl}}"
+                                 th:alt="${similarDish.name}" class="similar-dish-image"/>
+                            <div class="p-3">
+                                 <h6 class="mb-1" th:text="${similarDish.name}">Tên món</h6>
+                                <p class="text-danger fw-bold mb-2" th:text="'₫' + ${#numbers.formatDecimal(similarDish.price, 0, 'COMMA', 0, 'POINT')}">₫0</p>
+                                <a th:href="@{/dish/{id}(id=${similarDish.id})}" class="btn btn-sm btn-outline-primary">
+                                    Xem chi tiết
+                                </a>
                             </div>
                         </div>
                     </div>
@@ -203,46 +231,30 @@
                 </a>
             </div>
 
-            <!-- Món dành riêng cho bạn -->
-            <div class="dish-info-card" th:if="${!similarDishes.isEmpty()}">
-                <h5 class="mb-3">
-                    <i class="fas fa-heart text-danger me-2"></i>
-                    Món dành riêng cho bạn
-                </h5>
+            <!-- Danh sách coupon -->
+            <div class="dish-info-card" th:if="${!coupons.isEmpty()}">
+                <h3 class="mb-4">
+                    <i class="fas fa-tags text-primary me-2"></i>
+                    Khuyến mãi hôm nay
+                </h3>
                 <div class="row">
-                    <div class="col-12 mb-3" th:each="similarDish : ${similarDishes}">
-                        <div class="similar-dish-card">
-                            <img th:src="@{'/images/dish/eat_food/' + ${similarDish.pictureUrl}}"
-                                 th:alt="${similarDish.name}" class="similar-dish-image"/>
-                            <div class="p-3">
-                                <h6 class="mb-1" th:text="${similarDish.name}">Tên món</h6>
-                                <p class="text-danger fw-bold mb-2" th:text="'₫' + ${#numbers.formatDecimal(similarDish.price, 0, 'COMMA', 0, 'POINT')}">₫0</p>
-                                <a th:href="@{/dish/{id}(id=${similarDish.id})}" class="btn btn-sm btn-outline-primary">
-                                    Xem chi tiết
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Mọi người cũng thích -->
-            <div class="dish-info-card" th:if="${!popularDishes.isEmpty()}">
-                <h5 class="mb-3">
-                    <i class="fas fa-fire text-warning me-2"></i>
-                    Mọi người cũng thích
-                </h5>
-                <div class="row">
-                    <div class="col-12 mb-3" th:each="popularDish : ${popularDishes}">
-                        <div class="similar-dish-card">
-                            <img th:src="@{'/images/dish/eat_food/' + ${popularDish.pictureUrl}}"
-                                 th:alt="${popularDish.name}" class="similar-dish-image"/>
-                            <div class="p-3">
-                                <h6 class="mb-1" th:text="${popularDish.name}">Tên món</h6>
-                                <p class="text-danger fw-bold mb-2" th:text="'₫' + ${#numbers.formatDecimal(popularDish.price, 0, 'COMMA', 0, 'POINT')}">₫0</p>
-                                <a th:href="@{/dish/{id}(id=${popularDish.id})}" class="btn btn-sm btn-outline-primary">
-                                    Xem chi tiết
-                                </a>
+                    <div class="col-12 mb-3" th:each="coupon : ${coupons}">
+                        <div class="coupon-card">
+                            <h5 class="mb-2" th:text="${coupon.name}">Tên coupon</h5>
+                            <p class="mb-2" th:text="${coupon.description}">Mô tả coupon</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span th:if="${coupon.fixedDiscount != null}"
+                                      th:text="'Giảm ₫' + ${#numbers.formatDecimal(coupon.fixedDiscount, 0, 'COMMA', 0, 'POINT')}">
+                                    Giảm ₫0
+                                </span>
+                                <span th:if="${coupon.percentDiscount != null}"
+                                      th:text="'Giảm ' + ${coupon.percentDiscount} + '%'">
+                                    Giảm 0%
+                                </span>
+                                <span th:if="${coupon.minOrder != null}"
+                                      th:text="'Đơn tối thiểu: ₫' + ${#numbers.formatDecimal(coupon.minOrder, 0, 'COMMA', 0, 'POINT')}">
+                                    Đơn tối thiểu: ₫0
+                                </span>
                             </div>
                         </div>
                     </div>
