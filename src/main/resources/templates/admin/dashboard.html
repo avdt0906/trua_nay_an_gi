@@ -46,38 +46,7 @@
 <body>
 
 <!-- Navbar -->
-<nav class="navbar navbar-expand-lg navbar-light bg-white sticky-top">
-    <div class="container-fluid">
-        <a class="navbar-brand fw-bold" th:href="@{/admin/dashboard}">
-            <i class="fas fa-user-shield me-2 text-primary"></i>Admin Panel
-        </a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#adminNavbar" aria-controls="adminNavbar" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="adminNavbar">
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" th:href="@{/admin/dashboard}">
-                        <i class="fas fa-tachometer-alt me-1"></i>Dashboard
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" th:href="@{/admin/list}">
-                        <i class="fas fa-users-cog me-1"></i>Quản lý Chủ quán
-                    </a>
-                </li>
-                <!-- Thêm các mục menu khác ở đây -->
-            </ul>
-            <ul class="navbar-nav ms-auto">
-                <li class="nav-item">
-                    <a th:href="@{/logout}" class="btn btn-outline-danger">
-                        <i class="fas fa-sign-out-alt me-1"></i>Đăng xuất
-                    </a>
-                </li>
-            </ul>
-        </div>
-    </div>
-</nav>
+<div th:replace="~{admin/fragments/navbar :: navbar}"></div>
 
 <!-- Main Content -->
 <main class="container mt-4">
