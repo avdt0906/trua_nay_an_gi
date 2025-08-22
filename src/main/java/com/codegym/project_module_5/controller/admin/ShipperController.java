@@ -4,10 +4,7 @@ import com.codegym.project_module_5.model.shipper_model.Shipper;
 import com.codegym.project_module_5.service.shipper_service.IShipperService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 @Controller
@@ -37,6 +34,14 @@ public class ShipperController {
         ModelAndView mv = new ModelAndView("redirect:/admin/shippers");
         shipperService.save(shipper);
         mv.addObject("successMessage", "Thêm mới thành công!");
+        return mv;
+    }
+
+    @GetMapping("/{id}")
+    public ModelAndView showShipperDetail(@PathVariable("id") Long id) {
+        ModelAndView mv = new ModelAndView("admin/shipper/shipper_detail");
+        Shipper shipper = shipperService.findById(id).orElse(null);
+        mv.addObject("shipper", shipper);
         return mv;
     }
 }
