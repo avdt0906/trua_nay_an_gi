@@ -19,4 +19,6 @@ public interface IDishService extends IGeneralService<Dish> {
     List<Dish> findSimilarDishesByCategory(Long categoryId, Long excludeDishId);
 
     List<Dish> findPopularDishesByRestaurant(Long restaurantId, Long excludeDishId);
+
+    List<Dish> findByRestaurantId(Long restaurantId);
 }

@@ -19,4 +19,6 @@ public interface IDishRepository extends CrudRepository<Dish, Long> {
     List<Dish> findSimilarDishesByCategory(@Param("categoryId") Long categoryId, @Param("excludeDishId") Long excludeDishId);
     @Query("SELECT d FROM Dish d WHERE d.restaurant.id = :restaurantId AND d.id != :excludeDishId AND d.isAvailable = true ORDER BY d.id DESC LIMIT 6")
     List<Dish> findPopularDishesByRestaurant(@Param("restaurantId") Long restaurantId, @Param("excludeDishId") Long excludeDishId);
+
+    List<Dish> findByRestaurant_Id(Long Id);
 }
