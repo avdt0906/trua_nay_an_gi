@@ -127,14 +127,14 @@ public class AdminController {
         return "redirect:/admin/list";
     }
 
-    @GetMapping("/restaurant/pending")
+    @GetMapping("/restaurants/pending")
     public String getPendingRestaurants(Model model) {
         List<Restaurant> pendingRestaurants = restaurantService.getPendingApprovalRestaurants();
         model.addAttribute("pendingRestaurants", pendingRestaurants);
         return "admin/approval_list";
     }
 
-    @PostMapping("/restaurant/approve/{id}")
+    @PostMapping("/restaurants/approve/{id}")
     public String approveRestaurant(@PathVariable Long id) {
         Optional<Restaurant> optional = restaurantService.findById(id);
         if (optional.isPresent()) {
@@ -142,10 +142,10 @@ public class AdminController {
             restaurant.setIsApproved(true);
             restaurantService.save(restaurant);
         }
-        return "redirect:/admin/restaurant/pending";
+        return "redirect:/admin/restaurants/pending";
     }
 
-    @PostMapping("/restaurant/reject/{id}")
+    @PostMapping("/restaurants/reject/{id}")
     public String rejectRestaurant(@PathVariable Long id) {
         Optional<Restaurant> optional = restaurantService.findById(id);
         if (optional.isPresent()) {
@@ -153,7 +153,7 @@ public class AdminController {
             restaurant.setIsApproved(false);
             restaurantService.save(restaurant);
         }
-        return "redirect:/admin/restaurant/pending";
+        return "redirect:/admin/restaurants/pending";
     }
 
 }
