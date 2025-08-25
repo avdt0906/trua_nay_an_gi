@@ -17,4 +17,7 @@ public interface IRestaurantRepository extends JpaRepository<Restaurant, Long> {
     
     @Query("SELECT c FROM Coupon c WHERE c.restaurant.id = :restaurantId AND c.isAvailable = true")
     List<Coupon> findCouponsByRestaurantId(@Param("restaurantId") Long restaurantId);
+
+    List<Restaurant> findByIsApprovedIsNull();
+
 }

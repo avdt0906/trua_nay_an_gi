@@ -2,27 +2,176 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Xác minh OTP</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #4361ee;
+            --secondary-color: #3f37c9;
+            --success-color: #4cc9f0;
+            --light-bg: #f8f9fa;
+        }
+        
+        body {
+            background-color: var(--light-bg);
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .otp-card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 450px;
+            padding: 2.5rem;
+            transition: all 0.3s ease;
+        }
+        
+        .otp-card:hover {
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+        }
+        
+        .otp-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .otp-icon {
+            background-color: rgba(67, 97, 238, 0.1);
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+        }
+        
+        .otp-icon i {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+        }
+        
+        .otp-header h2 {
+            color: #333;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        
+        .otp-header p {
+            color: #666;
+            margin-bottom: 0;
+        }
+        
+        .form-control {
+            padding: 0.875rem 1.25rem;
+            border-radius: 10px;
+            border: 2px solid #e2e8f0;
+            transition: all 0.3s;
+        }
+        
+        .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.25rem rgba(67, 97, 238, 0.25);
+        }
+        
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            padding: 0.875rem 1.25rem;
+            border-radius: 10px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--secondary-color);
+            border-color: var(--secondary-color);
+            transform: translateY(-2px);
+        }
+        
+        .alert {
+            border-radius: 10px;
+            padding: 1rem 1.25rem;
+        }
+        
+        .resend-otp {
+            text-align: center;
+            margin-top: 1.5rem;
+            color: #666;
+        }
+        
+        .resend-otp a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .resend-otp a:hover {
+            color: var(--secondary-color);
+            text-decoration: underline;
+        }
+        
+        .input-group {
+            position: relative;
+        }
+        
+        .input-group-text {
+            background: transparent;
+            border-right: none;
+            border-radius: 10px 0 0 10px;
+        }
+        
+        .form-control.with-icon {
+            border-left: none;
+            border-radius: 0 10px 10px 0;
+        }
+    </style>
 </head>
-<body class="container mt-5">
+<body>
+    <div class="otp-card">
+        <div class="otp-header">
+            <div class="otp-icon">
+                <i class="fas fa-lock"></i>
+            </div>
+            <h2>Xác minh OTP</h2>
+            <p>Nhập mã xác minh đã được gửi đến email của bạn</p>
+        </div>
 
-<h2>Xác minh OTP</h2>
+        <!-- Hiển thị lỗi -->
+        <div th:if="${error}" class="alert alert-danger" role="alert" th:text="${error}"></div>
+        <div th:if="${success}" class="alert alert-success" role="alert" th:text="${success}"></div>
 
-<!-- Hiển thị lỗi -->
-<div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
-<div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+        <form th:action="@{/verify-otp}" method="post">
+            <input type="hidden" name="email" th:value="${email}" />
 
-<form th:action="@{/verify-otp}" method="post">
-    <input type="hidden" name="email" th:value="${email}" />
+            <div class="mb-3">
+                <label class="form-label">Mã OTP</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="fas fa-key"></i></span>
+                    <input type="text" name="otp" class="form-control with-icon" placeholder="Nhập mã OTP 6 chữ số" required autocomplete="off" autofocus />
+                </div>
+                <div class="form-text">Vui lòng kiểm tra email và nhập mã xác minh</div>
+            </div>
 
-    <div class="mb-3">
-        <label>Mã OTP:</label>
-        <input type="text" name="otp" class="form-control" required />
+            <button type="submit" class="btn btn-primary w-100">
+                <i class="fas fa-check-circle me-2"></i> Xác minh
+            </button>
+        </form>
+        
+        <div class="resend-otp">
+            <p>Không nhận được mã? <a href="#">Gửi lại mã OTP</a></p>
+        </div>
     </div>
 
-    <button type="submit" class="btn btn-primary">Xác minh</button>
-</form>
-
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

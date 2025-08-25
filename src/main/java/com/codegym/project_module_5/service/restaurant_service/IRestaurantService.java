@@ -13,4 +13,5 @@ public interface IRestaurantService extends IGeneralService<Restaurant> {
     Restaurant registerRestaurant(RestaurantRegisterRequest request, String currentUsername);
     List<Coupon> getCouponsByRestaurantId(Long restaurantId);
     Restaurant toggleLockStatus(Long restaurantId);
+    List<Restaurant> getPendingApprovalRestaurants();
 }
