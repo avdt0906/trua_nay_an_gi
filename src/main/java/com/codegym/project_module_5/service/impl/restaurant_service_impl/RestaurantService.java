@@ -136,4 +136,9 @@ public class RestaurantService implements IRestaurantService {
         iRestaurantRepository.deleteById(id);
 
     }
+
+    @Override
+    public List<Restaurant> getPendingApprovalRestaurants() {
+        return iRestaurantRepository.findByIsApprovedIsNull();
+    }
 }

@@ -19,7 +19,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-
 @Controller
 @RequestMapping("/admin")
 public class AdminController {
@@ -35,6 +34,7 @@ public class AdminController {
 
     /**
      * Chuyển hướng từ /admin sang /admin/dashboard.
+     * 
      * @return Chuỗi chuyển hướng.
      */
     @GetMapping
@@ -44,6 +44,7 @@ public class AdminController {
 
     /**
      * Hiển thị trang tổng quan (dashboard) chính của admin.
+     * 
      * @param model Model để truyền dữ liệu tới view.
      * @return Tên view của trang dashboard.
      */
@@ -64,6 +65,7 @@ public class AdminController {
 
     /**
      * Hiển thị danh sách các chủ nhà hàng và trạng thái nhà hàng của họ.
+     * 
      * @param model Model để truyền dữ liệu tới view.
      * @return Tên view của trang danh sách.
      */
@@ -85,8 +87,9 @@ public class AdminController {
 
     /**
      * Hiển thị trang chi tiết thông tin của một chủ nhà hàng và nhà hàng của họ.
-     * @param id ID của chủ nhà hàng (User).
-     * @param model Model để truyền dữ liệu tới view.
+     * 
+     * @param id                 ID của chủ nhà hàng (User).
+     * @param model              Model để truyền dữ liệu tới view.
      * @param redirectAttributes Dùng để gửi thông báo lỗi nếu không tìm thấy.
      * @return Tên view của trang chi tiết hoặc chuyển hướng về trang danh sách.
      */
@@ -111,12 +114,6 @@ public class AdminController {
         return "admin/owner_detail";
     }
 
-    @PostMapping("/owner/lock")
-    public String postMethodName(@RequestBody String entity) {
-        //TODO: process POST request
-
-        return entity;
-    }
     @PostMapping("/restaurant/toggle-lock/{id}")
     public String toggleRestaurantLock(@PathVariable("id") Long restaurantId, RedirectAttributes redirectAttributes) {
         try {
@@ -129,4 +126,34 @@ public class AdminController {
         }
         return "redirect:/admin/list";
     }
+
+    @GetMapping("/restaurants/pending")
+    public String getPendingRestaurants(Model model) {
+        List<Restaurant> pendingRestaurants = restaurantService.getPendingApprovalRestaurants();
+        model.addAttribute("pendingRestaurants", pendingRestaurants);
+        return "admin/approval_list";
+    }
+
+    @PostMapping("/restaurants/approve/{id}")
+    public String approveRestaurant(@PathVariable Long id) {
+        Optional<Restaurant> optional = restaurantService.findById(id);
+        if (optional.isPresent()) {
+            Restaurant restaurant = optional.get();
+            restaurant.setIsApproved(true);
+            restaurantService.save(restaurant);
+        }
+        return "redirect:/admin/restaurants/pending";
+    }
+
+    @PostMapping("/restaurants/reject/{id}")
+    public String rejectRestaurant(@PathVariable Long id) {
+        Optional<Restaurant> optional = restaurantService.findById(id);
+        if (optional.isPresent()) {
+            Restaurant restaurant = optional.get();
+            restaurant.setIsApproved(false);
+            restaurantService.save(restaurant);
+        }
+        return "redirect:/admin/restaurants/pending";
+    }
+
 }

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Nhà hàng chờ phê duyệt</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body>
+
+    <div class="container py-4">
+        <h1 class="mb-4">Nhà hàng chờ phê duyệt</h1>
+
+        <!-- Nếu không có nhà hàng -->
+        <div th:if="${#lists.isEmpty(pendingRestaurants)}" class="alert alert-info">
+            Hiện tại không có nhà hàng nào chờ phê duyệt.
+        </div>
+
+        <!-- Nếu có nhà hàng -->
+        <div th:if="${!#lists.isEmpty(pendingRestaurants)}">
+            <table class="table table-bordered table-striped">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Tên nhà hàng</th>
+                        <th>Hành động</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="restaurant : ${pendingRestaurants}">
+                        <td th:text="${restaurant.name}">Tên nhà hàng</td>
+                        <td>
+                            <!-- Nút xem chi tiết -->
+                            <button class="btn btn-primary btn-sm" data-bs-toggle="modal"
+                                th:data-bs-target="'#detailModal-' + ${restaurant.id}">
+                                Xem chi tiết
+                            </button>
+
+                            <!-- Nút chấp nhận -->
+                            <form th:action="@{'/admin/restaurants/approve/' + ${restaurant.id}}" method="post"
+                                class="d-inline">
+                                
+                                <button type="submit" class="btn btn-success btn-sm"
+                                    onclick="return confirm('Bạn có chắc chắn muốn CHẤP NHẬN nhà hàng này?');">
+                                    Chấp nhận
+                                </button>
+                            </form>
+
+                            <!-- Nút từ chối -->
+                            <form th:action="@{'/admin/restaurants/reject/' + ${restaurant.id}}" method="post"
+                                class="d-inline">
+                               
+                                <button type="submit" class="btn btn-danger btn-sm"
+                                    onclick="return confirm('Bạn có chắc chắn muốn TỪ CHỐI nhà hàng này?');">
+                                    Từ chối
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Modal chi tiết -->
+        <div th:each="restaurant : ${pendingRestaurants}">
+            <div class="modal fade" th:id="'detailModal-' + ${restaurant.id}" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" th:text="${restaurant.name}">Tên nhà hàng</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <p><strong>Địa chỉ:</strong> <span th:text="${restaurant.address}">Địa chỉ</span></p>
+                            <p><strong>Số điện thoại:</strong> <span th:text="${restaurant.phone}">Số điện thoại</span>
+                            </p>
+                            <p><strong>Mô tả:</strong> <span th:text="${restaurant.description}">Mô tả</span></p>
+                            <p><strong>Đối tác lâu dài:</strong>
+                                <span th:text="${#bools.isTrue(restaurant.isLongTermPartner) ? 'Có' : 'Không'}"></span>
+                            </p>
+
+                            <p><strong>Trạng thái mở cửa:</strong>
+                                <span th:text="${#bools.isTrue(restaurant.isOpen) ? 'Đang mở' : 'Đóng'}"></span>
+                            </p>
+
+                            <div th:if="${restaurant.logoUrl}">
+                                <strong>Logo:</strong><br>
+                                <img th:src="${restaurant.logoUrl}" alt="Logo" class="img-fluid"
+                                    style="max-height: 150px;">
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>
