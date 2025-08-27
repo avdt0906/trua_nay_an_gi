@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chi tiết giỏ hàng</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        body {
+            background-color: #f4f6f9;
+        }
+        .card {
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0,0,0,.05);
+        }
+        .cart-item {
+            transition: background-color .2s;
+        }
+        .cart-item:hover {
+            background-color: #f8f9fa;
+        }
+        .price {
+            font-size: 1.1rem;
+        }
+        .total-price {
+            font-size: 1.3rem;
+            color: #e63946;
+        }
+        .btn-back {
+            border-radius: 30px;
+        }
+    </style>
+</head>
+<body>
+<div class="container py-4">
+    <h3 class="mb-4 text-primary">
+        <i class="fas fa-shopping-cart me-2"></i>Chi tiết giỏ hàng
+    </h3>
+
+    <p>
+        <a th:href="@{/cart}" class="btn btn-outline-secondary btn-back">
+            <i class="fas fa-arrow-left me-1"></i>Quay lại giỏ hàng
+        </a>
+    </p>
+
+    <!-- Giỏ hàng trống -->
+    <div th:if="${cartItemList == null or cartItemList.isEmpty()}"
+         class="alert alert-info text-center py-4">
+        <i class="fas fa-info-circle fa-lg me-2"></i>
+        Giỏ hàng của bạn đang trống.
+    </div>
+
+    <!-- Có sản phẩm -->
+    <div th:unless="${cartItemList == null or cartItemList.isEmpty()}">
+        <div class="row g-4">
+            <!-- Danh sách sản phẩm -->
+            <div class="col-lg-8">
+                <div class="card">
+                    <div class="card-header bg-white border-0">
+                        <h5 class="mb-0 text-dark">
+                            <i class="fas fa-list me-2 text-secondary"></i>Sản phẩm trong giỏ hàng
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div th:each="cartItem : ${cartItemList}" class="cart-item border-bottom pb-3 mb-3">
+                            <div class="row align-items-center">
+                                <div class="col-md-2 text-center">
+                                    <img th:src="@{'/images/dish/eat_food/' + ${cartItem.dish.pictureUrl}}"
+                                         th:alt="${cartItem.dish.name}"
+                                         class="img-fluid rounded shadow-sm"
+                                         style="width: 80px; height: 80px; object-fit: cover;">
+                                </div>
+                                <div class="col-md-6">
+                                    <h6 class="fw-bold mb-1" th:text="${cartItem.dish.name}">Tên món ăn</h6>
+                                    <p class="text-muted small mb-1" th:text="${cartItem.dish.description}">Mô tả món ăn</p>
+                                    <small class="text-muted">
+                                        <i class="fas fa-store me-1"></i>
+                                        <span th:text="${cartItem.dish.restaurant.name}">Tên nhà hàng</span>
+                                    </small>
+                                </div>
+                                <div class="col-md-2 text-center">
+                                    <span class="badge bg-primary fs-6 px-3 py-2" th:text="${cartItem.quantity}">1</span>
+                                </div>
+                                <div class="col-md-2 text-end">
+                                    <strong class="price"
+                                            th:text="'₫' + ${#numbers.formatDecimal(cartItem.dish.price * cartItem.quantity, 0, 'COMMA', 0, 'POINT')}">
+                                        ₫0
+                                    </strong>
+                                    <br>
+                                    <small class="text-muted"
+                                           th:text="'₫' + ${#numbers.formatDecimal(cartItem.dish.price, 0, 'COMMA', 0, 'POINT')} + '/món'">
+                                        ₫0/món
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tổng kết -->
+            <div class="col-lg-4">
+                <div class="card mb-3">
+                    <div class="card-header bg-white border-0">
+                        <h5 class="mb-0 text-dark">
+                            <i class="fas fa-calculator me-2 text-secondary"></i>Tổng kết
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Số lượng sản phẩm:</span>
+                            <strong th:text="${cartItemList != null ? #lists.size(cartItemList) : 0}">0</strong>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Tổng số món:</span>
+                            <strong th:text="${totalQuantity != null ? totalQuantity : 0}">0</strong>
+                        </div>
+                        <hr>
+                        <div class="d-flex justify-content-between">
+                            <span class="fs-5 fw-bold">Tổng tiền:</span>
+                            <span class="total-price fw-bold"
+                                  th:text="'₫' + ${#numbers.formatDecimal(totalPrice, 0, 'COMMA', 0, 'POINT')}">
+                                ₫0
+                            </span>
+                        </div>
+                        <div class="mt-3 d-grid">
+                            <button class="btn btn-success btn-lg rounded-pill">
+                                <i class="fas fa-credit-card me-2"></i>Thanh toán ngay
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Địa chỉ nhận hàng -->
+                <div class="card">
+                    <div class="card-header bg-white border-0">
+                        <h5 class="mb-0 text-dark">
+                            <i class="fas fa-map-marker-alt me-2 text-danger"></i>Địa chỉ nhận hàng
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="text-muted mb-2">Chưa có địa chỉ nhận hàng</p>
+                        <button class="btn btn-outline-primary btn-sm rounded-pill">
+                            <i class="fas fa-plus me-1"></i>Thêm địa chỉ
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
