@@ -10,5 +10,4 @@ import org.springframework.stereotype.Repository;
 public interface IUserAddressRepository extends JpaRepository<UserAddress, Long> {
     // Additional query methods can be defined here if needed
     List<UserAddress> findAllByUser_Id(Long userId);
-    
 }

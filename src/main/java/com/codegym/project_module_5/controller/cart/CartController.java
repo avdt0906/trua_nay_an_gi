@@ -3,6 +3,7 @@ package com.codegym.project_module_5.controller.cart;
 import com.codegym.project_module_5.model.cart_model.CartItem;
 import com.codegym.project_module_5.model.restaurant_model.Dish;
 import com.codegym.project_module_5.model.user_model.User;
+import com.codegym.project_module_5.model.user_model.UserAddress;
 import com.codegym.project_module_5.service.cart_service.ICartService;
 import com.codegym.project_module_5.service.restaurant_service.IDishService;
 import com.codegym.project_module_5.service.user_service.IUserService;
@@ -132,37 +133,42 @@ public class CartController {
     @GetMapping("/detail")
     public String showCartDetail(Model model) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        boolean isAuthenticated = authentication != null && authentication.isAuthenticated() && !(authentication instanceof AnonymousAuthenticationToken);
-        
+        boolean isAuthenticated = authentication != null && authentication.isAuthenticated()
+                && !(authentication instanceof AnonymousAuthenticationToken);
+
         if (!isAuthenticated) {
             return "redirect:/login";
         }
-        
+
         String username = authentication.getName();
         User currentUser = userService.findByUsername(username).orElse(null);
-        
+
         if (currentUser != null) {
-            // Sử dụng cùng logic như method viewCart để đảm bảo dữ liệu nhất quán
             List<CartItem> cartItemList = cartService.getCartItems(currentUser);
             model.addAttribute("cartItemList", cartItemList);
             model.addAttribute("currentUser", currentUser);
-            
-            // Tính tổng tiền và tổng số lượng
+
             double totalPrice = 0;
             int totalQuantity = 0;
             if (cartItemList != null) {
                 for (CartItem item : cartItemList) {
-                    totalPrice += item.getDish().getPrice() * item.getQuantity();
-                    totalQuantity += item.getQuantity();
+                    if (item.getDish() != null) {
+                        totalPrice += item.getDish().getPrice() * item.getQuantity();
+                        totalQuantity += item.getQuantity();
+                    }
                 }
             }
             model.addAttribute("totalPrice", totalPrice);
             model.addAttribute("totalQuantity", totalQuantity);
+
+            List<UserAddress> addressList = userService.getUserAddresses(currentUser.getId());
+            model.addAttribute("addressList", addressList);
+            model.addAttribute("newAddress", new UserAddress());
         }
-        
-        model.addAttribute("isAuthenticated", isAuthenticated);
+
         return "cart/cart_detail";
     }
+
 
     @GetMapping("/count")
     @ResponseBody
