@@ -68,8 +68,11 @@
                                 <span id="cart-total" th:text="${#numbers.formatDecimal(totalPrice + 15000, 0, 'COMMA', 0, 'POINT')} + 'đ'"></span>
                             </li>
                         </ul>
-                        <div class="d-grid mt-4">
-                            <a href="#" class="btn btn-danger btn-lg">Tiến hành thanh toán</a>
+                        <div class="d-grid mt-4" th:if="${isAuthenticated and cartItems != null and !cartItems.isEmpty()}">
+                            <a th:href="@{/cart/detail}" class="btn btn-danger btn-lg">Tiến hành thanh toán</a>
+                        </div>
+                        <div class="d-grid mt-4" th:unless="${isAuthenticated and cartItems != null and !cartItems.isEmpty()}">
+                            <button class="btn btn-secondary btn-lg" disabled>Vui lòng đăng nhập và thêm sản phẩm</button>
                         </div>
                     </div>
                 </div>
