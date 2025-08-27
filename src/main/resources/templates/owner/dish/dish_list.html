@@ -70,7 +70,7 @@
                         <div class="row g-4" th:if="${dishes}">
                             <div class="col-md-4" th:each="dish : ${dishes}">
                                 <div class="card h-100">
-                                    <!--                                    <img th:src="${dish.imageUrl}" alt="Dish Image" class="dish-img">-->
+                                    <img th:src="${'/images/dish/eat_food/' + dish.pictureUrl}" alt="Dish Image" class="dish-img">
                                     <div class="card-body">
                                         <h5 class="card-title fw-bold" th:text="${dish.name}"></h5>
                                         <p class="card-text text-muted mb-2" th:text="${dish.description}"></p>
