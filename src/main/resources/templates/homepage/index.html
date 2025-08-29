@@ -50,7 +50,7 @@
     <th:block th:each="restaurantEntry : ${dishesByRestaurant}">
       <div class="dish-card" th:each="dish : ${restaurantEntry.value}">
         <div class="dish-image-container">
-          <img th:src="@{'/images/dish/eat_food/' + ${dish.pictureUrl}}"
+          <img th:src="@{'/images/dish/' + ${dish.pictureUrl}}"
                class="dish-image"
                th:alt="${dish.name}">
           <div class="available-indicator"></div>

@@ -35,7 +35,7 @@ public class HomeController {
     @GetMapping(value = {"/", "/home"})
     public String showHome(Model model,
                            @RequestParam(name = "search", required = false) String search,
-                           @PageableDefault(size = 5, sort = "id") Pageable pageable) {
+                           @PageableDefault(size = 8, sort = "id") Pageable pageable) {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         boolean isAuthenticated = authentication != null
