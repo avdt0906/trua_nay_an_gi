@@ -4,158 +4,302 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Danh sách món ăn</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Roboto+Slab:400,700|Material+Icons" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
-            background-color: #f8f9fa;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f3ef;
+            font-family: 'Roboto', 'Helvetica', 'Arial', sans-serif;
         }
 
-        .navbar {
-            box-shadow: 0 2px 4px rgba(0, 0, 0, .08);
+        .wrapper {
+            display: flex;
+            width: 100%;
         }
 
+        /* --- Sidebar --- */
+        .sidebar {
+            width: 260px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            z-index: 1030;
+            background: #1e1e2f;
+            color: #fff;
+            transition: all 0.3s;
+        }
+
+        .sidebar .sidebar-header {
+            padding: 20px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .sidebar .sidebar-header h3 {
+            color: #fff;
+            font-weight: 300;
+            margin: 0;
+        }
+
+        .sidebar-nav {
+            padding: 20px 0;
+        }
+
+        .sidebar-nav .nav-item {
+            list-style: none;
+        }
+
+        .sidebar-nav .nav-link {
+            color: rgba(255, 255, 255, 0.8);
+            display: flex;
+            align-items: center;
+            padding: 12px 25px;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+
+        .sidebar-nav .nav-link i {
+            font-size: 20px;
+            margin-right: 15px;
+            width: 30px;
+            text-align: center;
+        }
+
+        .sidebar-nav .nav-link:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: #fff;
+        }
+
+        .sidebar-nav .nav-link.active {
+            background: #9c27b0;
+            color: #fff;
+            border-radius: 4px;
+            margin: 0 15px;
+            box-shadow: 0 4px 20px 0px rgba(0, 0, 0, 0.14), 0 7px 10px -5px rgba(156, 39, 176, 0.4);
+        }
+
+        /* --- Main Panel --- */
+        .main-panel {
+            flex-grow: 1;
+            margin-left: 260px;
+            padding: 20px;
+            transition: all 0.3s;
+        }
+
+        /* --- Top Navbar --- */
+        .navbar-main {
+            background-color: transparent !important;
+            box-shadow: none;
+            padding: 0.5rem 0;
+        }
+        .navbar-main .nav-link {
+            color: #555;
+        }
+        .navbar-main .dropdown-menu {
+            border-radius: 0.5rem;
+            border: 1px solid #eee;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        /* --- Custom Cards --- */
         .card {
-            border: none;
-            border-radius: 0.75rem;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, .05);
+            border: 0;
+            margin-bottom: 30px;
+            border-radius: 6px;
+            color: #333;
+            background: #fff;
+            width: 100%;
+            box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.14);
+        }
+
+        .card .card-header {
+            padding: 15px;
+            border-bottom: none;
+            background: transparent;
+        }
+
+        .card .card-header-primary {
+            margin: -20px 15px 0;
+            border-radius: 3px;
+            background: linear-gradient(60deg, #ab47bc, #8e24aa);
+            box-shadow: 0 4px 20px 0px rgba(0, 0, 0, 0.14), 0 7px 10px -5px rgba(156, 39, 176, 0.4);
+        }
+
+        .card .card-title {
+            margin: 0;
+            color: #3C4858;
+            font-weight: 300;
+        }
+        .card .card-category {
+            color: #999;
+            margin: 0;
+            font-size: 14px;
+        }
+
+        .card .card-body {
+            padding: 15px 20px;
+        }
+
+        .card .card-footer {
+            margin: 0 15px 10px;
+            padding: 10px 0;
+            border-top: 1px solid #eee;
+        }
+
+        /* Dish Card Specific Styles */
+        .dish-card {
             transition: transform .2s, box-shadow .2s;
         }
-
-        .card:hover {
-            transform: translateY(-2px);
+        .dish-card:hover {
+            transform: translateY(-5px);
             box-shadow: 0 8px 16px rgba(0, 0, 0, .1);
         }
-
         .dish-img {
             height: 180px;
             object-fit: cover;
-            border-radius: 0.75rem 0.75rem 0 0;
+            border-radius: 6px 6px 0 0;
+        }
+
+        .btn-primary-material {
+            background-color: #9c27b0 !important;
+            border-color: #9c27b0 !important;
+            color: #fff !important;
+            box-shadow: 0 2px 2px 0 rgba(156, 39, 176, 0.14), 0 3px 1px -2px rgba(156, 39, 176, 0.2), 0 1px 5px 0 rgba(156, 39, 176, 0.12);
+        }
+        .btn-primary-material:hover {
+            background-color: #8e24aa !important;
+            border-color: #8e24aa !important;
         }
     </style>
 </head>
 <body>
 
-<!-- Sử dụng Navbar Fragment -->
-<div th:replace="~{owner/fragments/owner_fragments :: navbar}"></div>
+<div class="wrapper">
+    <nav class="sidebar">
+        <div class="sidebar-header">
+            <h3>QUẢN LÝ NHÀ HÀNG</h3>
+        </div>
+        <ul class="nav sidebar-nav flex-column">
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/restaurants/dashboard}">
+                    <i class="fas fa-tachometer-alt"></i> Bảng điều khiển
+                </a>
+            </li>
+                <a class="nav-link" href="#">
+                    <i class="fas fa-user"></i> Hồ sơ người dùng
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link active" th:href="@{/restaurants/dishes/dish_list}">
+                    <i class="fas fa-utensils"></i> Danh sách món ăn
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">
+                    <i class="fas fa-clipboard-list"></i> Đơn hàng
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">
+                    <i class="fas fa-bell"></i> Thông báo
+                </a>
+            </li>
+        </ul>
+    </nav>
 
-<!-- Main Content -->
-<main class="container mt-4">
-    <div class="row" th:if="${restaurant}">
-        <div class="col-lg-8">
-            <!--Search Form-->
-            <form th:action="@{/restaurants/dishes/dish_list}" method="get" class="mb-4">
-                <div class="input-group">
-                    <input type="text" class="form-control" placeholder="Tìm kiếm theo tên món ăn..." name="search"
-                           th:value="${search}">
-                    <button class="btn btn-outline-secondary" type="submit">
-                        <i class="fas fa-search"></i>
-                    </button>
+    <div class="main-panel">
+        <nav class="navbar navbar-expand-lg navbar-main">
+            <div class="container-fluid">
+                <h4 class="fw-light m-0">Quản Lý Món Ăn</h4>
+                <div class="collapse navbar-collapse justify-content-end">
+                    <ul class="navbar-nav">
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownProfile" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-user"></i>
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownProfile">
+                                <li><a class="dropdown-item" href="#">Hồ sơ</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" th:href="@{/logout}">Đăng xuất</a></li>
+                            </ul>
+                        </li>
+                    </ul>
                 </div>
-            </form>
-            <div class="card mb-4">
-                <div class="card-header bg-primary text-white">
-                    <h5 class="mb-0">
-                        <i class="fas fa-store me-2"></i>Danh sách món ăn
-                    </h5>
-                </div>
-                <div class="card-body">
-                    <a th:href="@{/restaurants/dishes/add_dish_form}" class="btn btn-outline-primary">
-                        <i class="fas fa-plus me-2"></i>Thêm món ăn mới
-                    </a>
-                </div>
-                <div class="card-body">
-                    <div class="row">
-                        <div class="row g-4" th:if="${dishes}">
-                            <div class="col-md-4" th:each="dish : ${dishes}">
-                                <div class="card h-100">
-                                    <img th:src="${'/images/dish/eat_food/' + dish.pictureUrl}" alt="Dish Image" class="dish-img">
-                                    <div class="card-body">
-                                        <h5 class="card-title fw-bold" th:text="${dish.name}"></h5>
-                                        <p class="card-text text-muted mb-2" th:text="${dish.description}"></p>
-                                        <span class="badge bg-primary me-1" th:text="${dish.category.name}"></span>
-                                        <span class="badge bg-success" th:if="${dish.isAvailable}">Có sẵn</span>
-                                        <span class="badge bg-secondary" th:unless="${dish.isAvailable}">Hết hàng</span><br>
+            </div>
+        </nav>
+
+        <div class="content pt-2">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="card">
+                            <div class="card-header card-header-primary">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h4 class="card-title text-white">Danh sách món ăn</h4>
+                                        <p class="card-category text-white-50">Quản lý thực đơn của nhà hàng</p>
                                     </div>
-                                    <div class="card-footer d-flex justify-content-between align-items-center">
-                                        <span class="fw-bold text-danger"
-                                              th:text="${#numbers.formatDecimal(dish.price, 0, 'COMMA', 0, 'POINT')} + ' đ'">100,000 đ</span>
-                                        <div class="btn-group">
-                                            <a th:href="@{'/restaurants/dishes/edit_dish_form/' + ${dish.id}}"
-                                               class="btn btn-sm btn-outline-info">
-                                                <i class="fas fa-edit"></i>
-                                            </a>
-                                            <a th:href="@{'/restaurants/dishes/delete_dish/' + ${dish.id}}"
-                                               class="btn btn-sm btn-outline-danger">
-                                                <i class="fas fa-trash"></i>
-                                            </a>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <form th:action="@{/restaurants/dishes/dish_list}" method="get" class="mb-0">
+                                            <div class="input-group">
+                                                <input type="text" class="form-control bg-light border-0" placeholder="Tìm kiếm món ăn..." name="search" th:value="${search}" style="border-radius: 30px 0 0 30px;">
+                                                <button class="btn btn-light" type="submit" style="border-radius: 0 30px 30px 0;">
+                                                    <i class="fas fa-search"></i>
+                                                </button>
+                                            </div>
+                                        </form>
+                                        <a th:href="@{/restaurants/dishes/add_dish_form}" class="btn btn-light">
+                                            <i class="fas fa-plus me-1"></i> Thêm mới
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="row g-4" th:if="${dishes != null && !dishes.isEmpty()}">
+                                    <div class="col-xl-3 col-lg-4 col-md-6" th:each="dish : ${dishes}">
+                                        <div class="card dish-card h-100">
+                                            <img th:src="${'/images/dish/eat_food/' + dish.pictureUrl}" alt="Dish Image" class="dish-img">
+                                            <div class="card-body pb-0">
+                                                <h5 class="card-title fw-bold" th:text="${dish.name}"></h5>
+                                                <p class="card-text text-muted mb-2" style="font-size: 0.9rem;" th:text="${dish.description}"></p>
+                                                <span class="badge text-bg-primary me-1" th:text="${dish.category.name}"></span>
+                                                <span class="badge text-bg-success" th:if="${dish.isAvailable}">Có sẵn</span>
+                                                <span class="badge text-bg-secondary" th:unless="${dish.isAvailable}">Hết hàng</span>
+                                            </div>
+                                            <div class="card-footer d-flex justify-content-between align-items-center bg-transparent">
+                                                <span class="fw-bold fs-5 text-danger"
+                                                      th:text="${#numbers.formatDecimal(dish.price, 0, 'COMMA', 0, 'POINT')} + ' đ'"></span>
+                                                <div class="btn-group">
+                                                    <a th:href="@{'/restaurants/dishes/edit_dish_form/' + ${dish.id}}" class="btn btn-sm btn-outline-info">
+                                                        <i class="fas fa-edit"></i>
+                                                    </a>
+                                                    <a th:href="@{'/restaurants/dishes/delete_dish/' + ${dish.id}}" class="btn btn-sm btn-outline-danger">
+                                                        <i class="fas fa-trash"></i>
+                                                    </a>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
+                                </div>
+
+                                <div class="text-center py-5" th:if="${dishes == null || dishes.isEmpty()}">
+                                    <i class="fas fa-utensil-spoon fa-4x text-muted mb-3"></i>
+                                    <h4 class="text-muted">Chưa có món ăn nào</h4>
+                                    <p class="text-muted">Hãy thêm món ăn để bắt đầu phục vụ khách hàng!</p>
+                                    <a th:href="@{/restaurants/dishes/add_dish_form}" class="btn btn-primary-material btn-lg mt-3">
+                                        <i class="fas fa-plus me-2"></i>Thêm món ăn mới
+                                    </a>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                <!-- Empty List Message -->
-                <div class="row" th:unless="${dishes}">
-                    <div class="col-12 text-center">
-                        <i class="fas fa-utensil-spoon fa-4x text-muted mb-3"></i>
-                        <h4 class="text-muted">Chưa có món ăn nào</h4>
-                        <p class="text-muted">Hãy thêm món ăn để bắt đầu phục vụ khách hàng!</p>
-                        <a th:href="@{/restaurants/dishes/add_dish_form}" class="btn btn-primary btn-lg">
-                            <i class="fas fa-plus me-2"></i>Thêm món ăn mới
-                        </a>
-                    </div>
-                </div>
             </div>
-        </div>
-
-        <div class="col-lg-4">
-            <div class="card mb-4">
-                <div class="card-header bg-info text-white">
-                    <h5 class="mb-0">
-                        <i class="fas fa-chart-bar me-2"></i>Thống kê
-                    </h5>
-                </div>
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-                        <span>Trạng thái mở cửa:</span>
-                        <span th:if="${restaurant.isOpen}" class="badge bg-success">
-                            <i class="fas fa-door-open me-1"></i>Đang mở
-                        </span>
-                        <span th:unless="${restaurant.isOpen}" class="badge bg-secondary">
-                            <i class="fas fa-door-closed me-1"></i>Đã đóng
-                        </span>
-                    </div>
-
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-                        <span>Đối tác dài hạn:</span>
-                        <span th:if="${restaurant.isLongTermPartner}" class="badge bg-warning">
-                            <i class="fas fa-star me-1"></i>Có
-                        </span>
-                        <span th:unless="${restaurant.isLongTermPartner}" class="badge bg-light text-dark">
-                            <i class="fas fa-star-o me-1"></i>Không
-                        </span>
-                    </div>
-
-                    <div class="d-flex justify-content-between align-items-center">
-                        <span>Trạng thái khóa:</span>
-                        <span th:if="${restaurant.isLocked}" class="badge bg-danger">
-                            <i class="fas fa-lock me-1"></i>Đã khóa
-                        </span>
-                        <span th:unless="${restaurant.isLocked}" class="badge bg-success">
-                            <i class="fas fa-unlock me-1"></i>Hoạt động
-                        </span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Quick Actions -->
-            <div th:replace="~{owner/fragments/owner_fragments :: quick_action}"></div>
         </div>
     </div>
-</main>
+</div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
