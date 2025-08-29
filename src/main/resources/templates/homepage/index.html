@@ -16,7 +16,7 @@
 <!-- Header Section -->
 <div class="main-header">
   <div class="container">
-    <h1 class="header-title" th:if="${search == null or search.isEmpty()}">
+    <h1 style="text-align: center" class="header-title" th:if="${search == null or search.isEmpty()}">
       Danh sách ưu đãi
     </h1>
     <h1 class="header-title" th:unless="${search == null or search.isEmpty()}">
@@ -27,17 +27,6 @@
 
 <!-- Main Content -->
 <main class="container">
-  <!-- Category Filters -->
-  <div class="category-filters">
-    <button class="btn category-filter active">Tất cả</button>
-    <button class="btn category-filter">Cơm</button>
-    <button class="btn category-filter">Phở</button>
-    <button class="btn category-filter">Bún</button>
-    <button class="btn category-filter">Bánh mì</button>
-    <button class="btn category-filter">Đồ uống</button>
-    <button class="btn category-filter">Tráng miệng</button>
-    <button class="btn category-filter">Đồ ăn nhanh</button>
-  </div>
 
   <!-- Results Info -->
   <div class="results-info">
