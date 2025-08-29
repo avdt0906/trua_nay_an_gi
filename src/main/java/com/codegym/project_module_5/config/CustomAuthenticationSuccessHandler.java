@@ -15,7 +15,9 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Component
 public class CustomAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
@@ -32,15 +34,36 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
 
         mergeSessionCart(request, authentication);
 
-        String redirectUrl = "/home";
-        Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
-        for (GrantedAuthority grantedAuthority : authorities) {
-            if (grantedAuthority.getAuthority().equals("ADMIN")) {
-                redirectUrl = "/admin/dashboard";
-                break;
-            } else if (grantedAuthority.getAuthority().equals("OWNER")) {
-                redirectUrl = "/restaurants/dashboard";
-                break;
+        HttpSession session = request.getSession(false);
+        String redirectUrl = null;
+
+        if (session != null) {
+            redirectUrl = (String) session.getAttribute("redirectAfterLogin");
+            if (redirectUrl != null) {
+                @SuppressWarnings("unchecked")
+                List<Long> selectedDishIds = (List<Long>) session.getAttribute("selectedDishIds");
+                if (selectedDishIds != null && !selectedDishIds.isEmpty()) {
+                    String params = selectedDishIds.stream()
+                            .map(id -> "selectedItems=" + id)
+                            .collect(Collectors.joining("&"));
+                    redirectUrl = redirectUrl + "?" + params;
+                }
+                session.removeAttribute("redirectAfterLogin");
+                session.removeAttribute("selectedDishIds");
+            }
+        }
+
+        if (redirectUrl == null || redirectUrl.isEmpty()) {
+            redirectUrl = "/home";
+            Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
+            for (GrantedAuthority grantedAuthority : authorities) {
+                if (grantedAuthority.getAuthority().equals("ADMIN")) {
+                    redirectUrl = "/admin/dashboard";
+                    break;
+                } else if (grantedAuthority.getAuthority().equals("OWNER")) {
+                    redirectUrl = "/restaurants/dashboard";
+                    break;
+                }
             }
         }
         response.sendRedirect(request.getContextPath() + redirectUrl);
@@ -49,14 +72,14 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
     private void mergeSessionCart(HttpServletRequest request, Authentication authentication) {
         HttpSession session = request.getSession(false);
         if (session != null) {
-             Map<Long, Integer> sessionCart = (Map<Long, Integer>) session.getAttribute("cart");
+            Map<Long, Integer> sessionCart = (Map<Long, Integer>) session.getAttribute("cart");
 
             if (sessionCart != null && !sessionCart.isEmpty()) {
                 String username = authentication.getName();
                 User user = userService.findByUsername(username)
                         .orElseThrow(() -> new RuntimeException("User not found after login"));
-        cartService.mergeSessionCartWithDbCart(sessionCart, user);
-     session.removeAttribute("cart");
+                cartService.mergeSessionCartWithDbCart(sessionCart, user);
+                session.removeAttribute("cart");
             }
         }
     }
