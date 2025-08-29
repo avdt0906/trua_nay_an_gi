@@ -1,11 +1,11 @@
+<!-- templates/user/fragments/_navbar.html -->
 <!DOCTYPE html>
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <!-- Fragment chỉ chứa navbar, không thêm link CSS/JS ở đây vì index đã có -->
+</head>
 <body>
-
-<!--/* Navbar Fragment cho User/Client
-    Đường dẫn mới: templates/user/fragments/_navbar.html
-    Cách gọi: th:replace="~{user/fragments/_navbar :: navbar}"
-*/-->
+<!-- Navbar Fragment cho User/Client -->
 <nav class="navbar navbar-expand-lg bg-white border-bottom sticky-top shadow-sm" th:fragment="navbar">
     <div class="container">
         <!-- Logo -->
@@ -23,9 +23,11 @@
         <div class="collapse navbar-collapse" id="mainNavbar">
             <!-- Menu chính (căn giữa) -->
             <ul class="navbar-nav mx-auto">
-                <li class="nav-item"><a class="nav-link" href="#">Đồ ăn</a></li>
-                <li class="nav-item"><a class="nav-link" href="#">Thực phẩm</a></li>
-                <li class="nav-item"><a class="nav-link" href="#">Bia & Rượu</a></li>
+                <li class="nav-item"><a class="nav-link" href="/">Cơm</a></li>
+                <li class="nav-item"><a class="nav-link" href="#">Phở</a></li>
+                <li class="nav-item"><a class="nav-link" href="#">Bánh mỳ</a></li>
+                <li class="nav-item"><a class="nav-link" href="#">Đồ uống</a></li>
+                <li class="nav-item"><a class="nav-link" href="#">Đồ ăn nhanh</a></li>
             </ul>
 
             <!-- Các nút chức năng (căn phải) -->
@@ -42,8 +44,8 @@
                     <!-- Số lượng sản phẩm trong giỏ hàng -->
                     <span id="cart-item-count" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
                           th:text="${session.cart != null ? session.cart.size() : '0'}">
-                        0
-                    </span>
+            0
+          </span>
                 </a>
 
                 <!-- Xác thực người dùng -->
@@ -69,6 +71,5 @@
         </div>
     </div>
 </nav>
-
 </body>
 </html>

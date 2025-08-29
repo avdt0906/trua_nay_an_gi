@@ -31,6 +31,14 @@ public class CartService implements ICartService {
     @Override
     @Transactional
     public void addToCart(User user, Dish dish, int quantity) {
+        List<CartItem> currentItems = cartItemRepository.findByUser(user);
+        if (!currentItems.isEmpty()) {
+            Long existingRestaurantId = currentItems.get(0).getDish().getRestaurant().getId();
+            Long newRestaurantId = dish.getRestaurant().getId();
+            if (!existingRestaurantId.equals(newRestaurantId)) {
+                throw new IllegalArgumentException("Chỉ được đặt món từ một nhà hàng trong mỗi đơn");
+            }
+        }
         Optional<CartItem> existingItem = cartItemRepository.findByUserAndDish(user, dish);
 
         if (existingItem.isPresent()) {
@@ -52,7 +60,6 @@ public class CartService implements ICartService {
             cartItem.setQuantity(quantity);
             return cartItemRepository.save(cartItem);
         } else {
-            // Nếu số lượng <= 0 thì xóa
             cartItemRepository.delete(cartItem);
             return null;
         }
