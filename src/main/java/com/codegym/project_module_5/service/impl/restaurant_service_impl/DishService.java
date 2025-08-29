@@ -4,6 +4,8 @@ import com.codegym.project_module_5.model.restaurant_model.Dish;
 import com.codegym.project_module_5.repository.restaurant_repository.IDishRepository;
 import com.codegym.project_module_5.service.restaurant_service.IDishService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -32,6 +34,11 @@ public class DishService implements IDishService {
     @Override
     public void delete(Long id) {
         dishRepository.deleteById(id);
+    }
+
+    @Override
+    public Page<Dish> findAll(Pageable pageable) {
+        return dishRepository.findAll(pageable);
     }
 
     @Override
