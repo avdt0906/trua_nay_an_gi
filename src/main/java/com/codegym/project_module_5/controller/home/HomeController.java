@@ -29,7 +29,6 @@ public class HomeController {
 
     @GetMapping(value = {"/", "/home"})
     public String showhome(Model model, @RequestParam(name = "search", required = false) String search) {
-        // Xử lý xác thực người dùng (giữ nguyên)
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         boolean isAuthenticated = authentication != null
                 && authentication.isAuthenticated()
@@ -42,14 +41,14 @@ public class HomeController {
         }
 
         // Lấy danh sách món ăn
-        Iterable<Dish> dishes;
+        List<Dish> dishes;
         if (search != null && !search.trim().isEmpty()) {
-            dishes = dishService.searchAvailableDishesByName(search);
+            dishes = (List<Dish>) dishService.searchAvailableDishesByName(search);
         } else {
-            dishes = dishService.findAllAvailableDishes();
+            dishes = (List<Dish>) dishService.findAllAvailableDishes();
         }
 
-        // Nhóm các món ăn theo NHÀ HÀNG
+        // Nhóm theo nhà hàng
         Map<Restaurant, List<Dish>> dishesByRestaurant = new LinkedHashMap<>();
         for (Dish dish : dishes) {
             Restaurant restaurant = dish.getRestaurant();
@@ -58,9 +57,11 @@ public class HomeController {
             }
         }
 
+        model.addAttribute("dishes", dishes); // ✅ add this
         model.addAttribute("dishesByRestaurant", dishesByRestaurant);
         model.addAttribute("search", search);
 
         return "/homepage/index";
     }
+
 }
