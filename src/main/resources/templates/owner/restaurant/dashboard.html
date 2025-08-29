@@ -4,13 +4,38 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bảng điều khiển Nhà hàng</title>
-    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Roboto+Slab:400,700|Material+Icons" />
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,900|Roboto+Slab:400,700|Material+Icons" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
+        /* --- BIẾN MÀU SẮC VÀ THUỘC TÍNH CHUNG --- */
+        :root {
+            --primary-color: #6a11cb;
+            --secondary-color: #2575fc;
+            --success-color: #43a047;
+            --warning-color: #fb8c00;
+            --danger-color: #e53935;
+            --info-color: #00acc1;
+            --background-color: #f8f9fa;
+            --surface-color: #ffffff;
+            --text-color: #495057;
+            --text-muted-color: #6c757d;
+            --sidebar-bg: #1e1e2f;
+            --sidebar-text: rgba(255, 255, 255, 0.8);
+            --sidebar-text-hover: #ffffff;
+            --sidebar-active-bg: linear-gradient(60deg, #7b2cbf, #9d4edd);
+            --border-color: #dee2e6;
+            --box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --border-radius: 0.5rem;
+            --sidebar-width: 260px;
+            --sidebar-width-collapsed: 85px;
+            --transition-speed: 0.3s;
+        }
+
         body {
-            background-color: #f4f3ef;
+            background-color: var(--background-color);
             font-family: 'Roboto', 'Helvetica', 'Arial', sans-serif;
+            color: var(--text-color);
         }
 
         .wrapper {
@@ -20,183 +45,135 @@
 
         /* --- Sidebar --- */
         .sidebar {
-            width: 260px;
-            position: fixed;
-            top: 0;
-            left: 0;
-            height: 100vh;
-            z-index: 1030; /* Higher z-index */
-            background: #1e1e2f;
-            color: #fff;
-            transition: all 0.3s;
+            width: var(--sidebar-width);
+            position: fixed; top: 0; left: 0; height: 100vh; z-index: 1030;
+            background: var(--sidebar-bg); color: var(--sidebar-text);
+            transition: width var(--transition-speed) ease;
+            overflow-x: hidden;
         }
-
         .sidebar .sidebar-header {
-            padding: 20px;
-            text-align: center;
+            padding: 20px; text-align: center;
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
-
         .sidebar .sidebar-header h3 {
-            color: #fff;
-            font-weight: 300;
-            margin: 0;
+            color: #fff; font-weight: 500; margin: 0; font-size: 1.2rem;
+            white-space: nowrap; transition: opacity var(--transition-speed) ease;
         }
-
-        .sidebar-nav {
-            padding: 20px 0;
-        }
-
-        .sidebar-nav .nav-item {
-            list-style: none;
-        }
-
+        .sidebar-nav { padding: 20px 0; }
+        .sidebar-nav .nav-item { list-style: none; }
         .sidebar-nav .nav-link {
-            color: rgba(255, 255, 255, 0.8);
-            display: flex;
-            align-items: center;
-            padding: 12px 25px;
-            text-decoration: none;
-            transition: all 0.2s;
+            color: var(--sidebar-text); display: flex; align-items: center;
+            padding: 12px 25px; margin: 4px 15px; border-radius: var(--border-radius);
+            text-decoration: none; transition: all 0.2s ease; white-space: nowrap;
         }
-
         .sidebar-nav .nav-link i {
-            font-size: 20px;
-            margin-right: 15px;
-            width: 30px;
-            text-align: center;
+            font-size: 20px; margin-right: 20px; min-width: 30px;
+            text-align: center; transition: margin var(--transition-speed) ease;
         }
-
         .sidebar-nav .nav-link:hover {
-            background: rgba(255, 255, 255, 0.05);
-            color: #fff;
+            background: rgba(255, 255, 255, 0.08); color: var(--sidebar-text-hover);
         }
-
         .sidebar-nav .nav-link.active {
-            background: #9c27b0;
-            color: #fff;
-            border-radius: 4px;
-            margin: 0 15px;
-            box-shadow: 0 4px 20px 0px rgba(0, 0, 0, 0.14), 0 7px 10px -5px rgba(156, 39, 176, 0.4);
+            background: var(--sidebar-active-bg); color: #fff;
+            box-shadow: 0 4px 15px -2px rgba(0, 0, 0, 0.2), 0 7px 10px -5px rgba(138, 43, 226, 0.4);
         }
 
         /* --- Main Panel --- */
         .main-panel {
-            flex-grow: 1;
-            margin-left: 260px;
-            padding: 20px;
-            transition: all 0.3s;
+            flex-grow: 1; margin-left: var(--sidebar-width); padding: 20px;
+            transition: margin-left var(--transition-speed) ease;
+            width: calc(100% - var(--sidebar-width));
         }
+
+        /* --- Cơ chế đóng/mở Sidebar --- */
+        .wrapper.sidebar-collapsed .sidebar { width: var(--sidebar-width-collapsed); }
+        .wrapper.sidebar-collapsed .main-panel {
+            margin-left: var(--sidebar-width-collapsed);
+            width: calc(100% - var(--sidebar-width-collapsed));
+        }
+        .wrapper.sidebar-collapsed .sidebar .sidebar-header h3,
+        .wrapper.sidebar-collapsed .sidebar .nav-link span { opacity: 0; visibility: hidden; width: 0; }
+        .wrapper.sidebar-collapsed .sidebar .nav-link i { margin-right: 0; }
+        .wrapper.sidebar-collapsed .sidebar .nav-link { justify-content: center; }
 
         /* --- Top Navbar --- */
         .navbar-main {
-            background-color: transparent !important;
-            box-shadow: none;
-            padding: 0.5rem 0;
+            background-color: var(--surface-color); box-shadow: var(--box-shadow);
+            border-radius: var(--border-radius); padding: 0.75rem 1.5rem;
         }
-        .navbar-main .nav-link {
-            color: #555;
-        }
+        .navbar-main .nav-link { color: var(--text-muted-color); }
         .navbar-main .dropdown-menu {
-            border-radius: 0.5rem;
-            border: 1px solid #eee;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border-radius: var(--border-radius); border: 1px solid var(--border-color);
+            box-shadow: var(--box-shadow);
         }
-        .navbar-main .dropdown-item {
-            padding: 0.5rem 1.5rem;
+        .navbar-main .sidebar-toggle-icon {
+            font-size: 1.5rem; color: var(--primary-color);
+            transition: all 0.3s ease-in-out;
         }
-        .navbar-main .dropdown-item i {
-            margin-right: 10px;
-            width: 20px;
-        }
+        .navbar-main #sidebarToggle:hover .sidebar-toggle-icon { color: var(--secondary-color); }
+        .wrapper.sidebar-collapsed .sidebar-toggle-icon { transform: rotate(180deg); }
 
-        /* --- Custom Cards --- */
+        /* --- Card Styles --- */
         .card {
-            border: 0;
-            margin-bottom: 30px;
-            border-radius: 6px;
-            color: #333;
-            background: #fff;
-            width: 100%;
-            box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.14);
+            border: none; margin-bottom: 30px; border-radius: var(--border-radius);
+            background: var(--surface-color); width: 100%;
+            box-shadow: var(--box-shadow);
+            display: flex; flex-direction: column;
         }
-
         .card .card-header {
-            margin: -20px 15px 0;
-            border-radius: 3px;
-            padding: 15px;
-            background: linear-gradient(60deg, #ab47bc, #8e24aa);
-            box-shadow: 0 4px 20px 0px rgba(0, 0, 0, 0.14), 0 7px 10px -5px rgba(156, 39, 176, 0.4);
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid var(--border-color); background: transparent;
+            border-top: 4px solid var(--primary-color);
+            border-radius: var(--border-radius) var(--border-radius) 0 0;
         }
-        .card .card-header.card-header-text {
-            display: inline-block;
-        }
-
-        .card .card-header-icon {
-            float: left;
-            padding: 15px 20px;
-            margin-right: 15px;
-            border-radius: 3px;
-        }
-
-        .card .card-header-icon i {
-            color: #fff;
-            font-size: 32px;
-        }
-
-        .card .card-category {
-            color: #999;
-            margin: 0;
-            font-size: 14px;
-            padding-top: 10px;
-        }
-
         .card .card-title {
-            margin: 0;
-            color: #3C4858;
-            font-size: 1.5625rem;
-            font-weight: 300;
+            margin: 0; color: var(--text-color); font-weight: 500;
         }
-
-        .card .card-body {
-            padding: 15px 20px;
+        .card .card-category {
+            color: var(--text-muted-color); margin-top: 0.25rem; font-size: 0.9em;
         }
-
+        .card .card-body { padding: 1.5rem; flex-grow: 1;}
         .card .card-footer {
-            margin: 20px 0 0 0;
-            padding-top: 10px;
-            border-top: 1px solid #eee;
-            color: #999;
+            padding: 1rem 1.5rem; background-color: transparent;
+            border-top: 1px solid var(--border-color);
         }
 
-        .card .card-footer .stats {
-            line-height: 22px;
-            font-size: 12px;
+        /* --- Stat Card Styles (Thẻ thống kê) --- */
+        .card-stat .card-body {
+            display: flex; justify-content: space-between; align-items: center;
         }
-        .card .card-footer i {
-            margin-right: 5px;
+        .card-stat .stat-icon {
+            font-size: 2rem; width: 60px; height: 60px;
+            display: inline-flex; align-items: center; justify-content: center;
+            border-radius: 50%;
+        }
+        .card-stat.border-success .stat-icon { background-color: rgba(var(--bs-success-rgb), 0.1); color: var(--success-color); }
+        .card-stat.border-warning .stat-icon { background-color: rgba(var(--bs-warning-rgb), 0.1); color: var(--warning-color); }
+        .card-stat.border-danger .stat-icon { background-color: rgba(var(--bs-danger-rgb), 0.1); color: var(--danger-color); }
+        .card-stat.border-info .stat-icon { background-color: rgba(var(--bs-info-rgb), 0.1); color: var(--info-color); }
+
+        /* --- Chart Card Styles (Thẻ biểu đồ) --- */
+        .card-chart .card-body {
+            border-radius: var(--border-radius);
+            color: white;
+            padding: 1rem;
+        }
+        .card-chart .card-footer {
+            border-top: 1px solid var(--border-color);
         }
 
-        .btn-primary-material {
-            background-color: #9c27b0 !important;
-            border-color: #9c27b0 !important;
-            box-shadow: 0 2px 2px 0 rgba(156, 39, 176, 0.14), 0 3px 1px -2px rgba(156, 39, 176, 0.2), 0 1px 5px 0 rgba(156, 39, 176, 0.12);
+        .bg-success-gradient { background: linear-gradient(60deg, #66bb6a, #43a047); }
+        .bg-warning-gradient { background: linear-gradient(60deg, #ffa726, #fb8c00); }
+        .bg-danger-gradient { background: linear-gradient(60deg, #ef5350, #e53935); }
+
+        /* Button Styles */
+        .btn-primary {
+            background-color: var(--primary-color); border-color: var(--primary-color);
         }
-        .btn-primary-material:hover {
-            background-color: #8e24aa !important;
-            border-color: #8e24aa !important;
+        .btn-primary:hover {
+            background-color: #580ca6; border-color: #580ca6;
         }
 
-        /* Card Header Colors */
-        .bg-primary-gradient { background: linear-gradient(60deg, #ab47bc, #8e24aa); box-shadow: 0 4px 20px 0 rgba(0,0,0,.14), 0 7px 10px -5px rgba(156,39,176,.4); }
-        .bg-success-gradient { background: linear-gradient(60deg, #66bb6a, #43a047); box-shadow: 0 4px 20px 0 rgba(0,0,0,.14), 0 7px 10px -5px rgba(76,175,80,.4); }
-        .bg-warning-gradient { background: linear-gradient(60deg, #ffa726, #fb8c00); box-shadow: 0 4px 20px 0 rgba(0,0,0,.14), 0 7px 10px -5px rgba(255,152,0,.4); }
-        .bg-danger-gradient { background: linear-gradient(60deg, #ef5350, #e53935); box-shadow: 0 4px 20px 0 rgba(0,0,0,.14), 0 7px 10px -5px rgba(244,67,54,.4); }
-        .bg-info-gradient { background: linear-gradient(60deg, #26c6da, #00acc1); box-shadow: 0 4px 20px 0 rgba(0,0,0,.14), 0 7px 10px -5px rgba(0,172,193,.4); }
-
-        .no-restaurant-card {
-            margin-top: 50px;
-        }
     </style>
 </head>
 <body>
@@ -208,61 +185,52 @@
         </div>
         <ul class="nav sidebar-nav flex-column">
             <li class="nav-item">
-                <a class="nav-link active" th:href="@{/owner/dashboard}">
-                    <i class="fas fa-tachometer-alt"></i> Bảng điều khiển
+                <a class="nav-link active" th:href="@{/restaurants/dashboard}">
+                    <i class="fas fa-tachometer-alt"></i> <span>Bảng điều khiển</span>
                 </a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="#">
-                    <i class="fas fa-user"></i> Hồ sơ người dùng
+                    <i class="fas fa-user"></i> <span>Hồ sơ người dùng</span>
                 </a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" th:href="@{/restaurants/dishes/dish_list}">
-                    <i class="fas fa-utensils"></i> Danh sách món ăn
+                    <i class="fas fa-utensils"></i> <span>Danh sách món ăn</span>
                 </a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="#">
-                    <i class="fas fa-clipboard-list"></i> Đơn hàng
+                    <i class="fas fa-clipboard-list"></i> <span>Đơn hàng</span>
                 </a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="#">
-                    <i class="fas fa-bell"></i> Thông báo
+                    <i class="fas fa-bell"></i> <span>Thông báo</span>
                 </a>
             </li>
         </ul>
     </nav>
 
     <div class="main-panel">
-        <nav class="navbar navbar-expand-lg navbar-main">
+        <nav class="navbar navbar-expand-lg navbar-main mb-4">
             <div class="container-fluid">
+                <button class="btn btn-link p-0 me-3" type="button" id="sidebarToggle">
+                    <i class="fas fa-indent sidebar-toggle-icon"></i>
+                </button>
                 <h4 class="fw-light m-0">Bảng điều khiển</h4>
                 <div class="collapse navbar-collapse justify-content-end">
-                    <ul class="navbar-nav">
-                        <li class="nav-item">
-                            <a class="nav-link" href="#"><i class="fas fa-search"></i></a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#"><i class="fas fa-bell"></i></a>
-                        </li>
+                    <ul class="navbar-nav align-items-center">
+                        <li class="nav-item"><a class="nav-link" href="#"><i class="fas fa-search"></i></a></li>
+                        <li class="nav-item"><a class="nav-link" href="#"><i class="fas fa-bell"></i></a></li>
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownProfile" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 <i class="fas fa-user"></i>
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownProfile">
-                                <li>
-                                    <a class="dropdown-item" href="#">
-                                        <i class="fas fa-user-circle"></i> Hồ sơ
-                                    </a>
-                                </li>
+                                <li><a class="dropdown-item" href="#"><i class="fas fa-user-circle"></i> Hồ sơ</a></li>
                                 <li><hr class="dropdown-divider"></li>
-                                <li>
-                                    <a class="dropdown-item" th:href="@{/logout}">
-                                        <i class="fas fa-sign-out-alt"></i> Đăng xuất
-                                    </a>
-                                </li>
+                                <li><a class="dropdown-item" th:href="@{/logout}"><i class="fas fa-sign-out-alt"></i> Đăng xuất</a></li>
                             </ul>
                         </li>
                     </ul>
@@ -274,68 +242,54 @@
             <div class="container-fluid">
                 <div th:if="${restaurant}">
                     <div class="row">
-                        <div class="col-lg-3 col-md-6 col-sm-6">
-                            <div class="card">
-                                <div class="card-header card-header-icon bg-success-gradient">
-                                    <i class="fas fa-store"></i>
-                                </div>
-                                <div class="card-body text-end">
-                                    <p class="card-category">Trạng thái</p>
-                                    <h4 class="card-title" th:text="${restaurant.isApproved ? 'Đã phê duyệt' : 'Chờ duyệt'}"></h4>
-                                </div>
-                                <div class="card-footer">
-                                    <div class="stats">
-                                        <i th:class="${restaurant.isApproved ? 'fas fa-check' : 'fas fa-clock'}"></i>
-                                        <span th:text="${restaurant.name}"></span>
+                        <div class="col-lg-3 col-md-6">
+                            <div class="card card-stat border-start border-success border-4">
+                                <div class="card-body">
+                                    <div>
+                                        <p class="card-category text-muted mb-1">Trạng thái</p>
+                                        <h4 class="card-title mb-0" th:text="${restaurant.isApproved ? 'Đã phê duyệt' : 'Chờ duyệt'}"></h4>
+                                    </div>
+                                    <div class="stat-icon">
+                                        <i class="fas fa-store"></i>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-lg-3 col-md-6 col-sm-6">
-                            <div class="card">
-                                <div class="card-header card-header-icon bg-warning-gradient">
-                                    <i class="fas fa-dollar-sign"></i>
-                                </div>
-                                <div class="card-body text-end">
-                                    <p class="card-category">Doanh thu (Giả)</p>
-                                    <h4 class="card-title">$34,245</h4>
-                                </div>
-                                <div class="card-footer">
-                                    <div class="stats">
-                                        <i class="fas fa-calendar-alt"></i> 24 giờ qua
+                        <div class="col-lg-3 col-md-6">
+                            <div class="card card-stat border-start border-warning border-4">
+                                <div class="card-body">
+                                    <div>
+                                        <p class="card-category text-muted mb-1">Doanh thu (Tháng)</p>
+                                        <h4 class="card-title mb-0">34,245,000đ</h4>
+                                    </div>
+                                    <div class="stat-icon">
+                                        <i class="fas fa-dollar-sign"></i>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-lg-3 col-md-6 col-sm-6">
-                            <div class="card">
-                                <div class="card-header card-header-icon bg-danger-gradient">
-                                    <i class="fas fa-door-open"></i>
-                                </div>
-                                <div class="card-body text-end">
-                                    <p class="card-category">Mở cửa</p>
-                                    <h4 class="card-title" th:text="${restaurant.isOpen ? 'Đang mở' : 'Đã đóng'}"></h4>
-                                </div>
-                                <div class="card-footer">
-                                    <div class="stats">
-                                        <i th:class="${restaurant.isOpen ? 'fas fa-unlock' : 'fas fa-lock'}"></i>
-                                        <span th:text="${restaurant.isLocked ? 'Bị khóa' : 'Hoạt động'}"></span>
+                        <div class="col-lg-3 col-md-6">
+                            <div class="card card-stat border-start border-danger border-4">
+                                <div class="card-body">
+                                    <div>
+                                        <p class="card-category text-muted mb-1">Trạng thái cửa</p>
+                                        <h4 class="card-title mb-0" th:text="${restaurant.isOpen ? 'Đang mở' : 'Đã đóng'}"></h4>
+                                    </div>
+                                    <div class="stat-icon">
+                                        <i class="fas fa-door-open"></i>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-lg-3 col-md-6 col-sm-6">
-                            <div class="card">
-                                <div class="card-header card-header-icon bg-info-gradient">
-                                    <i class="fas fa-users"></i>
-                                </div>
-                                <div class="card-body text-end">
-                                    <p class="card-category">Người theo dõi (Giả)</p>
-                                    <h4 class="card-title">+245</h4>
-                                </div>
-                                <div class="card-footer">
-                                    <div class="stats">
-                                        <i class="fas fa-sync"></i> Vừa cập nhật
+                        <div class="col-lg-3 col-md-6">
+                            <div class="card card-stat border-start border-info border-4">
+                                <div class="card-body">
+                                    <div>
+                                        <p class="card-category text-muted mb-1">Đơn hàng mới</p>
+                                        <h4 class="card-title mb-0">+12</h4>
+                                    </div>
+                                    <div class="stat-icon">
+                                        <i class="fas fa-receipt"></i>
                                     </div>
                                 </div>
                             </div>
@@ -344,102 +298,100 @@
 
                     <div class="row">
                         <div class="col-md-4">
-                            <div class="card">
-                                <div class="card-header bg-success-gradient">
-                                    <canvas id="dailySalesChart" style="height: 170px;"></canvas>
+                            <div class="card card-chart">
+                                <div class="card-body bg-success-gradient">
+                                    <canvas id="dailySalesChart" style="height: 180px;"></canvas>
                                 </div>
-                                <div class="card-body">
-                                    <h4 class="card-title">Doanh số hàng ngày</h4>
-                                    <p class="card-category">
-                                        <span class="text-success"><i class="fa fa-long-arrow-up"></i> 55% </span> tăng trong doanh số hôm nay.
+                                <div class="card-footer">
+                                    <h5 class="card-title mb-1">Doanh số hàng ngày</h5>
+                                    <p class="card-category text-muted mb-0">
+                                        <span class="text-success"><i class="fa fa-long-arrow-up"></i> 55%</span> tăng trưởng trong hôm nay.
                                     </p>
                                 </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card card-chart">
+                                <div class="card-body bg-warning-gradient">
+                                    <canvas id="emailSubscriptionsChart" style="height: 180px;"></canvas>
+                                </div>
                                 <div class="card-footer">
-                                    <div class="stats">
-                                        <i class="fas fa-clock"></i> cập nhật 4 phút trước
-                                    </div>
+                                    <h5 class="card-title mb-1">Lượt đăng ký mới</h5>
+                                    <p class="card-category text-muted mb-0">
+                                        75 người đăng ký trong tháng này.
+                                    </p>
                                 </div>
                             </div>
                         </div>
                         <div class="col-md-4">
-                            <div class="card">
-                                <div class="card-header bg-warning-gradient">
-                                    <canvas id="emailSubscriptionsChart" style="height: 170px;"></canvas>
-                                </div>
-                                <div class="card-body">
-                                    <h4 class="card-title">Lượt đăng ký Email</h4>
-                                    <p class="card-category">Hiệu suất chiến dịch gần nhất</p>
+                            <div class="card card-chart">
+                                <div class="card-body bg-danger-gradient">
+                                    <canvas id="completedTasksChart" style="height: 180px;"></canvas>
                                 </div>
                                 <div class="card-footer">
-                                    <div class="stats">
-                                        <i class="fas fa-clock"></i> chiến dịch đã gửi 2 ngày trước
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="card">
-                                <div class="card-header bg-danger-gradient">
-                                    <canvas id="completedTasksChart" style="height: 170px;"></canvas>
-                                </div>
-                                <div class="card-body">
-                                    <h4 class="card-title">Công việc đã hoàn thành</h4>
-                                    <p class="card-category">Hiệu suất chiến dịch gần nhất</p>
-                                </div>
-                                <div class="card-footer">
-                                    <div class="stats">
-                                        <i class="fas fa-clock"></i> chiến dịch đã gửi 2 ngày trước
-                                    </div>
+                                    <h5 class="card-title mb-1">Đơn hàng đã hoàn thành</h5>
+                                    <p class="card-category text-muted mb-0">
+                                        Hoàn thành 120/132 đơn hàng.
+                                    </p>
                                 </div>
                             </div>
                         </div>
                     </div>
 
                     <div class="row">
-                        <div class="col-lg-8">
-                            <div class="card">
-                                <div class="card-header card-header-text bg-info-gradient">
-                                    <h4 class="card-title text-white mt-0">Thông tin chi tiết nhà hàng</h4>
-                                    <p class="card-category text-white" th:text="${restaurant.name}"></p>
+                        <div class="col-lg-4">
+                            <div class="card h-100">
+                                <div class="card-header">
+                                    <h4 class="card-title">Tỷ lệ danh mục</h4>
+                                    <p class="card-category">Các loại món ăn bán chạy</p>
+                                </div>
+                                <div class="card-body d-flex align-items-center justify-content-center">
+                                    <canvas id="categoryPopularityChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-4">
+                            <div class="card h-100">
+                                <div class="card-header">
+                                    <h4 class="card-title">Thông tin nhà hàng</h4>
+                                    <p class="card-category" th:text="${restaurant.name}"></p>
                                 </div>
                                 <div class="card-body">
-                                    <div class="row">
-                                        <div class="col-md-6 mb-3">
-                                            <strong><i class="fas fa-envelope me-2"></i>Email:</strong>
-                                            <p class="mb-0" th:text="${restaurant.user.email}"></p>
+                                    <div class="d-flex flex-column justify-content-around h-100">
+                                        <div>
+                                            <strong><i class="fas fa-envelope me-2 text-primary"></i>Email:</strong>
+                                            <p class="mb-2 ps-4" th:text="${restaurant.user.email}"></p>
                                         </div>
-                                        <div class="col-md-6 mb-3">
-                                            <strong><i class="fas fa-phone me-2"></i>Số điện thoại:</strong>
-                                            <p class="mb-0" th:text="${restaurant.phone}"></p>
+                                        <div>
+                                            <strong><i class="fas fa-phone me-2 text-primary"></i>SĐT:</strong>
+                                            <p class="mb-2 ps-4" th:text="${restaurant.phone}"></p>
                                         </div>
-                                        <div class="col-md-6 mb-3">
-                                            <strong><i class="fas fa-map-marker-alt me-2"></i>Địa chỉ:</strong>
-                                            <p class="mb-0" th:text="${restaurant.address}"></p>
-                                        </div>
-                                        <div class="col-md-6 mb-3">
-                                            <strong><i class="fas fa-info-circle me-2"></i>Mô tả:</strong>
-                                            <p class="mb-0" th:text="${restaurant.description}"></p>
+                                        <div>
+                                            <strong><i class="fas fa-map-marker-alt me-2 text-primary"></i>Địa chỉ:</strong>
+                                            <p class="mb-0 ps-4" th:text="${restaurant.address}"></p>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
+
                         <div class="col-lg-4">
-                            <div class="card">
-                                <div class="card-header card-header-text bg-primary-gradient">
-                                    <h4 class="card-title text-white mt-0">Hành động nhanh</h4>
-                                    <p class="card-category text-white">Các tác vụ thường dùng</p>
+                            <div class="card h-100">
+                                <div class="card-header">
+                                    <h4 class="card-title">Hành động nhanh</h4>
+                                    <p class="card-category">Các tác vụ thường dùng</p>
                                 </div>
-                                <div class="card-body">
-                                    <div class="d-grid gap-2">
-                                        <a th:href="@{/restaurants/dishes/add}" class="btn btn-primary-material">
+                                <div class="card-body d-flex align-items-center">
+                                    <div class="d-grid gap-3 w-100">
+                                        <a th:href="@{/restaurants/dishes/add}" class="btn btn-primary">
                                             <i class="fas fa-plus me-2"></i>Thêm món ăn mới
                                         </a>
                                         <a th:href="@{/owner/orders}" class="btn btn-outline-secondary">
                                             <i class="fas fa-list-alt me-2"></i>Xem danh sách đơn hàng
                                         </a>
                                         <a th:href="@{/owner/restaurant/edit}" class="btn btn-outline-secondary">
-                                            <i class="fas fa-edit me-2"></i>Cập nhật thông tin nhà hàng
+                                            <i class="fas fa-edit me-2"></i>Cập nhật thông tin
                                         </a>
                                     </div>
                                 </div>
@@ -449,13 +401,13 @@
                 </div>
 
                 <div class="row justify-content-center" th:unless="${restaurant}">
-                    <div class="col-md-8">
-                        <div class="card no-restaurant-card">
+                    <div class="col-md-8 mt-5">
+                        <div class="card">
                             <div class="card-body text-center py-5">
                                 <i class="fas fa-store fa-4x text-muted mb-4"></i>
                                 <h4 class="card-title">Bạn chưa có nhà hàng</h4>
                                 <p class="card-category">Hãy đăng ký nhà hàng để bắt đầu kinh doanh!</p>
-                                <a th:href="@{/restaurants/register}" class="btn btn-primary-material mt-3">
+                                <a th:href="@{/restaurants/register}" class="btn btn-primary mt-3 px-4 py-2">
                                     <i class="fas fa-plus me-2"></i>Đăng ký Nhà hàng
                                 </a>
                             </div>
@@ -469,70 +421,102 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
 <script>
     document.addEventListener("DOMContentLoaded", function() {
-        const salesData = {
-            labels: ['T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'CN'],
-            datasets: [{
-                label: 'Doanh số',
-                data: [12, 19, 3, 5, 2, 3, 9],
-                borderColor: 'rgba(255, 255, 255, .8)',
-                borderWidth: 2,
-                tension: 0.4,
-                fill: false,
-                pointBackgroundColor: '#fff'
-            }]
-        };
-
-        const subscriptionsData = {
-            labels: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'T8', 'T9', 'T10', 'T11', 'T12'],
-            datasets: [{
-                label: 'Đăng ký',
-                data: [542, 443, 320, 780, 553, 453, 326, 434, 568, 610, 756, 895],
-                backgroundColor: 'rgba(255, 255, 255, .8)',
-                barPercentage: 0.4
-            }]
-        };
-
-        const tasksData = {
-            labels: ['0h', '3h', '6h', '9h', '12h', '15h', '18h', '21h'],
-            datasets: [{
-                label: 'Công việc',
-                data: [230, 750, 450, 300, 280, 240, 200, 190],
-                borderColor: 'rgba(255, 255, 255, .8)',
-                borderWidth: 2,
-                tension: 0.4,
-                fill: false,
-                pointBackgroundColor: '#fff'
-            }]
-        };
-
-        const chartOptions = {
-            maintainAspectRatio: false,
-            plugins: {
-                legend: { display: false }
-            },
-            scales: {
-                y: {
-                    ticks: { color: 'rgba(255, 255, 255, .7)', beginAtZero: true },
-                    grid: { color: 'rgba(255, 255, 255, .1)' }
-                },
-                x: {
-                    ticks: { color: 'rgba(255, 255, 255, .7)' },
-                    grid: { display: false }
-                }
-            }
-        };
+        // Sidebar Toggle Script
+        const sidebarToggle = document.getElementById('sidebarToggle');
+        const wrapper = document.querySelector('.wrapper');
+        if (sidebarToggle) {
+            sidebarToggle.addEventListener('click', () => {
+                wrapper.classList.toggle('sidebar-collapsed');
+                localStorage.setItem('sidebarState', wrapper.classList.contains('sidebar-collapsed') ? 'collapsed' : 'expanded');
+            });
+        }
+        if (localStorage.getItem('sidebarState') === 'collapsed') {
+            wrapper.classList.add('sidebar-collapsed');
+        }
 
         if (document.getElementById('dailySalesChart')) {
-            new Chart(document.getElementById('dailySalesChart'), { type: 'line', data: salesData, options: chartOptions });
-        }
-        if (document.getElementById('emailSubscriptionsChart')) {
-            new Chart(document.getElementById('emailSubscriptionsChart'), { type: 'bar', data: subscriptionsData, options: chartOptions });
-        }
-        if (document.getElementById('completedTasksChart')) {
-            new Chart(document.getElementById('completedTasksChart'), { type: 'line', data: tasksData, options: chartOptions });
+            // === DATA MINH HỌA CHO BIỂU ĐỒ ===
+
+            // 1. Biểu đồ Doanh số: Dữ liệu thể hiện sự tăng trưởng, với ngày cuối tăng ~55% so với ngày trước đó.
+            const salesData = {
+                labels: ['T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'CN'],
+                datasets: [{
+                    label: 'Doanh số',
+                    data: [120, 135, 125, 150, 145, 155, 240], // Ngày cuối tăng vọt
+                    borderColor: 'rgba(255, 255, 255, .8)', borderWidth: 2,
+                    tension: 0.4, fill: false, pointBackgroundColor: '#fff'
+                }]
+            };
+
+            // 2. Biểu đồ Đăng ký: Dữ liệu dạng cột, thể hiện lượt đăng ký mỗi ngày trong tháng.
+            const subscriptionsData = {
+                labels: ['Tuần 1', 'Tuần 2', 'Tuần 3', 'Tuần 4'],
+                datasets: [{
+                    label: 'Đăng ký',
+                    data: [15, 25, 18, 17], // Tổng = 75
+                    backgroundColor: 'rgba(255, 255, 255, .8)', barPercentage: 0.5
+                }]
+            };
+
+            // 3. Biểu đồ Hoàn thành: Dữ liệu thể hiện số đơn hàng hoàn thành mỗi ngày trong tuần.
+            const tasksData = {
+                labels: ['T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'CN'],
+                datasets: [{
+                    label: 'Đơn hoàn thành',
+                    data: [15, 20, 18, 22, 10, 25, 10], // Tổng = 120
+                    borderColor: 'rgba(255, 255, 255, .8)', borderWidth: 2,
+                    tension: 0.4, fill: false, pointBackgroundColor: '#fff'
+                }]
+            };
+
+            const chartOptions = {
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    y: {
+                        ticks: { color: 'rgba(255, 255, 255, .7)', beginAtZero: true },
+                        grid: { color: 'rgba(255, 255, 255, .1)' }
+                    },
+                    x: {
+                        ticks: { color: 'rgba(255, 255, 255, .7)' },
+                        grid: { display: false }
+                    }
+                }
+            };
+
+            // Biểu đồ Tỷ lệ danh mục
+            const categoryData = {
+                labels: ['Món chính', 'Tráng miệng', 'Đồ uống', 'Món phụ'],
+                datasets: [{
+                    label: 'Số lượng bán ra',
+                    data: [300, 150, 200, 80],
+                    backgroundColor: [
+                        'rgba(75, 192, 192, 0.7)',
+                        'rgba(255, 206, 86, 0.7)',
+                        'rgba(54, 162, 235, 0.7)',
+                        'rgba(255, 99, 132, 0.7)'
+                    ],
+                    borderColor: '#fff',
+                    borderWidth: 2
+                }]
+            };
+
+            const doughnutOptions = {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: { color: '#333' }
+                    }
+                }
+            };
+
+            if (document.getElementById('dailySalesChart')) new Chart(document.getElementById('dailySalesChart'), { type: 'line', data: salesData, options: chartOptions });
+            if (document.getElementById('emailSubscriptionsChart')) new Chart(document.getElementById('emailSubscriptionsChart'), { type: 'bar', data: subscriptionsData, options: chartOptions });
+            if (document.getElementById('completedTasksChart')) new Chart(document.getElementById('completedTasksChart'), { type: 'line', data: tasksData, options: chartOptions });
+            if (document.getElementById('categoryPopularityChart')) new Chart(document.getElementById('categoryPopularityChart'), { type: 'doughnut', data: categoryData, options: doughnutOptions });
         }
     });
 </script>
