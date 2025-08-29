@@ -4,172 +4,172 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chỉnh sửa món ăn</title>
-    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Roboto+Slab:400,700|Material+Icons" />
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,900|Roboto+Slab:400,700|Material+Icons" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        body {
-            background-color: #f4f3ef;
-            font-family: 'Roboto', 'Helvetica', 'Arial', sans-serif;
+        /* --- BIẾN MÀU SẮC VÀ THUỘC TÍNH CHUNG --- */
+        :root {
+            --primary-color: #6a11cb;
+            --secondary-color: #2575fc;
+            --success-color: #43a047;
+            --background-color: #f8f9fa;
+            --surface-color: #ffffff;
+            --text-color: #495057;
+            --text-muted-color: #6c757d;
+            --sidebar-bg: #1e1e2f;
+            --sidebar-text: rgba(255, 255, 255, 0.8);
+            --sidebar-text-hover: #ffffff;
+            --sidebar-active-bg: linear-gradient(60deg, #7b2cbf, #9d4edd);
+            --border-color: #dee2e6;
+            --box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --border-radius: 0.75rem; /* 12px */
+            --sidebar-width: 260px;
+            --sidebar-width-collapsed: 85px;
+            --transition-speed: 0.3s;
         }
 
-        .wrapper {
-            display: flex;
-            width: 100%;
+        body {
+            background-color: var(--background-color);
+            font-family: 'Roboto', 'Helvetica', 'Arial', sans-serif;
+            color: var(--text-color);
         }
+
+        .wrapper { display: flex; width: 100%; }
 
         /* --- Sidebar --- */
         .sidebar {
-            width: 260px;
-            position: fixed;
-            top: 0;
-            left: 0;
-            height: 100vh;
-            z-index: 1030;
-            background: #1e1e2f;
-            color: #fff;
-            transition: all 0.3s;
+            width: var(--sidebar-width);
+            position: fixed; top: 0; left: 0; height: 100vh; z-index: 1030;
+            background: var(--sidebar-bg); color: var(--sidebar-text);
+            transition: width var(--transition-speed) ease;
+            overflow-x: hidden;
         }
-
         .sidebar .sidebar-header {
-            padding: 20px;
-            text-align: center;
+            padding: 20px; text-align: center;
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
-
         .sidebar .sidebar-header h3 {
-            color: #fff;
-            font-weight: 300;
-            margin: 0;
+            color: #fff; font-weight: 500; margin: 0; font-size: 1.2rem;
+            white-space: nowrap; transition: opacity var(--transition-speed) ease;
         }
-
-        .sidebar-nav {
-            padding: 20px 0;
-        }
-
-        .sidebar-nav .nav-item {
-            list-style: none;
-        }
-
+        .sidebar-nav { padding: 20px 0; }
+        .sidebar-nav .nav-item { list-style: none; }
         .sidebar-nav .nav-link {
-            color: rgba(255, 255, 255, 0.8);
-            display: flex;
-            align-items: center;
-            padding: 12px 25px;
-            text-decoration: none;
-            transition: all 0.2s;
+            color: var(--sidebar-text); display: flex; align-items: center;
+            padding: 12px 25px; margin: 4px 15px; border-radius: var(--border-radius);
+            text-decoration: none; transition: all 0.2s ease; white-space: nowrap;
         }
-
         .sidebar-nav .nav-link i {
-            font-size: 20px;
-            margin-right: 15px;
-            width: 30px;
-            text-align: center;
+            font-size: 20px; margin-right: 20px; min-width: 30px;
+            text-align: center; transition: margin var(--transition-speed) ease;
         }
-
         .sidebar-nav .nav-link:hover {
-            background: rgba(255, 255, 255, 0.05);
-            color: #fff;
+            background: rgba(255, 255, 255, 0.08); color: var(--sidebar-text-hover);
         }
-
         .sidebar-nav .nav-link.active {
-            background: #9c27b0;
-            color: #fff;
-            border-radius: 4px;
-            margin: 0 15px;
-            box-shadow: 0 4px 20px 0px rgba(0, 0, 0, 0.14), 0 7px 10px -5px rgba(156, 39, 176, 0.4);
+            background: var(--sidebar-active-bg); color: #fff;
+            box-shadow: 0 4px 15px -2px rgba(0, 0, 0, 0.2), 0 7px 10px -5px rgba(138, 43, 226, 0.4);
         }
 
         /* --- Main Panel --- */
         .main-panel {
-            flex-grow: 1;
-            margin-left: 260px;
-            padding: 20px;
-            transition: all 0.3s;
+            flex-grow: 1; margin-left: var(--sidebar-width); padding: 30px;
+            transition: margin-left var(--transition-speed) ease;
+            width: calc(100% - var(--sidebar-width));
         }
+
+        /* --- Sidebar Collapse --- */
+        .wrapper.sidebar-collapsed .sidebar { width: var(--sidebar-width-collapsed); }
+        .wrapper.sidebar-collapsed .main-panel {
+            margin-left: var(--sidebar-width-collapsed);
+            width: calc(100% - var(--sidebar-width-collapsed));
+        }
+        .wrapper.sidebar-collapsed .sidebar .sidebar-header h3,
+        .wrapper.sidebar-collapsed .sidebar .nav-link span { opacity: 0; visibility: hidden; width: 0; }
+        .wrapper.sidebar-collapsed .sidebar .nav-link i { margin-right: 0; }
+        .wrapper.sidebar-collapsed .sidebar .nav-link { justify-content: center; }
 
         /* --- Top Navbar --- */
         .navbar-main {
-            background-color: transparent !important;
-            box-shadow: none;
-            padding: 0.5rem 0;
+            background-color: var(--surface-color); box-shadow: var(--box-shadow);
+            border-radius: var(--border-radius); padding: 0.75rem 1.5rem;
         }
+        .navbar-main .sidebar-toggle-icon {
+            font-size: 1.5rem; color: var(--primary-color);
+            transition: all 0.3s ease-in-out;
+        }
+        .wrapper.sidebar-collapsed .sidebar-toggle-icon { transform: rotate(180deg); }
 
-        /* --- Custom Cards --- */
+        /* --- Card Styles --- */
         .card {
-            border: 0;
-            margin-bottom: 30px;
-            border-radius: 6px;
-            color: #333;
-            background: #fff;
-            width: 100%;
-            box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.14);
+            border: none; margin-bottom: 30px; border-radius: var(--border-radius);
+            background: var(--surface-color); width: 100%;
+            box-shadow: var(--box-shadow);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
         }
-
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1), 0 6px 6px rgba(0,0,0,0.1);
+        }
         .card .card-header {
-            padding: 15px;
-            border-bottom: none;
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid var(--border-color);
             background: transparent;
+            border-top-left-radius: var(--border-radius);
+            border-top-right-radius: var(--border-radius);
+        }
+        .card .card-title { font-weight: 500; }
+        .card .card-category { color: var(--text-muted-color); font-size: 0.9em; }
+        .card .card-body { padding: 1.5rem; }
+
+        /* --- Image Upload Card --- */
+        .card-image-upload { text-align: center; }
+        .image-preview-container {
+            width: 100%;
+            padding-top: 75%; /* Aspect ratio 4:3 */
+            border-radius: var(--border-radius);
+            background-color: #f0f0f0;
+            position: relative;
+            overflow: hidden;
+            border: 2px dashed var(--border-color);
+            margin-bottom: 1rem;
+        }
+        .image-preview-container img {
+            position: absolute; top: 0; left: 0;
+            width: 100%; height: 100%; object-fit: cover;
         }
 
-        .card .card-header-primary {
-            margin: -20px 15px 0;
-            border-radius: 3px;
-            padding: 15px;
-            background: linear-gradient(60deg, #ab47bc, #8e24aa);
-            box-shadow: 0 4px 20px 0px rgba(0, 0, 0, 0.14), 0 7px 10px -5px rgba(156, 39, 176, 0.4);
-        }
-
-        .card .card-title {
-            margin: 0;
-            color: #3C4858;
-            font-weight: 300;
-        }
-        .card .card-category {
-            color: #999;
-            margin: 0;
-            font-size: 14px;
-        }
-
-        .card .card-body {
-            padding: 20px 20px;
-        }
-
-        .card .card-footer {
-            padding: 15px 20px;
-            background-color: transparent;
-            border-top: 1px solid #eee;
-        }
-
-        /* Form Styling */
-        .form-label {
-            color: #555;
-            font-weight: 400;
-        }
-        .form-control, .form-select {
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            padding: 10px;
+        /* --- Form & Button Styling --- */
+        .form-label { font-weight: 500; }
+        .form-control, .form-select, .input-group-text {
+            border: 1px solid var(--border-color);
+            border-radius: 0.5rem;
         }
         .form-control:focus, .form-select:focus {
-            border-color: #9c27b0;
-            box-shadow: 0 0 0 2px rgba(156, 39, 176, 0.2);
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.25rem rgba(106, 27, 203, 0.25);
         }
-        .form-control[readonly] {
-            background-color: #e9ecef;
-            opacity: 1;
+        .input-group-text { background-color: #f8f9fa; }
+        .btn { border-radius: 0.5rem; font-weight: 500; padding: 0.75rem 1.25rem; }
+        .btn-primary {
+            background: linear-gradient(60deg, var(--secondary-color), var(--primary-color));
+            border: none;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 7px 14px rgba(0,0,0,0.25);
         }
 
-        /* Button Styling */
-        .btn-primary-material {
-            background-color: #9c27b0 !important;
-            border-color: #9c27b0 !important;
-            color: #fff !important;
-            box-shadow: 0 2px 2px 0 rgba(156, 39, 176, 0.14), 0 3px 1px -2px rgba(156, 39, 176, 0.2), 0 1px 5px 0 rgba(156, 39, 176, 0.12);
+        /* --- Toggle Switch --- */
+        .form-switch .form-check-input {
+            width: 3.5em; height: 1.75em;
         }
-        .btn-primary-material:hover {
-            background-color: #8e24aa !important;
-            border-color: #8e24aa !important;
+        .form-switch .form-check-input:checked {
+            background-color: var(--success-color);
+            border-color: var(--success-color);
         }
     </style>
 </head>
@@ -177,112 +177,142 @@
 
 <div class="wrapper">
     <nav class="sidebar">
-        <div class="sidebar-header">
-            <h3>QUẢN LÝ NHÀ HÀNG</h3>
-        </div>
+        <!-- Sidebar content from your original file -->
+        <div class="sidebar-header"><h3>QUẢN LÝ NHÀ HÀNG</h3></div>
         <ul class="nav sidebar-nav flex-column">
-            <li class="nav-item">
-                <a class="nav-link" th:href="@{/owner/dashboard}">
-                    <i class="fas fa-tachometer-alt"></i> Bảng điều khiển
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#">
-                    <i class="fas fa-user"></i> Hồ sơ người dùng
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link active" th:href="@{/restaurants/dishes/dish_list}">
-                    <i class="fas fa-utensils"></i> Danh sách món ăn
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#">
-                    <i class="fas fa-clipboard-list"></i> Đơn hàng
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#">
-                    <i class="fas fa-bell"></i> Thông báo
-                </a>
-            </li>
+            <li class="nav-item"><a class="nav-link" th:href="@{/restaurants/dashboard}"><i class="fas fa-tachometer-alt"></i> <span>Bảng điều khiển</span></a></li>
+            <li class="nav-item"><a class="nav-link" href="#"><i class="fas fa-user"></i> <span>Hồ sơ người dùng</span></a></li>
+            <li class="nav-item"><a class="nav-link active" th:href="@{/restaurants/dishes/dish_list}"><i class="fas fa-utensils"></i> <span>Danh sách món ăn</span></a></li>
+            <li class="nav-item"><a class="nav-link" href="#"><i class="fas fa-clipboard-list"></i> <span>Đơn hàng</span></a></li>
+            <li class="nav-item"><a class="nav-link" href="#"><i class="fas fa-bell"></i> <span>Thông báo</span></a></li>
         </ul>
     </nav>
 
     <div class="main-panel">
-        <nav class="navbar navbar-expand-lg navbar-main">
+        <nav class="navbar navbar-expand-lg navbar-main mb-4">
+            <!-- Navbar content from your original file -->
             <div class="container-fluid">
-                <h4 class="fw-light m-0">Quản Lý Món Ăn</h4>
+                <button class="btn btn-link p-0 me-3" type="button" id="sidebarToggle"><i class="fas fa-indent sidebar-toggle-icon"></i></button>
+                <h4 class="fw-light m-0">Chỉnh Sửa Món Ăn</h4>
+                <div class="collapse navbar-collapse justify-content-end">
+                    <ul class="navbar-nav align-items-center">
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownProfile" role="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="fas fa-user"></i></a>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownProfile">
+                                <li><a class="dropdown-item" href="#">Hồ sơ</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" th:href="@{/logout}">Đăng xuất</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
             </div>
         </nav>
 
         <div class="content pt-2">
             <div class="container-fluid">
-                <div class="row">
-                    <div class="col-md-12">
-                        <div class="card">
-                            <div class="card-header card-header-primary">
-                                <h4 class="card-title text-white">Chỉnh sửa món ăn</h4>
-                                <p class="card-category text-white-50">Cập nhật thông tin chi tiết cho món ăn</p>
+                <form id="editDishForm" th:action="@{/restaurants/dishes/add_dish}" method="post" th:object="${dish}" enctype="multipart/form-data">
+                    <input type="hidden" th:field="*{id}">
+                    <div class="row">
+                        <div class="col-lg-4">
+                            <div class="card card-image-upload h-100">
+                                <div class="card-header"><h5 class="card-title">Ảnh Món Ăn</h5></div>
+                                <div class="card-body d-flex flex-column justify-content-between">
+<!--                                    <div class="image-preview-container">-->
+<!--                                        <img id="imagePreview" th:src="*{imageUrl != null ? imageUrl : 'https://placehold.co/600x400/f0f0f0/6c757d?text=Chưa+có+ảnh'}" alt="Xem trước ảnh món ăn">-->
+<!--                                    </div>-->
+                                    <input type="file" id="dishImage" name="imageFile" class="d-none" accept="image/*">
+                                    <label for="dishImage" class="btn btn-secondary w-100">
+                                        <i class="fas fa-camera me-2"></i> Tải ảnh mới
+                                    </label>
+                                </div>
                             </div>
-                            <form id="editDishForm" th:action="@{/restaurants/dishes/add_dish}" method="post" th:object="${dish}" enctype="multipart/form-data">
-                                <div class="card-body">
-                                    <input type="hidden" th:field="*{id}">
+                        </div>
 
-                                    <div class="row">
-                                        <div class="col-md-12">
-                                            <div class="mb-3">
-                                                <label for="name" class="form-label">Tên món ăn (Không thể thay đổi)</label>
-                                                <input class="form-control" type="text" id="name" th:field="*{name}" readonly/>
-                                            </div>
-                                        </div>
+                        <div class="col-lg-8">
+                            <div class="card h-100">
+                                <div class="card-header">
+                                    <h4 class="card-title">Thông tin chi tiết</h4>
+                                    <p class="card-category">Cập nhật các thông tin cho món ăn của bạn</p>
+                                </div>
+                                <div class="card-body">
+                                    <div class="mb-4">
+                                        <label for="name" class="form-label">Tên món ăn (Không thể thay đổi)</label>
+                                        <input class="form-control form-control-lg bg-light" type="text" id="name" th:field="*{name}" readonly/>
+                                    </div>
+                                    <div class="mb-4">
+                                        <label for="description" class="form-label">Mô tả</label>
+                                        <textarea class="form-control" id="description" th:field="*{description}" rows="4" placeholder="Nhập mô tả hấp dẫn về món ăn..."></textarea>
                                     </div>
                                     <div class="row">
-                                        <div class="col-md-12">
-                                            <div class="mb-3">
-                                                <label for="description" class="form-label">Mô tả</label>
-                                                <textarea class="form-control" id="description" th:field="*{description}" rows="3"></textarea>
+                                        <div class="col-md-6 mb-4">
+                                            <label for="price" class="form-label">Giá</label>
+                                            <div class="input-group">
+                                                <span class="input-group-text"><i class="fas fa-dollar-sign"></i></span>
+                                                <input type="number" class="form-control" id="price" th:field="*{price}" required min="0" step="1000" placeholder="VD: 50000">
+                                                <span class="input-group-text">VNĐ</span>
                                             </div>
                                         </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <div class="mb-3">
-                                                <label for="price" class="form-label">Giá (VNĐ)</label>
-                                                <input type="number" class="form-control" id="price" th:field="*{price}" required min="0" step="1000">
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="mb-3">
-                                                <label for="category" class="form-label">Danh mục</label>
+                                        <div class="col-md-6 mb-4">
+                                            <label for="category" class="form-label">Danh mục</label>
+                                            <div class="input-group">
+                                                <span class="input-group-text"><i class="fas fa-tags"></i></span>
                                                 <select class="form-select" id="category" th:field="*{category}" required>
                                                     <option value="">-- Chọn danh mục --</option>
-                                                    <option th:each="cat : ${categories}"
-                                                            th:value="${cat.id}"
-                                                            th:text="${cat.name}">
-                                                    </option>
+                                                    <option th:each="cat : ${categories}" th:value="${cat.id}" th:text="${cat.name}"></option>
                                                 </select>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="card-footer d-flex justify-content-end">
-                                    <a th:href="@{/restaurants/dishes/dish_list}" class="btn btn-secondary me-2">
+                                <div class="card-footer bg-transparent border-0 text-end">
+                                    <a th:href="@{/restaurants/dishes/dish_list}" class="btn btn-outline-secondary me-2">
                                         <i class="fas fa-times me-1"></i> Hủy
                                     </a>
-                                    <button type="submit" form="editDishForm" class="btn btn-primary-material">
-                                        <i class="fas fa-save me-1"></i> Lưu thay đổi
+                                    <button type="submit" form="editDishForm" class="btn btn-primary">
+                                        <i class="fas fa-save me-2"></i> Lưu thay đổi
                                     </button>
                                 </div>
-                            </form>
+                            </div>
                         </div>
                     </div>
-                </div>
+                </form>
             </div>
         </div>
     </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // Sidebar Toggle Script
+        const sidebarToggle = document.getElementById('sidebarToggle');
+        const wrapper = document.querySelector('.wrapper');
+        if (sidebarToggle) {
+            sidebarToggle.addEventListener('click', () => {
+                wrapper.classList.toggle('sidebar-collapsed');
+                localStorage.setItem('sidebarState', wrapper.classList.contains('sidebar-collapsed') ? 'collapsed' : 'expanded');
+            });
+        }
+        if (localStorage.getItem('sidebarState') === 'collapsed') {
+            wrapper.classList.add('sidebar-collapsed');
+        }
+
+        // Image Preview Script
+        const dishImageInput = document.getElementById('dishImage');
+        const imagePreview = document.getElementById('imagePreview');
+        if(dishImageInput && imagePreview) {
+            dishImageInput.addEventListener('change', function(event) {
+                if (event.target.files && event.target.files[0]) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        imagePreview.src = e.target.result;
+                    }
+                    reader.readAsDataURL(event.target.files[0]);
+                }
+            });
+        }
+    });
+</script>
 </body>
 </html>
