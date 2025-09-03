@@ -13,11 +13,21 @@ public class UserAddress {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @NotNull
-    private String address;
+
+    private String name; // Tên người nhận
+
+    private String phone; // Số điện thoại
+
+    private String fullAddress;
+
+    private Double latitude;
+
+    private Double longitude;
+
+    private boolean defaultAddress;
+
     @ManyToOne
     @JoinColumn(name = "user_id")
     @NotNull
     private User user;
-
 }
