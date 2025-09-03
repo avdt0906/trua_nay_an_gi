@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -57,6 +58,10 @@ public class DishController {
             List<Dish> popularDishes = dishService.findPopularDishesByRestaurant(restaurant.getId(), dish.getId());
 
             List<DishOption> dishOptionsList = dishOptionService.findDishOptionByDishId(id);
+
+            Collections.shuffle(similarDishes);
+            int limit = Math.min(similarDishes.size(), 4);
+            similarDishes = similarDishes.subList(0, limit);
 
             model.addAttribute("dish", dish);
             model.addAttribute("dishOptions", dishOptionsList);
