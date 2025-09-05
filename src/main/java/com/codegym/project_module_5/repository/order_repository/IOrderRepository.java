@@ -7,4 +7,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface IOrderRepository extends JpaRepository<Orders, Long> {
     Iterable<Orders> findAllByRestaurantId(Long restaurantId);
+    Iterable<Orders> findByUser_IdOrderByIdDesc(Long userId);
 }
