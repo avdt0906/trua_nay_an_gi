@@ -69,7 +69,7 @@ public class SecurityConfig {
                 .authenticationProvider(authenticationProvider())
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/css/**", "/js/**", "/images/**").permitAll()
-                        .requestMatchers("/", "/home", "/dish/**").permitAll()
+                        .requestMatchers("/", "/home", "/dish/**", "/restaurant_client/**").permitAll()
                         .requestMatchers("/account/**","/register","/verify-otp/profile/").permitAll()
 
                         // *** THÊM DÒNG NÀY ĐỂ CHO PHÉP TRUY CẬP GIỎ HÀNG ***
