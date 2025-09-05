@@ -461,9 +461,9 @@
                                                 <div class="form-check">
                                                     <input class="form-check-input" type="radio"
                                                         name="selectedAddressRadio" th:id="${'addr-' + addr.id}"
-                                                        th:value="${addr.address}">
+                                                        th:value="${addr.fullAddress}">
                                                     <label class="form-check-label" th:for="${'addr-' + addr.id}">
-                                                        <strong th:text="${addr.address}">Địa chỉ</strong>
+                                                        <strong th:text="${addr.fullAddress}">Địa chỉ</strong>
                                                     </label>
                                                 </div>
                                                 <form th:action="@{/addresses/delete/{id}(id=${addr.id})}" method="get">
@@ -475,7 +475,7 @@
                                                 method="post">
                                                 <div class="input-group input-group-sm">
                                                     <input type="text" class="form-control" name="address"
-                                                        th:value="${addr.address}">
+                                                        th:value="${addr.fullAddress}">
                                                     <button class="btn btn-shoppee" type="submit">Lưu</button>
                                                 </div>
                                             </form>
@@ -487,21 +487,6 @@
                             </div>
                             <div th:if="${addressList == null or addressList.isEmpty()}" class="text-muted">Chưa có địa
                                 chỉ nào.</div>
-                        </div>
-
-                        <!-- Thêm địa chỉ mới -->
-                        <div class="col-lg-5">
-                            <h6 class="mb-3">Thêm địa chỉ mới</h6>
-                            <form th:action="@{/addresses/add}" th:object="${newAddress}" method="post">
-                                <div class="mb-3">
-                                    <label class="form-label">Địa chỉ mới</label>
-                                    <input type="text" class="form-control" th:field="*{address}"
-                                        placeholder="Nhập địa chỉ mới" required>
-                                </div>
-                                <div class="d-grid">
-                                    <button type="submit" class="btn btn-shoppee">Thêm địa chỉ</button>
-                                </div>
-                            </form>
                         </div>
                     </div> <!-- row -->
                 </div>
