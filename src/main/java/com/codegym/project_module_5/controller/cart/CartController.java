@@ -221,6 +221,7 @@ public class CartController {
 
             List<UserAddress> addressList = userService.getUserAddresses(currentUser.getId());
             model.addAttribute("addressList", addressList);
+            model.addAttribute("newAddress", new UserAddress());
 
             Object paymentMethod = session.getAttribute("paymentMethod");
             Object orderNote = session.getAttribute("orderNote");

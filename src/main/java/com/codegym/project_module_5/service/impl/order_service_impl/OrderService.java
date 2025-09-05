@@ -54,9 +54,9 @@ public class OrderService implements IOrderService {
         Optional<Orders> orderOptional = orderRepository.findById(orderId);
         if (orderOptional.isPresent()) {
             Orders order = orderOptional.get();
-            // Cho phép hủy nếu trạng thái đơn hàng nhỏ hơn 4 (tức là trước khi giao hàng)
-            if (order.getOrderStatus().getId() < 4) {
-                OrderStatus cancelledStatus = orderStatusRepository.findById(6L) // Giả sử ID 6 là "Đã hủy"
+            // Giả sử chỉ có thể hủy đơn hàng khi đang ở trạng thái "Đang chờ" (ID = 1)
+            if (order.getOrderStatus().getId() == 1) {
+                OrderStatus cancelledStatus = orderStatusRepository.findById(4L) // Giả sử ID 4 là "Đã hủy"
                         .orElseThrow(() -> new RuntimeException("Không tìm thấy trạng thái Đã hủy"));
                 order.setOrderStatus(cancelledStatus);
                 orderRepository.save(order);
@@ -64,9 +64,5 @@ public class OrderService implements IOrderService {
             }
         }
         return false;
-    }
-    @Override
-    public Iterable<Orders> findByUserId(Long userId) {
-        return orderRepository.findByUser_IdOrderByIdDesc(userId);
     }
 }
