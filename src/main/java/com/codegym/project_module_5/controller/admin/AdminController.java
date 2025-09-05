@@ -1,9 +1,11 @@
 package com.codegym.project_module_5.controller.admin;
 
+import com.codegym.project_module_5.model.restaurant_model.Dish;
 import com.codegym.project_module_5.model.restaurant_model.Restaurant;
 import com.codegym.project_module_5.model.shipper_model.Shipper;
 import com.codegym.project_module_5.model.user_model.User;
 import com.codegym.project_module_5.service.order_service.IOrderService;
+import com.codegym.project_module_5.service.restaurant_service.IDishService;
 import com.codegym.project_module_5.service.restaurant_service.IRestaurantService;
 import com.codegym.project_module_5.service.shipper_service.IShipperService;
 import com.codegym.project_module_5.service.user_service.IUserService;
@@ -31,7 +33,8 @@ public class AdminController {
 
     @Autowired
     private IRestaurantService restaurantService;
-
+    @Autowired
+    private IDishService dishService;
     /**
      * Chuyển hướng từ /admin sang /admin/dashboard.
      * 
@@ -54,11 +57,13 @@ public class AdminController {
         List<User> owners = userService.findAllByRoleName("OWNER");
         List<User> customers = userService.findAllByRoleName("CUSTOMER");
         long orderCount = orderService.count();
+        List<Dish> topDishes = dishService.findTop8ByOrderByDiscountDesc();
 
         model.addAttribute("ownerCount", owners != null ? owners.size() : 0);
         model.addAttribute("customerCount", customers != null ? customers.size() : 0);
         model.addAttribute("orderCount", orderCount);
         model.addAttribute("activePage", "dashboard");
+        model.addAttribute("topDishes", topDishes);
 
         return "admin/dashboard";
     }

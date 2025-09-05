@@ -72,6 +72,10 @@ public class DishService implements IDishService {
         return dishRepository.findPopularDishesByRestaurant(restaurantId, excludeDishId);
     }
     @Override
+    public List<Dish> findTop8ByOrderByDiscountDesc() {
+        return dishRepository.findTop8ByOrderByDiscountDesc();
+    }
+    @Override
     public List<Dish> findByRestaurantId(Long restaurantId) {
         return dishRepository.findByRestaurant_Id(restaurantId);
     }
