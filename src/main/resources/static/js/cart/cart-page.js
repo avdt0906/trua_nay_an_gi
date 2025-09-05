@@ -6,8 +6,8 @@ document.addEventListener('DOMContentLoaded', function () {
     const confirmDeleteModalEl = document.getElementById('confirmDeleteModal');
     const confirmDeleteModal = new bootstrap.Modal(confirmDeleteModalEl);
     const confirmDeleteBtn = document.getElementById('confirm-delete-btn');
-    const selectAllCheckbox = document.getElementById('select-all-checkbox');
-    const checkoutButton = document.querySelector('a.btn-danger');
+    const selectAllButton = document.getElementById('select-all-btn');
+    const checkoutButton = document.getElementById('checkout-btn');
 
     let itemIdToDelete = null;
 
@@ -17,8 +17,9 @@ document.addEventListener('DOMContentLoaded', function () {
         currency: 'VND'
     });
 
-    // --- Hàm cập nhật tổng tiền ---
+    // --- Hàm cập nhật tổng tiền và trạng thái nút thanh toán ---
     function updateTotals() {
+        console.log("Updating totals now..."); // Thêm log để dễ dàng kiểm tra
         let subtotal = 0;
         const selectedItems = document.querySelectorAll('.item-checkbox:checked');
 
@@ -29,7 +30,7 @@ document.addEventListener('DOMContentLoaded', function () {
         selectedItems.forEach(checkbox => {
             const row = checkbox.closest('.cart-item-row');
             if (row) {
-                row.style.backgroundColor = '#f8f9fa'; // Highlight dòng được chọn
+                row.style.backgroundColor = '#f0f8ff';
                 const price = parseFloat(row.getAttribute('data-item-price'));
                 const quantity = parseInt(row.querySelector('.quantity-input').value);
                 subtotal += price * quantity;
@@ -51,24 +52,12 @@ document.addEventListener('DOMContentLoaded', function () {
             document.getElementById('cart-total').innerText = currencyFormatter.format(total);
 
             if (checkoutButton) {
-                checkoutButton.classList.toggle('disabled', selectedItems.length === 0);
+                checkoutButton.disabled = selectedItems.length === 0;
             }
         }
     }
 
-    // --- Hàm cập nhật trạng thái của checkbox "Chọn tất cả" ---
-    function updateSelectAllCheckboxState() {
-        if (selectAllCheckbox) {
-            const itemCheckboxes = document.querySelectorAll('.item-checkbox');
-            const allChecked = itemCheckboxes.length > 0 && Array.from(itemCheckboxes).every(cb => cb.checked);
-            const someChecked = Array.from(itemCheckboxes).some(cb => cb.checked);
-
-            selectAllCheckbox.checked = allChecked;
-            selectAllCheckbox.indeterminate = !allChecked && someChecked;
-        }
-    }
-
-    // --- SỬA ĐỔI: Thêm lại hàm cập nhật số lượng trên navbar ---
+    // --- Hàm cập nhật số lượng trên navbar ---
     function updateCartCountFromServer() {
         fetch('/cart/count')
             .then(response => response.json())
@@ -82,45 +71,30 @@ document.addEventListener('DOMContentLoaded', function () {
             .catch(error => console.error('Error updating cart count:', error));
     }
 
-    // --- Lắng nghe sự kiện trên container của các món hàng ---
+    // --- Lắng nghe các sự kiện thay đổi trong giỏ hàng ---
     cartContainer.addEventListener('change', function(event) {
-        if (event.target.classList.contains('quantity-input')) {
-            const row = event.target.closest('.cart-item-row');
-            const price = parseFloat(row.getAttribute('data-item-price'));
-            const quantity = parseInt(event.target.value);
-            const subtotalEl = row.querySelector('.item-subtotal');
-            subtotalEl.innerText = currencyFormatter.format(price * quantity);
-            updateTotals();
-        }
-
-        if (event.target.classList.contains('item-checkbox')) {
-            updateSelectAllCheckboxState();
+        const target = event.target;
+        if (target.classList.contains('quantity-input') || target.classList.contains('item-checkbox')) {
             updateTotals();
         }
     });
 
-    // --- Lắng nghe sự kiện click cho nút xóa ---
-    cartContainer.addEventListener('click', function(event) {
-        const removeButton = event.target.closest('.remove-item-btn');
-        if (removeButton) {
-            event.preventDefault();
-            itemIdToDelete = removeButton.getAttribute('data-item-id');
-        }
-    });
+    // --- Lắng nghe các sự kiện click ---
+    document.body.addEventListener('click', function(event) {
+        const target = event.target;
 
-    // --- Logic cho checkbox "Chọn tất cả" ---
-    if (selectAllCheckbox) {
-        selectAllCheckbox.addEventListener('change', function() {
-            document.querySelectorAll('.item-checkbox').forEach(checkbox => {
-                checkbox.checked = this.checked;
+        // Nút "Chọn tất cả"
+        if (target.id === 'select-all-btn') {
+            const allCheckboxes = document.querySelectorAll('.item-checkbox');
+            const isAllSelected = Array.from(allCheckboxes).every(cb => cb.checked);
+            allCheckboxes.forEach(checkbox => {
+                checkbox.checked = !isAllSelected;
             });
             updateTotals();
-        });
-    }
+        }
 
-    // --- Logic cho nút "Xóa" trong Modal ---
-    confirmDeleteBtn.addEventListener('click', function() {
-        if (itemIdToDelete) {
+        // Nút "Xóa" trong modal
+        if (target.id === 'confirm-delete-btn' && itemIdToDelete) {
             fetch(`/cart/remove/${itemIdToDelete}`, { method: 'POST' })
                 .then(response => response.ok ? response.json() : Promise.reject('Lỗi khi xóa'))
                 .then(data => {
@@ -128,8 +102,6 @@ document.addEventListener('DOMContentLoaded', function () {
                     const rowToDelete = cartContainer.querySelector(`.cart-item-row[data-item-id='${itemIdToDelete}']`);
                     if (rowToDelete) rowToDelete.remove();
                     updateTotals();
-                    updateSelectAllCheckboxState();
-                    // SỬA ĐỔI: Gọi lại hàm cập nhật số lượng sau khi xóa
                     updateCartCountFromServer();
                 })
                 .catch(error => console.error('Error:', error))
@@ -138,28 +110,35 @@ document.addEventListener('DOMContentLoaded', function () {
                     itemIdToDelete = null;
                 });
         }
-    });
 
-    // --- Logic cho nút thanh toán ---
-    if (checkoutButton) {
-        checkoutButton.addEventListener('click', function(event) {
+        // Nút thanh toán
+        if(target.id === 'checkout-btn'){
             event.preventDefault();
 
             const selectedItems = document.querySelectorAll('.item-checkbox:checked');
-            if (selectedItems.length === 0) {
-                alert('Vui lòng chọn ít nhất một sản phẩm để thanh toán.');
-                return;
-            }
-
             const selectedItemIds = Array.from(selectedItems).map(cb => cb.value);
             const params = new URLSearchParams();
             selectedItemIds.forEach(id => params.append('selectedItems', id));
 
             window.location.href = `/cart/checkout?${params.toString()}`;
-        });
-    }
+        }
 
-    // --- Khởi tạo khi tải trang ---
-    updateSelectAllCheckboxState();
-    updateTotals();
+        // Nút xóa item (lấy id để đưa vào modal)
+        const removeButton = target.closest('.remove-item-btn');
+        if (removeButton) {
+            event.preventDefault();
+            itemIdToDelete = removeButton.getAttribute('data-item-id');
+        }
+    });
+
+
+    // SỬA ĐỔI: ĐÂY LÀ PHẦN QUAN TRỌNG NHẤT
+    // ======================================================================
+    // Luôn kiểm tra lại trạng thái khi trang được hiển thị (tải mới hoặc back)
+    window.addEventListener('pageshow', function(event) {
+        // event.persisted cho biết trang có được khôi phục từ cache hay không
+        console.log(`Page show event fired. Persisted: ${event.persisted}`);
+        updateTotals();
+    });
+    // ======================================================================
 });
