@@ -3,15 +3,16 @@ package com.codegym.project_module_5.repository.restaurant_repository;
 import com.codegym.project_module_5.model.restaurant_model.Dish;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.CrudRepository;
+
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Optional;
 
 
-public interface IDishRepository extends CrudRepository<Dish, Long> {
+public interface IDishRepository extends JpaRepository<Dish, Long> {
     Page<Dish> findAll(Pageable pageable);
 
     Iterable<Dish> findAllByRestaurantId(Long restaurantId);
@@ -25,4 +26,9 @@ public interface IDishRepository extends CrudRepository<Dish, Long> {
     List<Dish> findPopularDishesByRestaurant(@Param("restaurantId") Long restaurantId, @Param("excludeDishId") Long excludeDishId);
 
     List<Dish> findByRestaurant_Id(Long Id);
+
+//    @Query("SELECT d FROM Dish d JOIN d.restaurant r, Coupon c WHERE c.restaurant = r GROUP BY d.id ORDER BY MAX(c.percentDiscount) DESC")
+//    List<Dish> findDishesWithTopDiscounts(Pageable pageable); // GHI CHÚ: Sử dụng Pageable để giới hạn số lượng kết quả.
+
+    List<Dish> findTop8ByOrderByDiscountDesc();
 }
