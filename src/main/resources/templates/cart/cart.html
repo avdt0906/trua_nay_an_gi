@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<html lang="vi" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -20,14 +20,12 @@
     <h2 class="mb-4 fw-bold">Giỏ hàng của bạn</h2>
 
     <div id="cart-container">
-        <!-- Thông báo giỏ hàng trống -->
         <div th:if="${cartItems == null or #lists.isEmpty(cartItems)}" id="empty-cart-message" class="text-center p-5 bg-white rounded shadow-sm">
             <i class="fas fa-shopping-cart fa-4x text-muted mb-3"></i>
             <h4 class="text-muted">Giỏ hàng của bạn đang trống</h4>
             <a href="/" class="btn btn-danger mt-3"><i class="fas fa-store me-2"></i> Quay lại trang chủ</a>
         </div>
 
-        <!-- Nội dung giỏ hàng -->
         <div class="row" th:if="${cartItems != null and not #lists.isEmpty(cartItems)}" id="cart-content">
             <div class="col-lg-8">
                 <div class="card border-0 shadow-sm">
@@ -35,19 +33,12 @@
                         <h5 class="mb-0 text-dark">
                             <i class="fas fa-list me-2 text-secondary"></i>Sản phẩm trong giỏ hàng
                         </h5>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="select-all-checkbox">
-                            <label class="form-check-label" for="select-all-checkbox">
-                                Chọn tất cả
-                            </label>
-                        </div>
+                        <button class="btn btn-outline-primary btn-sm" id="select-all-btn">Chọn tất cả</button>
                     </div>
 
                     <div class="card-body" id="cart-items-container">
-                        <!-- Dữ liệu giỏ hàng -->
                         <div th:each="item : ${cartItems}" class="d-flex align-items-center border-bottom py-3 cart-item-row" th:data-item-id="${item.id}" th:data-item-price="${item.dish.price}">
                             <div class="form-check me-3">
-                                <!-- SỬA ĐỔI: Giá trị của checkbox là ID của món ăn (dish.id) -->
                                 <input class="form-check-input item-checkbox" type="checkbox" th:value="${item.dish.id}">
                             </div>
                             <img th:src="@{'/images/dish/eat_food/' + ${item.dish.pictureUrl}}" class="rounded me-3" style="width: 80px; height: 80px; object-fit: cover;" alt="Dish Image">
@@ -70,7 +61,6 @@
                 </div>
             </div>
             <div class="col-lg-4">
-                <!-- Phần tổng kết -->
                 <div class="card border-0 shadow-sm">
                     <div class="card-body">
                         <h5 class="card-title mb-3">Tổng cộng</h5>
@@ -89,7 +79,7 @@
                             </li>
                         </ul>
                         <div class="d-grid mt-4">
-                            <a href="/cart/checkout" class="btn btn-danger btn-lg">Tiến hành thanh toán</a>
+                            <button id="checkout-btn" class="btn btn-danger btn-lg" disabled>Tiến hành thanh toán</button>
                         </div>
                     </div>
                 </div>
@@ -98,7 +88,6 @@
     </div>
 </main>
 
-<!-- MODAL XÁC NHẬN XÓA -->
 <div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
