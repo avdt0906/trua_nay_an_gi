@@ -7,156 +7,310 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="/css/index.css"/>
-  <style>
-    .restaurant-section {
-      background-color: #fff;
-      border-radius: 15px;
-      padding: 1.5rem;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-    }
-    .restaurant-header {
-      display: flex;
-      align-items: center;
-    }
-    .restaurant-header h5 {
-      font-weight: bold;
-      font-size: 1.25rem; /* Tăng kích thước tên nhà hàng */
-      margin-bottom: 0.25rem;
-    }
-    .restaurant-logo {
-      width: 80px; /* Tăng kích thước logo nhà hàng */
-      height: 80px; /* Tăng kích thước logo nhà hàng */
-      object-fit: cover;
-      border-radius: 10px;
-      margin-right: 1.25rem;
-    }
-    .restaurant-meta {
-      font-size: 1rem; /* Tăng kích thước thông tin meta */
-      color: #6c757d;
-    }
-    .dish-item {
-      display: flex;
-      align-items: center;
-      padding: 0.75rem 0;
-      border-bottom: 1px solid #f0f0f0;
-    }
-    .dish-item:last-child {
-      border-bottom: none;
-    }
-    .dish-img {
-      width: 60px; /* Giảm kích thước ảnh món ăn */
-      height: 60px; /* Giảm kích thước ảnh món ăn */
-      object-fit: cover;
-      border-radius: 8px;
-      margin-right: 1rem;
-    }
-    .dish-info {
-      flex-grow: 1;
-    }
-    .dish-name {
-      font-weight: 600;
-      font-size: 0.95rem; /* Giảm kích thước tên món ăn */
-    }
-    .dish-price {
-      font-weight: 500;
-      color: #333;
-      font-size: 0.9rem; /* Giảm kích thước giá */
-    }
-  </style>
 </head>
-<body style="background-color: #f8f9fa;">
+<body>
 
-<!-- Navbar -->
-<nav class="navbar navbar-expand-lg bg-white border-bottom sticky-top shadow-sm">
+<!-- Sử dụng Navbar Fragment -->
+<div th:replace="~{user/fragments/_navbar :: navbar}"></div>
+
+<!-- Header Section -->
+<div class="main-header">
   <div class="container">
-    <a class="navbar-brand d-flex align-items-center" href="/">
-      <img src="/images/logo/logo_thiet_ke.png" alt="Logo" width="40" height="40" class="me-2 rounded-circle">
-    </a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
-      <ul class="navbar-nav">
-        <li class="nav-item"><a class="nav-link" href="#">Đồ ăn</a></li>
-        <li class="nav-item"><a class="nav-link" href="#">Thực phẩm</a></li>
-        <li class="nav-item"><a class="nav-link" href="#">Rượu bia</a></li>
-      </ul>
-    </div>
-    <div class="d-flex align-items-center">
-      <form th:action="@{/}" method="get" class="d-flex me-3" style="width: 250px;">
-        <input class="form-control form-control-sm me-1" type="search" placeholder="Tìm món ăn..." name="search" th:value="${search}">
-        <button class="btn btn-sm btn-outline-danger" type="submit"><i class="fas fa-search"></i></button>
-      </form>
-      <div class="d-flex align-items-center gap-2">
-        <div th:if="${!isAuthenticated}">
-          <a th:href="@{/account/login}" class="btn btn-outline-danger">Đăng nhập</a>
-          <a th:href="@{/register}" class="btn btn-danger">Đăng ký</a>
-        </div>
-        <div class="dropdown" th:if="${isAuthenticated}">
-          <a class="d-flex align-items-center text-decoration-none dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-            <img th:src="${#strings.isEmpty(currentUser?.avatarUrl) ? '/images/logo_nguoi_dung.png' : currentUser.avatarUrl}"
-                 alt="avatar" width="30" height="30" class="rounded-circle me-2">
-            <span th:text="${currentUser != null ? currentUser.fullName : 'Tài khoản'}"></span>
-          </a>
-          <ul class="dropdown-menu dropdown-menu-end">
-            <li><a class="dropdown-item" href="#">Trang cá nhân</a></li>
-            <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item" th:href="@{/logout}">Đăng xuất</a></li>
-          </ul>
-        </div>
-      </div>
-    </div>
+    <h1 style="text-align: center" class="header-title" th:if="${search == null or search.isEmpty()}">
+      Danh sách ưu đãi
+    </h1>
+    <h1 class="header-title" th:unless="${search == null or search.isEmpty()}">
+      Kết quả tìm kiếm cho '<span th:text="${search}"></span>'
+    </h1>
   </div>
-</nav>
+</div>
 
 <!-- Main Content -->
-<main class="container py-4">
-  <h2 class="mb-4 fw-bold" th:if="${search == null or search.isEmpty()}">Quán ngon gần bạn</h2>
-  <h2 class="mb-4 fw-bold" th:unless="${search == null or search.isEmpty()}">Kết quả tìm kiếm cho '<span th:text="${search}"></span>'</h2>
+<main class="container">
 
-  <div class="d-grid gap-4">
-    <!-- Lặp qua từng nhà hàng -->
-    <div class="restaurant-section" th:each="restaurantEntry : ${dishesByRestaurant}">
-      <!-- Thông tin nhà hàng -->
-      <div class="restaurant-header mb-3">
-        <img th:src="@{'images/logo/' + ${restaurantEntry.key.logoUrl}}" class="restaurant-logo" alt="Logo nhà hàng">
-        <div>
-          <h5 th:text="${restaurantEntry.key.name}">Tên nhà hàng</h5>
-          <div class="restaurant-meta">
-            <span><i class="fas fa-star text-warning"></i> 4.5</span>
-            <span class="mx-2">·</span>
-            <span><i class="fas fa-map-marker-alt"></i> <span th:text="${restaurantEntry.key.address}"></span></span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Danh sách món ăn của nhà hàng -->
-      <div class="dish-list">
-        <div class="dish-item" th:each="dish : ${restaurantEntry.value}">
-          <img th:src="@{'images/dish/eat_food/' + ${dish.pictureUrl}}"
-               class="dish-img" 
-               th:alt="${dish.name}"/>
-          <div class="dish-info">
-            <div class="dish-name" th:text="${dish.name}">Cơm Rang Gà Nguyên Đùi</div>
-            <div class="dish-price" th:text="${'₫' + #numbers.formatDecimal(dish.price, 0, 'COMMA', 0, 'POINT')}">55.000đ</div>
-          </div>
-          <div class="d-flex gap-2">
-            <a th:href="@{/dish/{id}(id=${dish.id})}" class="btn btn-outline-primary btn-sm">
-              <i class="fas fa-eye"></i> Chi tiết
-            </a>
-            <a href="#" class="btn btn-outline-danger btn-sm"><i class="fas fa-plus"></i></a>
-          </div>
-        </div>
-      </div>
+  <!-- Results Info -->
+  <div class="results-info">
+    <div class="results-count">
+      <strong>KHU VỰC</strong>
+      <span th:if="${#lists.isEmpty(dishes)}">0 kết quả</span>
+      <span th:unless="${#lists.isEmpty(dishes)}" th:text="${#lists.size(dishes)} + ' kết quả'">1086 kết quả</span>
     </div>
+    <select class="sort-dropdown">
+      <option>Tất cả</option>
+      <option>Giá thấp đến cao</option>
+      <option>Giá cao đến thấp</option>
+      <option>Đánh giá cao</option>
+      <option>Bán chạy</option>
+    </select>
   </div>
 
-  <!-- Thông báo nếu không tìm thấy -->
-  <div th:if="${#maps.isEmpty(dishesByRestaurant)}" class="text-center mt-5">
-    <p class="text-muted fs-4">Không tìm thấy nhà hàng hoặc món ăn phù hợp.</p>
+  <!-- Dishes Grid -->
+  <div class="dishes-grid">
+    <!-- Lặp qua từng món ăn từ tất cả nhà hàng -->
+    <th:block th:each="restaurantEntry : ${dishesByRestaurant}">
+      <div class="dish-card" th:each="dish : ${restaurantEntry.value}">
+        <div class="dish-image-container">
+          <img th:src="@{'/images/dish/' + ${dish.pictureUrl}}"
+               class="dish-image"
+               th:alt="${dish.name}">
+          <div class="available-indicator"></div>
+          <div class="favorite-badge" th:data-dish-id="${dish.id}">
+            <i class="fas fa-heart"></i>
+          </div>
+          <div class="discount-badge">Giảm 20%</div>
+        </div>
+
+        <div class="dish-info">
+          <h3 class="dish-name" th:text="${dish.name}">Cơm Rang Dương Châu</h3>
+          <p class="restaurant-name" th:text="${restaurantEntry.key.name}">Nhà hàng ABC</p>
+
+          <div class="dish-price">
+            <span th:text="${#numbers.formatDecimal(dish.price, 0, 'COMMA', 0, 'POINT')} + 'đ'">25,000đ</span>
+            <span class="original-price" th:text="${#numbers.formatDecimal(dish.price * 1.25, 0, 'COMMA', 0, 'POINT')} + 'đ'">31,250đ</span>
+          </div>
+
+          <div class="dish-stats">
+            <div class="rating-section">
+              <div class="rating">
+                <i class="fas fa-star"></i> 4.5
+              </div>
+            </div>
+            <div class="sold-count">
+              Đã bán 150+
+            </div>
+          </div>
+
+          <div class="add-to-cart-section">
+            <a th:href="@{/dish/{id}(id=${dish.id})}" class="view-btn">
+              <i class="fas fa-eye me-1"></i> Xem
+            </a>
+            <button type="button" class="btn add-cart-btn add-to-cart-btn" th:data-dish-id="${dish.id}">
+              <i class="fas fa-plus"></i> Thêm
+            </button>
+          </div>
+        </div>
+      </div>
+    </th:block>
+  </div>
+
+  <!-- Empty State -->
+  <div th:if="${#maps.isEmpty(dishesByRestaurant)}" class="empty-state">
+    <i class="fas fa-utensils"></i>
+    <h4>Không tìm thấy món ăn phù hợp</h4>
+    <p>Thử thay đổi bộ lọc hoặc tìm kiếm với từ khóa khác</p>
+    <button class="btn btn-primary">
+      <i class="fas fa-redo me-2"></i>Tìm kiếm lại
+    </button>
   </div>
 </main>
 
+<!-- Toast Notification -->
+<div class="position-fixed bottom-0 end-0 p-3" style="z-index: 1050">
+  <div id="add-to-cart-toast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+    <div class="toast-header bg-success text-white">
+      <i class="fas fa-shopping-cart me-2"></i>
+      <strong class="me-auto">Thành công</strong>
+      <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"></button>
+    </div>
+    <div class="toast-body">
+      Đã thêm món ăn vào giỏ hàng!
+    </div>
+  </div>
+
+  <div id="favorite-toast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+    <div class="toast-header bg-danger text-white">
+      <i class="fas fa-heart me-2"></i>
+      <strong class="me-auto">Yêu thích</strong>
+      <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"></button>
+    </div>
+    <div class="toast-body">
+      Đã thêm món ăn vào danh sách yêu thích!
+    </div>
+  </div>
+</div>
+
+<nav th:if="${dishesPage.totalPages > 1}">
+  <ul class="pagination">
+    <!-- Nút Previous -->
+    <li class="page-item" th:classappend="${dishesPage.first} ? 'disabled'">
+      <a class="page-link"
+         th:href="@{/home(page=${dishesPage.number - 1}, search=${search})}">
+        <i class="fas fa-angle-left"></i>
+      </a>
+    </li>
+
+    <!-- Các số trang -->
+    <li class="page-item"
+        th:each="i : ${#numbers.sequence(0, dishesPage.totalPages - 1)}"
+        th:classappend="${i == dishesPage.number} ? 'active'">
+      <a class="page-link"
+         th:href="@{/home(page=${i}, search=${search})}"
+         th:text="${i + 1}">1</a>
+    </li>
+
+    <!-- Nút Next -->
+    <li class="page-item" th:classappend="${dishesPage.last} ? 'disabled'">
+      <a class="page-link"
+         th:href="@{/home(page=${dishesPage.number + 1}, search=${search})}">
+        <i class="fas fa-angle-right"></i>
+      </a>
+    </li>
+  </ul>
+</nav>
+
+
+<footer class="mt-5 bg-light pt-4 pb-4 border-top">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-3">
+        <h6>Công ty</h6>
+        <ul class="list-unstyled small">
+          <li>Giới thiệu</li>
+          <li>Trung tâm Trợ giúp</li>
+          <li>Quy chế</li>
+          <li>Điều khoản sử dụng</li>
+          <li>Bảo mật thông tin</li>
+        </ul>
+      </div>
+      <div class="col-md-3">
+        <h6>Ứng dụng FoodDelivery</h6>
+        <div class="d-flex gap-2">
+          <img src="/images/appstore.png" alt="App Store" height="40">
+          <img src="/images/googleplay.png" alt="Google Play" height="40">
+        </div>
+      </div>
+      <div class="col-md-6 text-end small">
+        <p>FoodDelivery © 2025</p>
+        <p>Công ty CP Foody - Địa chỉ: 244 Cống Quỳnh, P. Phạm Ngũ Lão, Q.1, TP.HCM</p>
+      </div>
+    </div>
+  </div>
+</footer>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script th:src="@{/js/cart/cart.js}"></script>
+
+<script>
+  // Add to cart functionality
+  document.querySelectorAll('.add-to-cart-btn').forEach(button => {
+    button.addEventListener('click', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+
+      // Add loading state
+      const originalContent = this.innerHTML;
+      this.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+      this.disabled = true;
+
+      // Simulate API call delay
+      setTimeout(() => {
+        // Restore button
+        this.innerHTML = originalContent;
+        this.disabled = false;
+
+        // Show success feedback
+        this.classList.add('bg-success');
+        this.innerHTML = '<i class="fas fa-check"></i> Đã thêm';
+
+        setTimeout(() => {
+          this.classList.remove('bg-success');
+          this.innerHTML = originalContent;
+        }, 2000);
+
+        // Show toast
+        const toast = new bootstrap.Toast(document.getElementById('add-to-cart-toast'));
+        toast.show();
+      }, 500);
+    });
+  });
+
+  // Favorite functionality
+  document.querySelectorAll('.favorite-badge').forEach(badge => {
+    badge.addEventListener('click', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+
+      // Toggle favorite state
+      const heart = this.querySelector('i');
+      if (heart.classList.contains('fas')) {
+        heart.classList.remove('fas');
+        heart.classList.add('far');
+        this.style.background = 'rgba(108, 117, 125, 0.8)';
+      } else {
+        heart.classList.remove('far');
+        heart.classList.add('fas');
+        this.style.background = 'rgba(238, 77, 45, 0.9)';
+
+        // Show favorite toast
+        const toast = new bootstrap.Toast(document.getElementById('favorite-toast'));
+        toast.show();
+      }
+    });
+  });
+
+  // Dish card click handler (except for buttons)
+  document.querySelectorAll('.dish-card').forEach(card => {
+    card.addEventListener('click', function(e) {
+      // Don't navigate if clicking on buttons or favorite badge
+      if (e.target.closest('.add-cart-btn, .view-btn, .favorite-badge')) {
+        return;
+      }
+
+      // Get dish ID and navigate to detail page
+      const dishId = this.querySelector('[data-dish-id]')?.getAttribute('data-dish-id');
+      if (dishId) {
+        window.location.href = `/dish/${dishId}`;
+      }
+    });
+  });
+
+  // Category filter functionality
+  document.querySelectorAll('.category-filter').forEach(filter => {
+    filter.addEventListener('click', function() {
+      // Remove active class from all filters
+      document.querySelectorAll('.category-filter').forEach(f => f.classList.remove('active'));
+      // Add active class to clicked filter
+      this.classList.add('active');
+
+      // Here you would implement the actual filtering logic
+      console.log('Filter by:', this.textContent);
+    });
+  });
+
+  // Sort dropdown functionality
+  document.querySelector('.sort-dropdown').addEventListener('change', function() {
+    console.log('Sort by:', this.value);
+    // Implement sorting logic here
+  });
+
+  // Smooth scroll for category filters on mobile
+  const categoryFilters = document.querySelector('.category-filters');
+  let isDown = false;
+  let startX;
+  let scrollLeft;
+
+  categoryFilters.addEventListener('mousedown', (e) => {
+    isDown = true;
+    startX = e.pageX - categoryFilters.offsetLeft;
+    scrollLeft = categoryFilters.scrollLeft;
+  });
+
+  categoryFilters.addEventListener('mouseleave', () => {
+    isDown = false;
+  });
+
+  categoryFilters.addEventListener('mouseup', () => {
+    isDown = false;
+  });
+
+  categoryFilters.addEventListener('mousemove', (e) => {
+    if (!isDown) return;
+    e.preventDefault();
+    const x = e.pageX - categoryFilters.offsetLeft;
+    const walk = (x - startX) * 2;
+    categoryFilters.scrollLeft = scrollLeft - walk;
+  });
+</script>
+
 </body>
 </html>

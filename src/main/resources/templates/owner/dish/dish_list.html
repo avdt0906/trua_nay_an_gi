@@ -4,159 +4,426 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Danh sách món ăn</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,900|Roboto+Slab:400,700|Material+Icons" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
+        /* --- BIẾN MÀU SẮC VÀ THUỘC TÍNH CHUNG --- */
+        :root {
+            --primary-color: #6a11cb;
+            --secondary-color: #2575fc;
+            --background-color: #f8f9fa;
+            --surface-color: #ffffff;
+            --text-color: #495057;
+            --text-muted-color: #6c757d;
+            --sidebar-bg: #1e1e2f;
+            --sidebar-text: rgba(255, 255, 255, 0.8);
+            --sidebar-text-hover: #ffffff;
+            --sidebar-active-bg: linear-gradient(60deg, #7b2cbf, #9d4edd);
+            --border-color: #dee2e6;
+            --box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --border-radius: 0.5rem; /* 8px */
+            --sidebar-width: 260px;
+            --sidebar-width-collapsed: 85px;
+            --transition-speed: 0.3s;
+        }
+
         body {
-            background-color: #f8f9fa;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--background-color);
+            font-family: 'Roboto', 'Helvetica', 'Arial', sans-serif;
+            color: var(--text-color);
         }
 
-        .navbar {
-            box-shadow: 0 2px 4px rgba(0, 0, 0, .08);
+        .wrapper {
+            display: flex;
+            width: 100%;
         }
 
+        /* --- Sidebar --- */
+        .sidebar {
+            width: var(--sidebar-width);
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            z-index: 1030;
+            background: var(--sidebar-bg);
+            color: var(--sidebar-text);
+            transition: width var(--transition-speed) ease;
+            overflow-x: hidden;
+        }
+
+        .sidebar .sidebar-header {
+            padding: 20px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .sidebar .sidebar-header h3 {
+            color: #fff;
+            font-weight: 500;
+            margin: 0;
+            font-size: 1.2rem;
+            white-space: nowrap;
+            transition: opacity var(--transition-speed) ease;
+        }
+
+        .sidebar-nav {
+            padding: 20px 0;
+        }
+
+        .sidebar-nav .nav-item {
+            list-style: none;
+        }
+
+        .sidebar-nav .nav-link {
+            color: var(--sidebar-text);
+            display: flex;
+            align-items: center;
+            padding: 12px 25px;
+            margin: 4px 15px;
+            border-radius: var(--border-radius);
+            text-decoration: none;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .sidebar-nav .nav-link i {
+            font-size: 20px;
+            margin-right: 20px;
+            min-width: 30px;
+            text-align: center;
+            transition: margin var(--transition-speed) ease;
+        }
+
+        .sidebar-nav .nav-link:hover {
+            background: rgba(255, 255, 255, 0.08);
+            color: var(--sidebar-text-hover);
+        }
+
+        .sidebar-nav .nav-link.active {
+            background: var(--sidebar-active-bg);
+            color: #fff;
+            box-shadow: 0 4px 15px -2px rgba(0, 0, 0, 0.2), 0 7px 10px -5px rgba(138, 43, 226, 0.4);
+        }
+
+        /* --- Main Panel --- */
+        .main-panel {
+            flex-grow: 1;
+            margin-left: var(--sidebar-width);
+            padding: 20px;
+            transition: margin-left var(--transition-speed) ease;
+            width: calc(100% - var(--sidebar-width));
+        }
+
+        /* --- CƠ CHẾ THÒ RA THỤT VÀO CHO SIDEBAR --- */
+        .wrapper.sidebar-collapsed .sidebar {
+            width: var(--sidebar-width-collapsed);
+        }
+
+        .wrapper.sidebar-collapsed .main-panel {
+            margin-left: var(--sidebar-width-collapsed);
+            width: calc(100% - var(--sidebar-width-collapsed));
+        }
+
+        .wrapper.sidebar-collapsed .sidebar .sidebar-header h3 {
+            opacity: 0;
+        }
+
+        .wrapper.sidebar-collapsed .sidebar .nav-link span {
+            opacity: 0;
+            visibility: hidden;
+            width: 0;
+        }
+
+        .wrapper.sidebar-collapsed .sidebar .nav-link i {
+            margin-right: 0;
+        }
+
+        .wrapper.sidebar-collapsed .sidebar .nav-link {
+            justify-content: center;
+        }
+
+        /* --- Top Navbar --- */
+        .navbar-main {
+            background-color: var(--surface-color);
+            box-shadow: var(--box-shadow);
+            border-radius: var(--border-radius);
+            padding: 0.75rem 1.5rem;
+        }
+        .navbar-main .nav-link {
+            color: var(--text-muted-color);
+        }
+        .navbar-main .dropdown-menu {
+            border-radius: var(--border-radius);
+            border: 1px solid var(--border-color);
+            box-shadow: var(--box-shadow);
+        }
+
+        /* --- CSS CHO ICON TOGGLE MỚI --- */
+        .navbar-main .sidebar-toggle-icon {
+            font-size: 1.5rem;
+            color: var(--primary-color);
+            transition: all 0.3s ease-in-out;
+        }
+
+        .navbar-main #sidebarToggle:hover .sidebar-toggle-icon {
+            color: var(--secondary-color);
+        }
+
+        .wrapper.sidebar-collapsed .sidebar-toggle-icon {
+            transform: rotate(180deg);
+        }
+
+        /* --- Custom Cards --- */
         .card {
             border: none;
-            border-radius: 0.75rem;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, .05);
-            transition: transform .2s, box-shadow .2s;
+            margin-bottom: 30px;
+            border-radius: var(--border-radius);
+            background: var(--surface-color);
+            width: 100%;
+            box-shadow: var(--box-shadow);
         }
 
-        .card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 16px rgba(0, 0, 0, .1);
+        .card .card-header {
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            background: transparent;
+            border-top: 4px solid var(--primary-color);
+            border-radius: var(--border-radius) var(--border-radius) 0 0;
         }
 
-        .dish-img {
-            height: 180px;
+        .card .card-title {
+            margin: 0;
+            color: var(--text-color);
+            font-weight: 500;
+        }
+        .card .card-category {
+            color: var(--text-muted-color);
+            margin-top: 0.25rem;
+            font-size: 0.9em;
+        }
+
+        /* --- Table Styles --- */
+        .table > thead > tr > th {
+            border-bottom: 2px solid var(--border-color) !important;
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--text-muted-color);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 1rem 1.5rem;
+        }
+
+        .table > tbody > tr > td {
+            border-top: 1px solid var(--border-color);
+            vertical-align: middle;
+            padding: 1rem 1.5rem;
+        }
+
+        .table > tbody > tr:hover {
+            background-color: #f8f9fa;
+        }
+
+        .table-dish-img {
+            width: 60px;
+            height: 60px;
             object-fit: cover;
-            border-radius: 0.75rem 0.75rem 0 0;
+            border-radius: var(--border-radius);
         }
+
+        .badge {
+            padding: 0.4em 0.8em;
+            font-weight: 500;
+            border-radius: 50rem;
+        }
+
+        /* --- Form & Button Styles --- */
+        .form-control, .btn {
+            transition: all 0.2s ease-in-out;
+        }
+        .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.25rem rgba(106, 27, 203, 0.25);
+        }
+
+        .btn-action {
+            width: 38px;
+            height: 38px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
     </style>
 </head>
 <body>
 
-<!-- Sử dụng Navbar Fragment -->
-<div th:replace="~{owner/fragments/owner_fragments :: navbar}"></div>
+<div class="wrapper">
+    <nav class="sidebar">
+        <div class="sidebar-header">
+            <h3>QUẢN LÝ NHÀ HÀNG</h3>
+        </div>
+        <ul class="nav sidebar-nav flex-column">
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/restaurants/dashboard}">
+                    <i class="fas fa-tachometer-alt"></i> <span>Bảng điều khiển</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">
+                    <i class="fas fa-user"></i> <span>Hồ sơ người dùng</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link active" th:href="@{/restaurants/dishes/dish_list}">
+                    <i class="fas fa-utensils"></i> <span>Danh sách món ăn</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">
+                    <i class="fas fa-clipboard-list"></i> <span>Đơn hàng</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">
+                    <i class="fas fa-bell"></i> <span>Thông báo</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <div class="main-panel">
+        <nav class="navbar navbar-expand-lg navbar-main mb-4">
+            <div class="container-fluid">
+                <button class="btn btn-link p-0 me-3" type="button" id="sidebarToggle">
+                    <i class="fas fa-indent sidebar-toggle-icon"></i>
+                </button>
 
-<!-- Main Content -->
-<main class="container mt-4">
-    <div class="row" th:if="${restaurant}">
-        <div class="col-lg-8">
-            <!--Search Form-->
-            <form th:action="@{/restaurants/dishes/dish_list}" method="get" class="mb-4">
-                <div class="input-group">
-                    <input type="text" class="form-control" placeholder="Tìm kiếm theo tên món ăn..." name="search"
-                           th:value="${search}">
-                    <button class="btn btn-outline-secondary" type="submit">
-                        <i class="fas fa-search"></i>
-                    </button>
+                <h4 class="fw-light m-0">Quản Lý Món Ăn</h4>
+
+                <div class="collapse navbar-collapse justify-content-end">
+                    <ul class="navbar-nav">
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownProfile" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-user"></i>
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownProfile">
+                                <li><a class="dropdown-item" href="#">Hồ sơ</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" th:href="@{/logout}">Đăng xuất</a></li>
+                            </ul>
+                        </li>
+                    </ul>
                 </div>
-            </form>
-            <div class="card mb-4">
-                <div class="card-header bg-primary text-white">
-                    <h5 class="mb-0">
-                        <i class="fas fa-store me-2"></i>Danh sách món ăn
-                    </h5>
-                </div>
-                <div class="card-body">
-                    <a th:href="@{/restaurants/dishes/add_dish_form}" class="btn btn-outline-primary">
-                        <i class="fas fa-plus me-2"></i>Thêm món ăn mới
-                    </a>
-                </div>
-                <div class="card-body">
-                    <div class="row">
-                        <div class="row g-4" th:if="${dishes}">
-                            <div class="col-md-4" th:each="dish : ${dishes}">
-                                <div class="card h-100">
-                                    <!--                                    <img th:src="${dish.imageUrl}" alt="Dish Image" class="dish-img">-->
-                                    <div class="card-body">
-                                        <h5 class="card-title fw-bold" th:text="${dish.name}"></h5>
-                                        <p class="card-text text-muted mb-2" th:text="${dish.description}"></p>
-                                        <span class="badge bg-primary me-1" th:text="${dish.category.name}"></span>
-                                        <span class="badge bg-success" th:if="${dish.isAvailable}">Có sẵn</span>
-                                        <span class="badge bg-secondary" th:unless="${dish.isAvailable}">Hết hàng</span><br>
+            </div>
+        </nav>
+
+        <div class="content pt-2">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
+                                    <div>
+                                        <h4 class="card-title">Danh sách món ăn</h4>
+                                        <p class="card-category">Quản lý thực đơn của nhà hàng</p>
                                     </div>
-                                    <div class="card-footer d-flex justify-content-between align-items-center">
-                                        <span class="fw-bold text-danger"
-                                              th:text="${#numbers.formatDecimal(dish.price, 0, 'COMMA', 0, 'POINT')} + ' đ'">100,000 đ</span>
-                                        <div class="btn-group">
-                                            <a th:href="@{'/restaurants/dishes/edit_dish_form/' + ${dish.id}}"
-                                               class="btn btn-sm btn-outline-info">
-                                                <i class="fas fa-edit"></i>
-                                            </a>
-                                            <a th:href="@{'/restaurants/dishes/delete_dish/' + ${dish.id}}"
-                                               class="btn btn-sm btn-outline-danger">
-                                                <i class="fas fa-trash"></i>
-                                            </a>
-                                        </div>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <form th:action="@{/restaurants/dishes/dish_list}" method="get" class="mb-0">
+                                            <div class="input-group">
+                                                <input type="text" class="form-control" placeholder="Tìm kiếm món ăn..." name="search" th:value="${search}">
+                                                <button class="btn btn-outline-secondary" type="submit">
+                                                    <i class="fas fa-search"></i>
+                                                </button>
+                                            </div>
+                                        </form>
+                                        <a th:href="@{/restaurants/dishes/add_dish_form}" class="btn btn-primary">
+                                            <i class="fas fa-plus me-1"></i> Thêm mới
+                                        </a>
                                     </div>
+                                </div>
+                            </div>
+                            <div class="card-body p-0">
+                                <div class="table-responsive" th:if="${dishes != null && !dishes.isEmpty()}">
+                                    <table class="table table-hover">
+                                        <thead>
+                                        <tr>
+                                            <th>Hình ảnh</th>
+                                            <th>Tên món ăn</th>
+                                            <th>Danh mục</th>
+                                            <th>Giá</th>
+                                            <th>Trạng thái</th>
+                                            <th class="text-end">Hành động</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr th:each="dish : ${dishes}">
+                                            <td>
+                                                <img th:src="${'/images/dish/eat_food/' + dish.pictureUrl}" alt="Dish Image" class="table-dish-img">
+                                            </td>
+                                            <td class="fw-bold" th:text="${dish.name}"></td>
+                                            <td>
+                                                <span class="badge text-bg-info" th:text="${dish.category.name}"></span>
+                                            </td>
+                                            <td class="text-danger fw-bold" th:text="${#numbers.formatDecimal(dish.price, 0, 'COMMA', 0, 'POINT')} + ' đ'"></td>
+                                            <td>
+                                                <span class="badge text-bg-success" th:if="${dish.isAvailable}">Có sẵn</span>
+                                                <span class="badge text-bg-secondary" th:unless="${dish.isAvailable}">Hết hàng</span>
+                                            </td>
+                                            <td class="text-end">
+                                                <a th:href="@{'/restaurants/dishes/edit_dish_form/' + ${dish.id}}" class="btn btn-sm btn-outline-info rounded-circle btn-action" title="Chỉnh sửa">
+                                                    <i class="fas fa-edit"></i>
+                                                </a>
+                                                <a th:href="@{'/restaurants/dishes/delete_dish/' + ${dish.id}}" class="btn btn-sm btn-outline-danger rounded-circle btn-action" title="Xóa">
+                                                    <i class="fas fa-trash"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                                <div class="text-center py-5" th:if="${dishes == null || dishes.isEmpty()}">
+                                    <i class="fas fa-utensil-spoon fa-4x text-muted mb-3"></i>
+                                    <h4 class="text-muted">Chưa có món ăn nào</h4>
+                                    <p class="text-muted">Hãy thêm món ăn để bắt đầu phục vụ khách hàng!</p>
+                                    <a th:href="@{/restaurants/dishes/add_dish_form}" class="btn btn-primary btn-lg mt-3">
+                                        <i class="fas fa-plus me-2"></i>Thêm món ăn mới
+                                    </a>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                <!-- Empty List Message -->
-                <div class="row" th:unless="${dishes}">
-                    <div class="col-12 text-center">
-                        <i class="fas fa-utensil-spoon fa-4x text-muted mb-3"></i>
-                        <h4 class="text-muted">Chưa có món ăn nào</h4>
-                        <p class="text-muted">Hãy thêm món ăn để bắt đầu phục vụ khách hàng!</p>
-                        <a th:href="@{/restaurants/dishes/add_dish_form}" class="btn btn-primary btn-lg">
-                            <i class="fas fa-plus me-2"></i>Thêm món ăn mới
-                        </a>
-                    </div>
-                </div>
             </div>
-        </div>
-
-        <div class="col-lg-4">
-            <div class="card mb-4">
-                <div class="card-header bg-info text-white">
-                    <h5 class="mb-0">
-                        <i class="fas fa-chart-bar me-2"></i>Thống kê
-                    </h5>
-                </div>
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-                        <span>Trạng thái mở cửa:</span>
-                        <span th:if="${restaurant.isOpen}" class="badge bg-success">
-                            <i class="fas fa-door-open me-1"></i>Đang mở
-                        </span>
-                        <span th:unless="${restaurant.isOpen}" class="badge bg-secondary">
-                            <i class="fas fa-door-closed me-1"></i>Đã đóng
-                        </span>
-                    </div>
-
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-                        <span>Đối tác dài hạn:</span>
-                        <span th:if="${restaurant.isLongTermPartner}" class="badge bg-warning">
-                            <i class="fas fa-star me-1"></i>Có
-                        </span>
-                        <span th:unless="${restaurant.isLongTermPartner}" class="badge bg-light text-dark">
-                            <i class="fas fa-star-o me-1"></i>Không
-                        </span>
-                    </div>
-
-                    <div class="d-flex justify-content-between align-items-center">
-                        <span>Trạng thái khóa:</span>
-                        <span th:if="${restaurant.isLocked}" class="badge bg-danger">
-                            <i class="fas fa-lock me-1"></i>Đã khóa
-                        </span>
-                        <span th:unless="${restaurant.isLocked}" class="badge bg-success">
-                            <i class="fas fa-unlock me-1"></i>Hoạt động
-                        </span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Quick Actions -->
-            <div th:replace="~{owner/fragments/owner_fragments :: quick_action}"></div>
         </div>
     </div>
-</main>
+</div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const sidebarToggle = document.getElementById('sidebarToggle');
+        const wrapper = document.querySelector('.wrapper');
+
+        const toggleSidebar = () => {
+            wrapper.classList.toggle('sidebar-collapsed');
+            if (wrapper.classList.contains('sidebar-collapsed')) {
+                localStorage.setItem('sidebarState', 'collapsed');
+            } else {
+                localStorage.setItem('sidebarState', 'expanded');
+            }
+        };
+
+        if (sidebarToggle) {
+            sidebarToggle.addEventListener('click', toggleSidebar);
+        }
+
+        if (localStorage.getItem('sidebarState') === 'collapsed') {
+            wrapper.classList.add('sidebar-collapsed');
+        }
+    });
+</script>
 </body>
 </html>

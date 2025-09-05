@@ -3,6 +3,7 @@ package com.codegym.project_module_5.service.impl.user_service_impl;
 import com.codegym.project_module_5.model.user_model.Role;
 import com.codegym.project_module_5.model.user_model.User;
 import com.codegym.project_module_5.model.dto.request.RegisterRequest;
+import com.codegym.project_module_5.model.dto.request.UserAddressRequest;
 import com.codegym.project_module_5.model.user_model.UserAddress;
 import com.codegym.project_module_5.repository.user_repository.IUserAddressRepository;
 import com.codegym.project_module_5.repository.user_repository.IRoleRepository;
@@ -90,7 +91,7 @@ public class UserService implements IUserService {
         return userRepository.existsByUsername(username);
     }
 
-  public void updateAvatar(String username, String avatarUrl) {
+    public void updateAvatar(String username, String avatarUrl) {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not found"));
         user.setAvatarUrl(avatarUrl);
@@ -105,13 +106,20 @@ public class UserService implements IUserService {
         userRepository.save(user);
     }
 
-    public void addAddress(Long userId, String address) {
+    public UserAddress adddAdress(Long userId, UserAddressRequest addressRequest) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
-        UserAddress ua = new UserAddress();
-        ua.setUser(user);
-        ua.setAddress(address);
-        userAddressRepository.save(ua);
+
+        UserAddress userAddress = new UserAddress();
+        userAddress.setName(addressRequest.getName());
+        userAddress.setPhone(addressRequest.getPhone());
+        userAddress.setFullAddress(addressRequest.getFullAddress());
+        userAddress.setDefaultAddress(addressRequest.isDefaultAddress());
+        userAddress.setLatitude(addressRequest.getLatitude());
+        userAddress.setLongitude(addressRequest.getLongitude());
+        userAddress.setUser(user);
+
+        return userAddressRepository.save(userAddress);
     }
 
     public void deleteAddress(Long addressId) {
@@ -122,15 +130,21 @@ public class UserService implements IUserService {
         return userAddressRepository.findAllByUser_Id(userId);
     }
 
-    public UserAddress updateUserAddress(Long addressId, String newAddress) {
-        // 1. Tìm địa chỉ theo ID
-        UserAddress userAddress = userAddressRepository.findById(addressId)
-                .orElseThrow(() -> new RuntimeException("Address not found"));
-
-        // 2. Cập nhật địa chỉ
-        userAddress.setAddress(newAddress);
-
-        // 3. Lưu lại
-        return userAddressRepository.save(userAddress);
+    public Optional<UserAddress> getAddressById(Long id) {
+        return userAddressRepository.findById(id);
     }
+
+    public UserAddress updateAddress( Long addressId,UserAddressRequest addressRequest) {
+    UserAddress existingAddress = userAddressRepository.findById(addressId)
+            .orElseThrow(() -> new RuntimeException("Address not found"));
+
+    existingAddress.setName(addressRequest.getName());
+    existingAddress.setPhone(addressRequest.getPhone());
+    existingAddress.setFullAddress(addressRequest.getFullAddress());
+    existingAddress.setLatitude(addressRequest.getLatitude());
+    existingAddress.setLongitude(addressRequest.getLongitude());
+    existingAddress.setDefaultAddress(addressRequest.isDefaultAddress());
+
+    return userAddressRepository.save(existingAddress);
+}
 }

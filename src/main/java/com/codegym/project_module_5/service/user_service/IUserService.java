@@ -2,6 +2,7 @@ package com.codegym.project_module_5.service.user_service;
 
 import com.codegym.project_module_5.model.user_model.User;
 import com.codegym.project_module_5.model.dto.request.RegisterRequest;
+import com.codegym.project_module_5.model.user_model.UserAddress;
 import com.codegym.project_module_5.service.general_service.IGeneralService;
 
 import java.util.List;
@@ -14,4 +15,5 @@ public interface IUserService extends IGeneralService<User> {
     List<User> findAllByRoleName(String roleName);
     boolean existsByEmail(String username);
     boolean existsByUsername(String username);
+    List<UserAddress> getUserAddresses(Long userId);
 }

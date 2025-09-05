@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thêm địa chỉ mới</title>
+
+    <!-- Mapbox CSS -->
+    <link href='https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css' rel='stylesheet' />
+    <link href='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.7.2/mapbox-gl-geocoder.css'
+        rel='stylesheet' />
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+
+    <style>
+        body {
+            background-color: #f8f9fa;
+            color: #333;
+        }
+
+        .header-section {
+            background: linear-gradient(to right, #dc3545, #ff6b7a);
+            color: white;
+            padding: 25px 0;
+            margin-bottom: 30px;
+            border-radius: 0 0 15px 15px;
+        }
+
+        .form-container {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: #495057;
+            margin-bottom: 8px;
+        }
+
+        .form-control,
+        .form-select {
+            border-radius: 8px;
+            padding: 12px 15px;
+            border: 1px solid #ced4da;
+            transition: all 0.3s;
+        }
+
+        .form-control:focus,
+        .form-select:focus {
+            border-color: #dc3545;
+            box-shadow: 0 0 0 0.25rem rgba(220, 53, 69, 0.25);
+        }
+
+        #map {
+            height: 400px;
+            width: 100%;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-submit {
+            background: linear-gradient(to right, #dc3545, #ff6b7a);
+            border: none;
+            border-radius: 50px;
+            padding: 12px 30px;
+            font-weight: 600;
+            box-shadow: 0 4px 8px rgba(220, 53, 69, 0.3);
+            transition: all 0.3s;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(220, 53, 69, 0.4);
+        }
+
+        .map-overlay {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            z-index: 1;
+            background: white;
+            padding: 10px 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            font-size: 14px;
+            max-width: 300px;
+        }
+
+        .location-marker {
+            text-align: center;
+            margin-top: 10px;
+            color: #dc3545;
+            font-weight: 500;
+        }
+
+        .instruction-text {
+            color: #6c757d;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+        }
+
+        .geocoder-container {
+            margin-bottom: 15px;
+        }
+
+        .mapboxgl-ctrl-geocoder {
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+            width: 100% !important;
+            max-width: none !important;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Header Section -->
+    <div class="header-section">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center">
+                <h2><i class="bi bi-geo-alt-fill me-2"></i>Thêm địa chỉ mới</h2>
+                <a th:href="@{/addresses}" class="btn btn-light btn-sm"><i class="bi bi-arrow-left me-1"></i>Quay
+                    lại</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <div class="form-container">
+                    <form th:action="@{/addresses/save}" method="post">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Họ tên <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" name="name" placeholder="Nhập họ và tên"
+                                        required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Số điện thoại <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" name="phone"
+                                        placeholder="Nhập số điện thoại" required>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Tìm kiếm địa chỉ</label>
+                            <p class="instruction-text">Nhập địa chỉ hoặc nhấp vào bản đồ để chọn vị trí chính xác</p>
+                            <div id="geocoder" class="geocoder-container"></div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Bản đồ <span class="text-danger">*</span></label>
+                            <div class="position-relative">
+                                <div id="map"></div>
+                            </div>
+                            <div class="location-marker">
+                                <i class="bi bi-geo-alt me-1"></i> Vị trí đã chọn: <span id="selectedLocation">Chưa chọn
+                                    vị trí</span>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Địa chỉ chi tiết <span class="text-danger">*</span></label>
+                            <input id="addressInput" type="text" class="form-control" name="fullAddress"
+                                placeholder="Nhập hoặc chọn địa chỉ" required>
+                        </div>
+
+                        <input type="hidden" id="latitude" name="latitude">
+                        <input type="hidden" id="longitude" name="longitude">
+
+                        <div class="mb-3 form-check form-switch">
+                            <input class="form-check-input" type="checkbox" name="defaultAddress" id="defaultAddress"
+                                style="width: 50px; height: 25px;">
+                            <label class="form-check-label ms-2" for="defaultAddress">Đặt làm địa chỉ mặc định</label>
+                        </div>
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <button type="submit" class="btn btn-submit">
+                                <i class="bi bi-check-circle me-1"></i> Lưu địa chỉ
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mapbox JS -->
+    <script src='https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js'></script>
+    <script
+        src='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.7.2/mapbox-gl-geocoder.min.js'></script>
+
+    <script th:inline="javascript">
+        let mapboxToken = /*[[${mapboxApiKey}]]*/ 'YOUR_MAPBOX_ACCESS_TOKEN';
+        mapboxgl.accessToken = mapboxToken;
+
+        // Vị trí mặc định nếu không lấy được GPS
+        const defaultLocation = [105.854444, 21.028511]; // Hà Nội
+
+        let map, marker;
+
+        function initMap(center) {
+            map = new mapboxgl.Map({
+                container: 'map',
+                style: 'mapbox://styles/mapbox/streets-v11',
+                center: center,
+                zoom: 13
+            });
+
+            // Thêm navigation control
+            map.addControl(new mapboxgl.NavigationControl());
+
+            // Tạo marker có thể kéo được
+            marker = new mapboxgl.Marker({
+                draggable: true,
+                color: '#dc3545'
+            })
+                .setLngLat(center)
+                .addTo(map);
+
+            // Khởi tạo geocoder
+            const geocoder = new MapboxGeocoder({
+                accessToken: mapboxgl.accessToken,
+                mapboxgl: mapboxgl,
+                placeholder: 'Nhập địa chỉ...',
+                marker: false,
+                countries: 'vn',
+                language: 'vi'
+            });
+
+            document.getElementById('geocoder').appendChild(geocoder.onAdd(map));
+
+            // Xử lý khi chọn kết quả từ geocoder
+            geocoder.on('result', function (e) {
+                const { center, place_name } = e.result;
+                marker.setLngLat(center);
+                map.flyTo({ center: center, zoom: 16 });
+                updateAddressInfo(center[0], center[1]);
+                document.getElementById("selectedLocation").textContent = place_name;
+            });
+
+            // Xử lý khi kéo marker
+            marker.on('dragend', function () {
+                const lngLat = marker.getLngLat();
+                updateAddressInfo(lngLat.lng, lngLat.lat);
+                updateLocationText(lngLat.lng, lngLat.lat);
+            });
+
+            // Xử lý khi click vào bản đồ
+            map.on('click', function (e) {
+                marker.setLngLat(e.lngLat);
+                updateAddressInfo(e.lngLat.lng, e.lngLat.lat);
+                updateLocationText(e.lngLat.lng, e.lngLat.lat);
+            });
+
+            // Cập nhật thông tin ban đầu
+            updateAddressInfo(center[0], center[1]);
+            updateLocationText(center[0], center[1]);
+        }
+        function updateAddressInfo(lng, lat) {
+            fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&addressdetails=1&accept-language=vi`)
+                .then(res => res.json())
+                .then(data => {
+                    const fullAddress = data.display_name || "";
+                    document.getElementById("addressInput").value = fullAddress;
+                    document.getElementById("latitude").value = lat;
+                    document.getElementById("longitude").value = lng;
+                })
+                .catch(err => console.error("Lỗi khi lấy thông tin địa chỉ:", err));
+        }
+
+
+        function updateLocationText(lng, lat) {
+            fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&addressdetails=1&accept-language=vi`)
+                .then(res => res.json())
+                .then(data => {
+                    document.getElementById("selectedLocation").textContent = data.display_name || "Vị trí không xác định";
+                })
+                .catch(err => {
+                    console.error("Lỗi khi lấy tên vị trí:", err);
+                    document.getElementById("selectedLocation").textContent = `Tọa độ: ${lat.toFixed(4)}, ${lng.toFixed(4)}`;
+                });
+        }
+
+        // Xin quyền lấy vị trí từ thiết bị
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                function (position) {
+                    const userLng = position.coords.longitude;
+                    const userLat = position.coords.latitude;
+                    initMap([userLng, userLat]);
+                },
+                function (error) {
+                    console.warn("Không lấy được vị trí, dùng vị trí mặc định:", error);
+                    initMap(defaultLocation);
+                },
+                {
+                    enableHighAccuracy: true,
+                    timeout: 5000,
+                    maximumAge: 0
+                }
+            );
+        } else {
+            console.warn("Trình duyệt không hỗ trợ geolocation.");
+            initMap(defaultLocation);
+        }
+    </script>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

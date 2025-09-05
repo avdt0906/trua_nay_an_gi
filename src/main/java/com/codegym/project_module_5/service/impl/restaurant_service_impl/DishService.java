@@ -4,6 +4,8 @@ import com.codegym.project_module_5.model.restaurant_model.Dish;
 import com.codegym.project_module_5.repository.restaurant_repository.IDishRepository;
 import com.codegym.project_module_5.service.restaurant_service.IDishService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -35,6 +37,11 @@ public class DishService implements IDishService {
     }
 
     @Override
+    public Page<Dish> findAll(Pageable pageable) {
+        return dishRepository.findAll(pageable);
+    }
+
+    @Override
     public Iterable<Dish> findAllByRestaurantId(Long restaurantId) {
         return dishRepository.findAllByRestaurantId(restaurantId);
     }
@@ -62,5 +69,10 @@ public class DishService implements IDishService {
     @Override
     public List<Dish> findPopularDishesByRestaurant(Long restaurantId, Long excludeDishId) {
         return dishRepository.findPopularDishesByRestaurant(restaurantId, excludeDishId);
+    }
+
+    @Override
+    public List<Dish> findByRestaurantId(Long restaurantId) {
+        return dishRepository.findByRestaurant_Id(restaurantId);
     }
 }

@@ -67,9 +67,6 @@
           <tr>
             <th scope="col">ID</th>
             <th scope="col">Tên đối tác vận chuyển</th>
-            <th scope="col">SĐT</th>
-            <th scope="col">Giá</th>
-            <th scope="col">Thời gian vận chuyển</th>
             <th scope="col">Trạng thái</th>
             <th scope="col">Khóa</th>
             <th scope="col" class="text-center">Thao tác</th>
@@ -79,9 +76,6 @@
           <tr th:each="shipper : ${shippers}">
             <th scope="row" th:text="${shipper.id}"></th>
             <td th:text="${shipper.name}"></td>
-            <td th:text="${shipper.phone}"></td>
-            <td th:text="${shipper.price}"></td>
-            <td th:text="${shipper.deliverMinute} +' phút'"></td>
             <td>
               <div th:if="${shipper != null}">
                 <span th:if="${shipper.isAvailable}" class="badge bg-danger">Đang hoạt động</span>
@@ -95,7 +89,7 @@
               </div>
             </td>
             <td class="text-center">
-              <a href="#" class="btn btn-sm btn-info btn-action" title="Sửa">
+              <a th:href="@{/admin/shippers/{id}(id=${shipper.id})}" class="btn btn-sm btn-info btn-action" title="Chi tiết">
                 <i class="fas fa-edit"></i>
               </a>
               <a href="#" class="btn btn-sm btn-danger btn-action" title="Xóa">
