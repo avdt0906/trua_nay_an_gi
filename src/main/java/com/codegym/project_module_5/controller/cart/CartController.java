@@ -162,21 +162,21 @@ public class CartController {
     }
 
     @GetMapping("/checkout")
-    public String checkout(@RequestParam(value = "selectedItems", required = false) List<Long> selectedDishIds, HttpSession session) {
+    public String checkout(@RequestParam(value = "selectedItems", required = false) List<Long> selectedItemIds, HttpSession session) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         boolean isAuthenticated = authentication != null && authentication.isAuthenticated() && !(authentication instanceof AnonymousAuthenticationToken);
 
         if (isAuthenticated) {
-            if (selectedDishIds == null || selectedDishIds.isEmpty()) {
+            if (selectedItemIds == null || selectedItemIds.isEmpty()) {
                 return "redirect:/cart";
             }
-            String params = selectedDishIds.stream()
+            String params = selectedItemIds.stream()
                     .map(id -> "selectedItems=" + id)
                     .collect(Collectors.joining("&"));
             return "redirect:/cart/detail?" + params;
         } else {
-            if (selectedDishIds != null && !selectedDishIds.isEmpty()) {
-                session.setAttribute("selectedDishIds", selectedDishIds);
+            if (selectedItemIds != null && !selectedItemIds.isEmpty()) {
+                session.setAttribute("selectedDishIds", selectedItemIds);
             }
             session.setAttribute("redirectAfterLogin", "/cart/detail");
             return "redirect:/account/login";
@@ -184,13 +184,19 @@ public class CartController {
     }
 
     @GetMapping("/detail")
-    public String showCartDetail(Model model, HttpSession session, @RequestParam(value = "selectedItems", required = false) List<Long> selectedDishIds) {
+    public String showCartDetail(Model model, HttpSession session, @RequestParam(value = "selectedItems", required = false) List<Long> selectedItemIds) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated() || (authentication instanceof AnonymousAuthenticationToken)) {
             return "redirect:/account/login";
         }
 
-        if (selectedDishIds == null || selectedDishIds.isEmpty()) {
+        // === SỬA LỖI: Thêm biến isAuthenticated vào model ===
+        // Thêm dòng này để navbar có thể render chính xác
+        model.addAttribute("isAuthenticated", true);
+
+        // === SỬA LỖI NHỎ: Thay selectedDishIds thành selectedItemIds ===
+        // Biến được truyền vào là selectedItemIds, nên cần kiểm tra đúng biến đó.
+        if (selectedItemIds == null || selectedItemIds.isEmpty()) {
             return "redirect:/cart";
         }
 
@@ -198,12 +204,15 @@ public class CartController {
         User currentUser = userService.findByUsername(username).orElse(null);
 
         if (currentUser != null) {
-            List<CartItem> cartItemList = cartService.getCartItems(currentUser);
             List<CartItem> allCartItems = cartService.getCartItems(currentUser);
 
             List<CartItem> selectedCartItems = allCartItems.stream()
-                    .filter(item -> selectedDishIds.contains(item.getDish().getId()))
+                    .filter(item -> selectedItemIds.contains(item.getId()))
                     .collect(Collectors.toList());
+
+            if(selectedCartItems.isEmpty()){
+                return "redirect:/cart";
+            }
 
             model.addAttribute("cartItemList", selectedCartItems);
             model.addAttribute("currentUser", currentUser);
@@ -236,8 +245,8 @@ public class CartController {
             String appliedCoupon = (String) session.getAttribute("appliedCoupon");
             double discount = 0;
             String couponMessage = null;
-            if (appliedCoupon != null && !appliedCoupon.isBlank() && !cartItemList.isEmpty()) {
-                Long restaurantId = cartItemList.get(0).getDish().getRestaurant().getId();
+            if (appliedCoupon != null && !appliedCoupon.isBlank() && !selectedCartItems.isEmpty()) {
+                Long restaurantId = selectedCartItems.get(0).getDish().getRestaurant().getId();
                 try {
                     var coupons = restaurantService.getCouponsByRestaurantId(restaurantId);
                     var matched = coupons.stream()
@@ -310,12 +319,16 @@ public class CartController {
     }
 
     @PostMapping("/place-order")
-    public String placeOrder(HttpSession session) {
+    public String placeOrder(@RequestParam(name = "selectedItems", required = false) List<Long> selectedItemIds, HttpSession session) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         boolean isAuthenticated = authentication != null && authentication.isAuthenticated()
                 && !(authentication instanceof AnonymousAuthenticationToken);
         if (!isAuthenticated) {
             return "redirect:/login";
+        }
+
+        if (selectedItemIds == null || selectedItemIds.isEmpty()) {
+            return "redirect:/cart";
         }
 
         String username = authentication.getName();
@@ -324,12 +337,16 @@ public class CartController {
             return "redirect:/login";
         }
 
-        List<CartItem> cartItemList = cartService.getCartItems(currentUser);
-        if (cartItemList == null || cartItemList.isEmpty()) {
+        List<CartItem> allCartItems = cartService.getCartItems(currentUser);
+        List<CartItem> itemsToOrder = allCartItems.stream()
+                .filter(item -> selectedItemIds.contains(item.getId()))
+                .collect(Collectors.toList());
+
+        if (itemsToOrder.isEmpty()) {
             return "redirect:/cart";
         }
 
-        Long restaurantId = cartItemList.get(0).getDish().getRestaurant().getId();
+        Long restaurantId = itemsToOrder.get(0).getDish().getRestaurant().getId();
         var restaurantOpt = restaurantService.findById(restaurantId);
         if (restaurantOpt.isEmpty()) {
             return "redirect:/cart/detail";
@@ -350,7 +367,7 @@ public class CartController {
         if (note != null) order.setCustomerNote(note.toString());
         orderService.save(order);
 
-        for (CartItem ci : cartItemList) {
+        for (CartItem ci : itemsToOrder) {
             OrderDetail od = new OrderDetail();
             od.setOrder(order);
             od.setDish(ci.getDish());
@@ -358,7 +375,10 @@ public class CartController {
             orderDetailService.save(od);
         }
 
-        cartService.clearCart(currentUser);
+        for(CartItem item : itemsToOrder) {
+            cartService.removeCartItem(item.getId());
+        }
+
         session.removeAttribute("paymentMethod");
         session.removeAttribute("orderNote");
         session.removeAttribute("appliedCoupon");
@@ -406,7 +426,31 @@ public class CartController {
 
     @PostMapping("/update")
     @ResponseBody
-    public ResponseEntity<?> updateCartItem(@RequestParam("itemId") Long itemId, @RequestParam("quantity") int quantity, HttpSession session) {
-        return ResponseEntity.ok().build();
+    public ResponseEntity<?> updateCartItem(@RequestParam("itemId") Long itemId,
+                                            @RequestParam("quantity") int quantity,
+                                            HttpSession session) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        boolean isAuthenticated = authentication != null && authentication.isAuthenticated() && !(authentication instanceof AnonymousAuthenticationToken);
+
+        try {
+            if (isAuthenticated) {
+                cartService.updateCartItem(itemId, quantity);
+            } else {
+                Map<Long, Integer> cart = (Map<Long, Integer>) session.getAttribute("cart");
+                if (cart != null && cart.containsKey(itemId)) {
+                    if (quantity > 0) {
+                        cart.put(itemId, quantity);
+                    } else {
+                        cart.remove(itemId);
+                    }
+                    session.setAttribute("cart", cart);
+                }
+            }
+            return ResponseEntity.ok(Map.of("message", "Cập nhật giỏ hàng thành công"));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of("message", "Lỗi khi cập nhật giỏ hàng."));
+        }
     }
 }
+
+
