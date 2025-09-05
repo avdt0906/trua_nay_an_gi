@@ -13,6 +13,7 @@ import java.util.Optional;
 
 @Service
 public class DishService implements IDishService {
+
     @Autowired
     private IDishRepository dishRepository;
 
@@ -70,7 +71,6 @@ public class DishService implements IDishService {
     public List<Dish> findPopularDishesByRestaurant(Long restaurantId, Long excludeDishId) {
         return dishRepository.findPopularDishesByRestaurant(restaurantId, excludeDishId);
     }
-
     @Override
     public List<Dish> findByRestaurantId(Long restaurantId) {
         return dishRepository.findByRestaurant_Id(restaurantId);
