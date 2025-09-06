@@ -10,6 +10,15 @@
         .cart-item-row {
             transition: background-color 0.3s ease;
         }
+        .quantity-input {
+            /* Vô hiệu hóa mũi tên tăng/giảm mặc định của trình duyệt */
+            -moz-appearance: textfield;
+        }
+        .quantity-input::-webkit-outer-spin-button,
+        .quantity-input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
     </style>
 </head>
 <body style="background-color: #f8f9fa;">
@@ -39,16 +48,21 @@
                     <div class="card-body" id="cart-items-container">
                         <div th:each="item : ${cartItems}" class="d-flex align-items-center border-bottom py-3 cart-item-row" th:data-item-id="${item.id}" th:data-item-price="${item.dish.price}">
                             <div class="form-check me-3">
-                                <input class="form-check-input item-checkbox" type="checkbox" th:value="${item.dish.id}">
+                                <input class="form-check-input item-checkbox" type="checkbox" th:value="${item.id}">
                             </div>
                             <img th:src="@{'/images/dish/eat_food/' + ${item.dish.pictureUrl}}" class="rounded me-3" style="width: 80px; height: 80px; object-fit: cover;" alt="Dish Image">
                             <div class="flex-grow-1">
                                 <h6 class="mb-1" th:text="${item.dish.name}"></h6>
                                 <small class="text-muted" th:text="${item.dish.restaurant.name}"></small>
                             </div>
-                            <div class="text-center" style="width: 120px;">
-                                <input type="number" class="form-control form-control-sm text-center quantity-input" th:value="${item.quantity}" min="1">
+                            <!-- === ĐOẠN CODE SỬA ĐỔI === -->
+                            <!-- Thay đổi input number thành input group với nút + và - -->
+                            <div class="input-group input-group-sm mx-3" style="width: 120px;">
+                                <button class="btn btn-outline-secondary quantity-minus" type="button">-</button>
+                                <input type="text" class="form-control text-center quantity-input" th:value="${item.quantity}" readonly>
+                                <button class="btn btn-outline-secondary quantity-plus" type="button">+</button>
                             </div>
+                            <!-- === KẾT THÚC ĐOẠN CODE SỬA ĐỔI === -->
                             <div class="text-end fw-bold item-subtotal" style="width: 100px;" th:text="${#numbers.formatDecimal(item.dish.price * item.quantity, 0, 'COMMA', 0, 'POINT')} + 'đ'"></div>
                             <button class="btn btn-sm btn-outline-danger ms-3 remove-item-btn"
                                     th:data-item-id="${item.id}"
@@ -111,3 +125,4 @@
 <script th:src="@{/js/cart/cart-page.js}"></script>
 </body>
 </html>
+
