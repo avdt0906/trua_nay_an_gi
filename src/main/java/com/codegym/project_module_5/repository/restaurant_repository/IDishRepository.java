@@ -27,8 +27,21 @@ public interface IDishRepository extends JpaRepository<Dish, Long> {
 
     List<Dish> findByRestaurant_Id(Long Id);
 
-//    @Query("SELECT d FROM Dish d JOIN d.restaurant r, Coupon c WHERE c.restaurant = r GROUP BY d.id ORDER BY MAX(c.percentDiscount) DESC")
-//    List<Dish> findDishesWithTopDiscounts(Pageable pageable); // GHI CHÚ: Sử dụng Pageable để giới hạn số lượng kết quả.
 
     List<Dish> findTop8ByOrderByDiscountDesc();
+    
+    @Query("SELECT d FROM Dish d WHERE d.category.id = :categoryId AND d.restaurant.isApproved = true AND d.restaurant.isLocked = false AND d.isAvailable = true")
+    List<Dish> findByCategoryIdAndRestaurantApproved(@Param("categoryId") Long categoryId);
+    
+    @Query("SELECT d FROM Dish d WHERE d.category.id = :categoryId AND d.restaurant.isApproved = true AND d.restaurant.isLocked = false AND d.isAvailable = true")
+    Page<Dish> findByCategoryIdAndRestaurantApproved(@Param("categoryId") Long categoryId, Pageable pageable);
+    
+    @Query("SELECT d FROM Dish d WHERE d.restaurant.isApproved = true AND d.restaurant.isLocked = false AND d.isAvailable = true AND d.discount > 0 ORDER BY d.discount DESC")
+    List<Dish> findBestPriceDishes(Pageable pageable);
+    
+    @Query("SELECT d FROM Dish d WHERE d.restaurant.isApproved = true AND d.restaurant.isLocked = false AND d.isAvailable = true ORDER BY d.id DESC")
+    List<Dish> findHotPickDishes(Pageable pageable);
+    
+    @Query("SELECT d FROM Dish d WHERE d.restaurant.isApproved = true AND d.restaurant.isLocked = false AND d.isAvailable = true ORDER BY RAND()")
+    List<Dish> findNearbyDishes(Pageable pageable);
 }

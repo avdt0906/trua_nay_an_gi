@@ -49,8 +49,8 @@ body {
 
 .dishes-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 1.5rem;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 1rem;
     margin-bottom: 2rem;
 }
 
@@ -71,7 +71,7 @@ body {
 
 .dish-image {
     width: 100%;
-    height: 200px;
+    height: 180px;
     object-fit: cover;
     position: relative;
 }
@@ -121,27 +121,29 @@ body {
 }
 
 .dish-info {
-    padding: 1rem;
+    padding: 0.8rem;
 }
 
 .dish-name {
     font-weight: 600;
-    font-size: 1rem;
+    font-size: 0.9rem;
     color: #333;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.4rem;
     display: -webkit-box;
     -webkit-line-clamp: 2;
+    line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
-    line-height: 1.3;
+    line-height: 1.2;
 }
 
 .restaurant-name {
     color: #999;
-    font-size: 0.8rem;
-    margin-bottom: 0.7rem;
+    font-size: 0.75rem;
+    margin-bottom: 0.5rem;
     display: -webkit-box;
     -webkit-line-clamp: 1;
+    line-clamp: 1;
     -webkit-box-orient: vertical;
     overflow: hidden;
 }
@@ -149,8 +151,8 @@ body {
 .dish-price {
     color: var(--shopee-orange);
     font-weight: 700;
-    font-size: 1.1rem;
-    margin-bottom: 0.5rem;
+    font-size: 1rem;
+    margin-bottom: 0.4rem;
 }
 
 .original-price {
@@ -164,8 +166,8 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    font-size: 0.8rem;
-    margin-bottom: 0.7rem;
+    font-size: 0.75rem;
+    margin-bottom: 0.5rem;
 }
 
 .rating-section {
@@ -194,18 +196,20 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-top: 0.5rem;
+    margin-top: 0.4rem;
+    gap: 0.5rem;
 }
 
 .view-btn {
     background: #f8f9fa;
     border: 1px solid #dee2e6;
     color: #666;
-    padding: 0.4rem 0.8rem;
+    padding: 0.3rem 0.6rem;
     border-radius: 6px;
-    font-size: 0.8rem;
+    font-size: 0.75rem;
     transition: all 0.2s ease;
     text-decoration: none;
+    flex: 1;
 }
 
 .view-btn:hover {
@@ -217,14 +221,15 @@ body {
     background: var(--shopee-orange);
     border: none;
     color: white;
-    padding: 0.4rem 0.8rem;
+    padding: 0.3rem 0.6rem;
     border-radius: 6px;
-    font-size: 0.8rem;
+    font-size: 0.75rem;
     font-weight: 600;
     transition: all 0.2s ease;
     display: flex;
     align-items: center;
-    gap: 0.3rem;
+    gap: 0.2rem;
+    flex: 1;
 }
 
 .add-cart-btn:hover {
@@ -275,10 +280,24 @@ body {
     color: white;
 }
 
+@media (max-width: 1200px) {
+    .dishes-grid {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 0.8rem;
+    }
+}
+
+@media (max-width: 992px) {
+    .dishes-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 0.8rem;
+    }
+}
+
 @media (max-width: 768px) {
     .dishes-grid {
-        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-        gap: 1rem;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.8rem;
     }
 
     .dish-image {
@@ -297,34 +316,41 @@ body {
 @media (max-width: 576px) {
     .dishes-grid {
         grid-template-columns: 1fr 1fr;
-        gap: 0.8rem;
+        gap: 0.6rem;
     }
 
     .dish-image {
-        height: 140px;
+        height: 120px;
     }
 
     .dish-info {
-        padding: 0.8rem;
+        padding: 0.6rem;
     }
 
     .dish-name {
-        font-size: 0.9rem;
+        font-size: 0.8rem;
+        line-height: 1.2;
     }
 
     .dish-stats {
-        font-size: 0.75rem;
+        font-size: 0.7rem;
+    }
+
+    .dish-price {
+        font-size: 0.9rem;
     }
 
     .add-to-cart-section {
         flex-direction: column;
-        gap: 0.5rem;
+        gap: 0.4rem;
     }
 
     .view-btn,
     .add-cart-btn {
         width: 100%;
         justify-content: center;
+        padding: 0.3rem 0.6rem;
+        font-size: 0.7rem;
     }
 }
 
