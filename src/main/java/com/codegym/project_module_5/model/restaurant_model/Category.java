@@ -15,4 +15,5 @@ public class Category {
     private Long id;
     @NotNull
     private String name;
+    private String pictureUrl;
 }

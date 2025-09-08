@@ -8,19 +8,188 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="/css/index.css"/>
 </head>
+<style>
+  .category-scroll {
+    display: flex;
+    overflow-x: auto;
+    gap: 1.5rem;
+    scroll-snap-type: x mandatory;
+    padding: 1.5rem 1rem;
+    margin-bottom: 2rem;
+    background: linear-gradient(135deg, #f5f5f5 0%, #ffffff 100%);
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(238, 77, 45, 0.1);
+    border: 1px solid rgba(238, 77, 45, 0.1);
+  }
+
+  .category-item {
+    flex: 0 0 auto;
+    scroll-snap-align: center;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    padding: 0.5rem;
+    border-radius: 12px;
+    background: white;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  }
+
+  .category-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    background: linear-gradient(135deg, #fff 0%, #f8f9fa 100%);
+  }
+
+  .category-item img {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 3px solid transparent;
+    background: linear-gradient(45deg, #ee4d2d, #ff6633, #ff7043);
+    background-clip: padding-box;
+    transition: all 0.3s ease;
+    position: relative;
+  }
+
+  .category-item:hover img {
+    transform: scale(1.05);
+    border: 3px solid #ee4d2d;
+    box-shadow: 0 0 15px rgba(238, 77, 45, 0.2);
+  }
+
+  .category-name {
+    margin-top: 0.8rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #495057;
+    transition: color 0.3s ease;
+  }
+
+  .category-item:hover .category-name {
+    color: #ee4d2d;
+  }
+
+  .category-item.active {
+    background: linear-gradient(135deg, #ee4d2d 0%, #ff6633 100%);
+    color: white;
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(238, 77, 45, 0.3);
+  }
+
+  .category-item.active .category-name {
+    color: white;
+    font-weight: 700;
+  }
+
+  .category-item.active img {
+    border: 3px solid white;
+    box-shadow: 0 0 25px rgba(255, 255, 255, 0.5);
+  }
+
+  .category-name a {
+    text-decoration: none;
+    color: inherit;
+    transition: all 0.3s ease;
+  }
+
+  .category-name a:hover {
+    color: #ee4d2d;
+  }
+
+  /* Ẩn thanh cuộn hoàn toàn */
+  .category-scroll::-webkit-scrollbar {
+    display: none;
+  }
+
+  .category-scroll {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  /* Animation cho category items */
+  @keyframes slideInFromLeft {
+    from {
+      opacity: 0;
+      transform: translateX(-50px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  .category-item {
+    animation: slideInFromLeft 0.6s ease forwards;
+  }
+
+  .category-item:nth-child(1) { animation-delay: 0.1s; }
+  .category-item:nth-child(2) { animation-delay: 0.2s; }
+  .category-item:nth-child(3) { animation-delay: 0.3s; }
+  .category-item:nth-child(4) { animation-delay: 0.4s; }
+  .category-item:nth-child(5) { animation-delay: 0.5s; }
+  .category-item:nth-child(6) { animation-delay: 0.6s; }
+  .category-item:nth-child(7) { animation-delay: 0.7s; }
+  .category-item:nth-child(8) { animation-delay: 0.8s; }
+
+  /* Floating animation for category items - removed for subtler effect */
+
+  /* Pulse animation for active category */
+  @keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgba(238, 77, 45, 0.7); }
+    70% { box-shadow: 0 0 0 10px rgba(238, 77, 45, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(238, 77, 45, 0); }
+  }
+
+
+  /* Smooth scroll behavior */
+  .category-scroll {
+    scroll-behavior: smooth;
+  }
+</style>
 <body>
 
 <!-- Sử dụng Navbar Fragment -->
 <div th:replace="~{user/fragments/_navbar :: navbar}"></div>
 
+<div class="container py-4">
+  <h3 class="text-center mb-4" style="color: #ee4d2d; font-weight: 700;">
+    <i class="fas fa-utensils me-2" style="color: #ff6633;"></i>
+    Danh mục món ăn
+  </h3>
+  <div class="category-scroll">
+    <!-- Các category -->
+    <div class="category-item" th:each="row: ${categories}" th:data-category-id="${row.id}"
+         th:classappend="${categoryId != null && categoryId == row.id} ? 'active' : ''">
+      <img th:src="@{'/images/category/' + ${row.getPictureUrl()}}" th:alt="${row.name}">
+      <div class="category-name">
+        <a href="#" th:text="${row.name}" class="category-link"></a>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- Header Section -->
-<div class="main-header">
+<div class="main-header" style="background: linear-gradient(135deg, #f5f5f5 0%, #ffffff 100%); border: 1px solid rgba(238, 77, 45, 0.1); box-shadow: 0 4px 15px rgba(238, 77, 45, 0.1);">
   <div class="container">
-    <h1 style="text-align: center" class="header-title" th:if="${search == null or search.isEmpty()}">
-      Danh sách ưu đãi
+    <h1 style="text-align: center; color: #ee4d2d;" class="header-title" th:if="${search == null or search.isEmpty()} and ${categoryId == null} and ${menuType == null}">
+      <i class="fas fa-gift me-2"></i>Danh sách ưu đãi
     </h1>
-    <h1 class="header-title" th:unless="${search == null or search.isEmpty()}">
-      Kết quả tìm kiếm cho '<span th:text="${search}"></span>'
+    <h1 class="header-title" style="color: #ee4d2d;" th:if="${search != null and !search.isEmpty()}">
+      <i class="fas fa-search me-2"></i>Kết quả tìm kiếm cho '<span th:text="${search}" style="color: #ff6633;"></span>'
+    </h1>
+    <h1 class="header-title" style="color: #ee4d2d;" th:if="${categoryId != null}">
+      <i class="fas fa-filter me-2"></i>Món ăn theo danh mục:
+      <span th:each="cat : ${categories}" th:if="${cat.id == categoryId}" th:text="${cat.name}" style="color: #ff6633;"></span>
+    </h1>
+    <h1 class="header-title" style="color: #ee4d2d;" th:if="${menuType == 'best-price'}">
+      <i class="fas fa-tags me-2"></i>Món ăn giá tốt - Giảm giá cao nhất
+    </h1>
+    <h1 class="header-title" style="color: #ee4d2d;" th:if="${menuType == 'nearby'}">
+      <i class="fas fa-map-marker-alt me-2"></i>Món ngon gần bạn
+    </h1>
+    <h1 class="header-title" style="color: #ee4d2d;" th:if="${menuType == 'hot-pick'}">
+      <i class="fas fa-fire me-2"></i>Món ngon hot pick - Được yêu thích
     </h1>
   </div>
 </div>
@@ -134,7 +303,7 @@
     <!-- Nút Previous -->
     <li class="page-item" th:classappend="${dishesPage.first} ? 'disabled'">
       <a class="page-link"
-         th:href="@{/home(page=${dishesPage.number - 1}, search=${search})}">
+         th:href="@{/home(page=${dishesPage.number - 1}, search=${search}, category=${categoryId}, menu=${menuType})}">
         <i class="fas fa-angle-left"></i>
       </a>
     </li>
@@ -144,14 +313,14 @@
         th:each="i : ${#numbers.sequence(0, dishesPage.totalPages - 1)}"
         th:classappend="${i == dishesPage.number} ? 'active'">
       <a class="page-link"
-         th:href="@{/home(page=${i}, search=${search})}"
+         th:href="@{/home(page=${i}, search=${search}, category=${categoryId}, menu=${menuType})}"
          th:text="${i + 1}">1</a>
     </li>
 
     <!-- Nút Next -->
     <li class="page-item" th:classappend="${dishesPage.last} ? 'disabled'">
       <a class="page-link"
-         th:href="@{/home(page=${dishesPage.number + 1}, search=${search})}">
+         th:href="@{/home(page=${dishesPage.number + 1}, search=${search}, category=${categoryId}, menu=${menuType})}">
         <i class="fas fa-angle-right"></i>
       </a>
     </li>
@@ -175,8 +344,8 @@
       <div class="col-md-3">
         <h6>Ứng dụng FoodDelivery</h6>
         <div class="d-flex gap-2">
-          <img src="/images/appstore.png" alt="App Store" height="40">
-          <img src="/images/googleplay.png" alt="Google Play" height="40">
+          <img src="/images/logo/appstore.png" alt="App Store" height="40">
+          <img src="/images/logo/googleplay.png" alt="Google Play" height="40">
         </div>
       </div>
       <div class="col-md-6 text-end small">
@@ -265,17 +434,64 @@
   });
 
   // Category filter functionality
-  document.querySelectorAll('.category-filter').forEach(filter => {
-    filter.addEventListener('click', function() {
-      // Remove active class from all filters
-      document.querySelectorAll('.category-filter').forEach(f => f.classList.remove('active'));
-      // Add active class to clicked filter
-      this.classList.add('active');
+  document.querySelectorAll('.category-item').forEach(item => {
+    item.addEventListener('click', function(e) {
+      e.preventDefault();
 
-      // Here you would implement the actual filtering logic
-      console.log('Filter by:', this.textContent);
+      // Remove active class from all category items
+      document.querySelectorAll('.category-item').forEach(cat => {
+        cat.classList.remove('active');
+        cat.style.transform = '';
+        cat.style.boxShadow = '';
+      });
+
+      // Add active class to clicked category
+      this.classList.add('active');
+      this.style.transform = 'translateY(-3px)';
+      this.style.boxShadow = '0 6px 20px rgba(238, 77, 45, 0.3)';
+
+      // Add ripple effect
+      const ripple = document.createElement('div');
+      ripple.style.position = 'absolute';
+      ripple.style.borderRadius = '50%';
+      ripple.style.background = 'rgba(238, 77, 45, 0.3)';
+      ripple.style.transform = 'scale(0)';
+      ripple.style.animation = 'ripple 0.6s linear';
+      ripple.style.left = '50%';
+      ripple.style.top = '50%';
+      ripple.style.width = '100px';
+      ripple.style.height = '100px';
+      ripple.style.marginLeft = '-50px';
+      ripple.style.marginTop = '-50px';
+      ripple.style.pointerEvents = 'none';
+
+      this.style.position = 'relative';
+      this.appendChild(ripple);
+
+      setTimeout(() => {
+        ripple.remove();
+      }, 600);
+
+      // Get category ID and implement filtering logic
+      const categoryId = this.getAttribute('data-category-id');
+      console.log('Filter by category ID:', categoryId);
+
+      // Redirect to home page with category filter
+      window.location.href = `/home?category=${categoryId}`;
     });
   });
+
+  // Add ripple animation
+  const style = document.createElement('style');
+  style.textContent = `
+    @keyframes ripple {
+      to {
+        transform: scale(4);
+        opacity: 0;
+      }
+    }
+  `;
+  document.head.appendChild(style);
 
   // Sort dropdown functionality
   document.querySelector('.sort-dropdown').addEventListener('change', function() {

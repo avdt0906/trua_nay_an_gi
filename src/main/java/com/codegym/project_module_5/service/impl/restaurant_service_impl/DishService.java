@@ -13,7 +13,6 @@ import java.util.Optional;
 
 @Service
 public class DishService implements IDishService {
-
     @Autowired
     private IDishRepository dishRepository;
 
@@ -71,8 +70,38 @@ public class DishService implements IDishService {
     public List<Dish> findPopularDishesByRestaurant(Long restaurantId, Long excludeDishId) {
         return dishRepository.findPopularDishesByRestaurant(restaurantId, excludeDishId);
     }
+
+    @Override
+    public List<Dish> findTop8ByOrderByDiscountDesc() {
+        return dishRepository.findTop8ByOrderByDiscountDesc();
+    }
     @Override
     public List<Dish> findByRestaurantId(Long restaurantId) {
         return dishRepository.findByRestaurant_Id(restaurantId);
+    }
+    
+    @Override
+    public List<Dish> findByCategoryIdAndRestaurantApproved(Long categoryId) {
+        return dishRepository.findByCategoryIdAndRestaurantApproved(categoryId);
+    }
+    
+    @Override
+    public Page<Dish> findByCategoryIdAndRestaurantApproved(Long categoryId, Pageable pageable) {
+        return dishRepository.findByCategoryIdAndRestaurantApproved(categoryId, pageable);
+    }
+    
+    @Override
+    public List<Dish> findBestPriceDishes(Pageable pageable) {
+        return dishRepository.findBestPriceDishes(pageable);
+    }
+    
+    @Override
+    public List<Dish> findHotPickDishes(Pageable pageable) {
+        return dishRepository.findHotPickDishes(pageable);
+    }
+    
+    @Override
+    public List<Dish> findNearbyDishes(Pageable pageable) {
+        return dishRepository.findNearbyDishes(pageable);
     }
 }

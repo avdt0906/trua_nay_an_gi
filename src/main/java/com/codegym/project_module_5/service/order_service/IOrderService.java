@@ -7,5 +7,4 @@ public interface IOrderService extends IGeneralService<Orders> {
     long count();
     Iterable<Orders> findAllByRestaurantId(Long restaurantId);
     boolean cancelOrder(Long orderId);
-    Iterable<Orders> findByUserId(Long userId);
 }

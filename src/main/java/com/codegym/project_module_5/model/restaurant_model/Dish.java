@@ -22,7 +22,7 @@ public class Dish {
     @NotNull
     private Double price;
     private String description;
-
+    private Integer discount;
 //    @Lob
 //    @Column(columnDefinition="LONGBLOB")
     private String pictureUrl;
