@@ -141,4 +141,27 @@ public class RestaurantService implements IRestaurantService {
     public List<Restaurant> getPendingApprovalRestaurants() {
         return iRestaurantRepository.findByIsApprovedIsNull();
     }
+
+    @Override
+    public List<Restaurant> getPartnerRequests() {
+        return iRestaurantRepository.findByPartnerRequestTrueAndIsLongTermPartnerFalse();
+    }
+
+    @Override
+    public void approveParter(Long restaurantId) {
+       iRestaurantRepository.findById(restaurantId).ifPresent(r -> {
+            r.setIsLongTermPartner(true);
+            r.setPartnerRequest(false);
+            iRestaurantRepository.save(r);
+        });
+    }
+
+    @Override
+    public void rejectPartner(Long restaurantId) {
+       iRestaurantRepository.findById(restaurantId).ifPresent(r -> {
+            r.setIsLongTermPartner(false);
+            r.setPartnerRequest(false);
+            iRestaurantRepository.save(r);
+        });
+    }
 }
