@@ -15,8 +15,8 @@ import java.util.Optional;
 public interface IDishRepository extends JpaRepository<Dish, Long> {
     Page<Dish> findAll(Pageable pageable);
 
-    Iterable<Dish> findAllByRestaurantId(Long restaurantId);
-    Iterable<Dish> findAllByRestaurantIdAndNameContainingIgnoreCase(Long restaurantId, String name);
+    Page<Dish> findAllByRestaurantId(Long restaurantId, Pageable pageable);
+    Page<Dish> findAllByRestaurantIdAndNameContainingIgnoreCase(Long restaurantId, String name, Pageable pageable);
     Iterable<Dish> findAllByRestaurantIsApprovedTrueAndRestaurantIsLockedFalse(); //Tìm tất cả các món ăn từ các nhà hàng đã được duyệt và đang hoạt động.
     Iterable<Dish> findAllByNameContainingIgnoreCaseAndRestaurantIsApprovedTrueAndRestaurantIsLockedFalse(String name); //Tìm kiếm các món ăn theo tên từ các nhà hàng đã được duyệt và đang hoạt động.
     Optional<Dish> findDishById(Long id);

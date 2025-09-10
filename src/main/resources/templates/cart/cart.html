@@ -50,7 +50,7 @@
                             <div class="form-check me-3">
                                 <input class="form-check-input item-checkbox" type="checkbox" th:value="${item.id}">
                             </div>
-                            <img th:src="@{'/images/dish/eat_food/' + ${item.dish.pictureUrl}}" class="rounded me-3" style="width: 80px; height: 80px; object-fit: cover;" alt="Dish Image">
+                            <img th:src="@{'/images/dish/' + ${item.dish.pictureUrl}}" class="rounded me-3" style="width: 80px; height: 80px; object-fit: cover;" alt="Dish Image">
                             <div class="flex-grow-1">
                                 <h6 class="mb-1" th:text="${item.dish.name}"></h6>
                                 <small class="text-muted" th:text="${item.dish.restaurant.name}"></small>
