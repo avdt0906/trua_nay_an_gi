@@ -19,3 +19,4 @@ public interface IRestaurantService extends IGeneralService<Restaurant> {
     void rejectPartner(Long restaurantId);
     double calculateTotalRevenue(Long restaurantId);
 }
+
