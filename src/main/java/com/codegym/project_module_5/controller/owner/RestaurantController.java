@@ -3,6 +3,11 @@ package com.codegym.project_module_5.controller.owner;
 import com.codegym.project_module_5.model.dto.request.RestaurantRegisterRequest;
 import com.codegym.project_module_5.model.restaurant_model.Restaurant;
 import com.codegym.project_module_5.service.restaurant_service.IRestaurantService;
+import com.codegym.project_module_5.repository.order_repository.IOrderRepository;
+import com.codegym.project_module_5.repository.order_repository.IOrderDetailRepository;
+import com.codegym.project_module_5.model.order_model.Orders;
+import com.codegym.project_module_5.model.order_model.OrderDetail;
+import java.util.List;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -26,6 +31,13 @@ public class RestaurantController {
     @Autowired
     private IRestaurantService restaurantService;
 
+    @Autowired
+    private IOrderRepository orderRepository;
+
+    @Autowired
+    private IOrderDetailRepository orderDetailRepository;
+
+
     @GetMapping("/signup")
     public String showSignupForm(Model model) {
         model.addAttribute("restaurant", new RestaurantRegisterRequest());
@@ -40,7 +52,6 @@ public class RestaurantController {
             Model model) {
 
         if (bindingResult.hasErrors()) {
-            // Quan trọng: phải truyền lại object restaurant để hiển thị validation errors
             model.addAttribute("restaurant", request);
             return "owner/restaurant/register_restaurant";
         }
@@ -65,7 +76,15 @@ public class RestaurantController {
     public ModelAndView showDashboard() {
         ModelAndView mv = new ModelAndView("owner/restaurant/dashboard");
         Optional<Restaurant> restaurant = restaurantService.findByUsername(getCurrentUsername());
-        mv.addObject("restaurant", restaurant.get());
+        
+        if (restaurant.isPresent()) {
+            Restaurant restaurantData = restaurant.get();
+            mv.addObject("restaurant", restaurantData);
+            
+            double totalRevenue = calculateTestRevenue(restaurantData.getId());
+            mv.addObject("totalRevenue", totalRevenue);
+        }
+        
         return mv;
     }
 
@@ -75,5 +94,32 @@ public class RestaurantController {
             return ((UserDetails) principal).getUsername();
         }
         return null;
+    }
+
+    private double calculateTestRevenue(Long restaurantId) {
+        
+        List<Orders> orders = (List<Orders>) orderRepository.findAllByRestaurantId(restaurantId);
+        
+        double totalRevenue = 0.0;
+        
+        for (Orders order : orders) {
+            System.out.println("Order ID: " + order.getId() + ", Status: " + order.getOrderStatus().getName());
+            
+            double orderAmount = 0;
+            List<OrderDetail> details = (List<OrderDetail>) orderDetailRepository.findAllByOrderId(order.getId());
+            
+            for (OrderDetail detail : details) {
+                double itemTotal = detail.getDish().getPrice() * detail.getQuantity();
+                orderAmount += itemTotal;
+            }
+            
+            double netAmount = orderAmount - 15000;
+            double commission = netAmount >= 200_000_000 ? 0.10 : netAmount <= 100_000_000 ? 0.05 : 0.075;
+            double orderRevenue = netAmount * (1 - commission);
+            totalRevenue += orderRevenue;
+            
+        }
+
+        return totalRevenue;
     }
 }
