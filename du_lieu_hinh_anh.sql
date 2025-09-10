@@ -11,10 +11,10 @@ INSERT INTO roles (name) VALUES
 
 -- 2. Thêm dữ liệu cho bảng users
 INSERT INTO user (username, password, email, phone, full_name, avatar_url) VALUES
-('admin', '$2a$12$N.zmdr9k7uOCQb376NoUnuTJ8iAt6Z5EHsM8lE9lBOsl7iKTVEFDi', 'admin@codegym.vn', '0987654321', 'Admin System', NULL),
-('owner1', '$2a$12$N.zmdr9k7uOCQb376NoUnuTJ8iAt6Z5EHsM8lE9lBOsl7iKTVEFDi', 'owner1@restaurant.com', '0123456789', 'Chủ nhà hàng 1', NULL),
-('owner2', '$2a$12$N.zmdr9k7uOCQb376NoUnuTJ8iAt6Z5EHsM8lE9lBOsl7iKTVEFDi', 'owner2@restaurant.com', '0123456790', 'Chủ nhà hàng 2', NULL),
-('customer1', '$2a$12$N.zmdr9k7uOCQb376NoUnuTJ8iAt6Z5EHsM8lE9lBOsl7iKTVEFDi', 'customer1@gmail.com', '0123456791', 'Khách hàng 1', NULL);
+('admin', '$2a$12$/NmbZs9tWCi7dPaF46ynseIsAaR6STGCA87SYHV3Ln.TdKJ/DZlVC', 'admin@codegym.vn', '0987654321', 'Admin System', NULL),
+('owner1', '$2a$12$/NmbZs9tWCi7dPaF46ynseIsAaR6STGCA87SYHV3Ln.TdKJ/DZlVC', 'owner1@restaurant.com', '0123456789', 'Chủ nhà hàng 1', NULL),
+('owner2', '$2a$12$/NmbZs9tWCi7dPaF46ynseIsAaR6STGCA87SYHV3Ln.TdKJ/DZlVC', 'owner2@restaurant.com', '0123456790', 'Chủ nhà hàng 2', NULL),
+('customer1', '$2a$12$/NmbZs9tWCi7dPaF46ynseIsAaR6STGCA87SYHV3Ln.TdKJ/DZlVC', 'customer1@gmail.com', '0123456791', 'Khách hàng 1', NULL);
 
 -- 3. Thêm dữ liệu cho bảng user_roles
 INSERT INTO user_roles (user_id, role_id) VALUES
@@ -36,13 +36,10 @@ INSERT INTO category (name) VALUES
 ('Bún'),
 ('Hải sản'),
 ('Gà'),
-('Heo'),
 ('Rau củ'),
-('Tráng miệng'),
-('Nước uống'),
-('Trà Sữa'),   -- id=10
-('Trà Chanh'), -- id=11
-('Topping');   -- id=12
+('Trà Sữa'), 
+('Trà Chanh'),
+('Topping');
 
 -- 6. Thêm dữ liệu cho bảng tags
 INSERT INTO tag (name, restaurant_id) VALUES
@@ -54,9 +51,9 @@ INSERT INTO tag (name, restaurant_id) VALUES
 ('Khuyến mãi', 2),
 ('Truyền thống', 1),
 ('Hiện đại', 2),
-('Ngọt nhẹ', 3),           -- id=9
-('Best seller', 3),        -- id=10
-('Giới trẻ yêu thích', 3); -- id=11
+('Ngọt nhẹ', 3),
+('Best seller', 3),
+('Giới trẻ yêu thích', 3);
 
 -- 7. Thêm dữ liệu cho bảng dishes
 INSERT INTO dish (name, restaurant_id, price, description, picture_url, tag_id, is_available, category_id) VALUES
@@ -75,19 +72,19 @@ INSERT INTO dish (name, restaurant_id, price, description, picture_url, tag_id, 
 ('Phở bò tái', 2, 65000, 'Phở bò với nước dùng đậm đà, bò tái mềm, bánh phở dai', '/images/logo.jpg', 1, true, 2),
 ('Bún chả cá', 2, 70000, 'Bún với chả cá tươi, nước dùng ngọt, rau sống tươi', '/images/logo.jpg', 2, true, 3),
 ('Gà nướng lá chanh', 2, 180000, 'Gà ta nướng với lá chanh, thịt mềm, da giòn', '/images/logo.jpg', 3, true, 5),
-('Trà Sữa Trân Châu Đường Đen', 3, 39000, 'Trà sữa đậm vị, trân châu đường đen dẻo thơm', 'https://example.com/trasua_duongden.jpg', 10, TRUE, 10),
-('Trà Sữa Matcha', 3, 42000, 'Matcha Nhật Bản, vị ngọt dịu', 'https://example.com/trasua_matcha.jpg', 9, TRUE, 10),
-('Trà Sữa Oolong Kem Cheese', 3, 45000, 'Trà oolong thơm nhẹ, phủ kem cheese mặn mà', 'https://example.com/oolong_cheese.jpg', 10, TRUE, 10),
-('Trà Sữa Thái Xanh', 3, 35000, 'Trà Thái xanh đặc trưng, béo thơm', 'https://example.com/tra_thai_xanh.jpg', 11, TRUE, 10),
-('Trà Sữa Socola', 3, 37000, 'Kết hợp giữa vị cacao và sữa', 'https://example.com/tra_socola.jpg', 9, TRUE, 10),
-('Trà Sữa Hồng Trà', 3, 36000, 'Hồng trà đậm đà, kết hợp sữa ngọt nhẹ', 'https://example.com/tra_hong.jpg', 10, TRUE, 10),
+('Trà Sữa Trân Châu Đường Đen', 3, 39000, 'Trà sữa đậm vị, trân châu đường đen dẻo thơm', 'https://example.com/trasua_duongden.jpg', 10, TRUE, 7),
+('Trà Sữa Matcha', 3, 42000, 'Matcha Nhật Bản, vị ngọt dịu', 'https://example.com/trasua_matcha.jpg', 9, TRUE, 7),
+('Trà Sữa Oolong Kem Cheese', 3, 45000, 'Trà oolong thơm nhẹ, phủ kem cheese mặn mà', 'https://example.com/oolong_cheese.jpg', 10, TRUE, 7),
+('Trà Sữa Thái Xanh', 3, 35000, 'Trà Thái xanh đặc trưng, béo thơm', 'https://example.com/tra_thai_xanh.jpg', 11, TRUE, 7),
+('Trà Sữa Socola', 3, 37000, 'Kết hợp giữa vị cacao và sữa', 'https://example.com/tra_socola.jpg', 9, TRUE, 7),
+('Trà Sữa Hồng Trà', 3, 36000, 'Hồng trà đậm đà, kết hợp sữa ngọt nhẹ', 'https://example.com/tra_hong.jpg', 10, TRUE, 7),
 
-('Trà Chanh Sả Tắc', 3, 25000, 'Trà chanh thanh mát kết hợp sả và tắc', 'https://example.com/trachanh_sata.jpg', 11, TRUE, 11),
-('Trà Chanh Cam Quế', 3, 28000, 'Trà chanh kèm cam tươi và hương quế', 'https://example.com/trachanh_camque.jpg', 9, TRUE, 11),
-('Trà Chanh Đào', 3, 30000, 'Trà chanh kết hợp miếng đào giòn ngọt', 'https://example.com/trachanh_dao.jpg', 10, TRUE, 11),
-('Trà Chanh Bạc Hà', 3, 27000, 'Trà chanh thanh mát với bạc hà', 'https://example.com/trachanh_bac_ha.jpg', 11, TRUE, 11),
-('Trà Chanh Gừng Mật Ong', 3, 32000, 'Tốt cho sức khỏe, ấm nóng vị gừng', 'https://example.com/trachanh_gung.jpg', 9, TRUE, 11),
-('Trà Chanh Kiwi', 3, 34000, 'Trà chanh pha kiwi chua ngọt lạ miệng', 'https://example.com/trachanh_kiwi.jpg', 10, TRUE, 11);
+('Trà Chanh Sả Tắc', 3, 25000, 'Trà chanh thanh mát kết hợp sả và tắc', 'https://example.com/trachanh_sata.jpg', 11, TRUE, 8),
+('Trà Chanh Cam Quế', 3, 28000, 'Trà chanh kèm cam tươi và hương quế', 'https://example.com/trachanh_camque.jpg', 9, TRUE, 8),
+('Trà Chanh Đào', 3, 30000, 'Trà chanh kết hợp miếng đào giòn ngọt', 'https://example.com/trachanh_dao.jpg', 10, TRUE, 8),
+('Trà Chanh Bạc Hà', 3, 27000, 'Trà chanh thanh mát với bạc hà', 'https://example.com/trachanh_bac_ha.jpg', 11, TRUE, 8),
+('Trà Chanh Gừng Mật Ong', 3, 32000, 'Tốt cho sức khỏe, ấm nóng vị gừng', 'https://example.com/trachanh_gung.jpg', 9, TRUE, 8),
+('Trà Chanh Kiwi', 3, 34000, 'Trà chanh pha kiwi chua ngọt lạ miệng', 'https://example.com/trachanh_kiwi.jpg', 10, TRUE, 8);
 
 -- 8. Thêm dữ liệu cho bảng coupons
 INSERT INTO coupon (name, restaurant_id, fixed_discount, percent_discount, min_order, max_discount, description, is_available) VALUES
@@ -172,12 +169,11 @@ INSERT INTO oder_option_detail (order_detail_id, dish_option_id) VALUES
 (7, 3),  -- Trà Oolong thêm Kem Cheese
 (9, 6);  -- Trà Sữa Matcha mức ngọt 70%
 
--- 15. Thêm dữ liệu cho bảng user_addresses
-INSERT INTO user_address (user_id, address) VALUES
-(4, '123 Đường ABC, Quận 1, TP.HCM'),
-(4, '456 Đường XYZ, Quận 3, TP.HCM'),
-(1, '123 Nguyễn Trãi, Hà Nội'),
-(2, '56 Lê Lợi, Hà Nội');
+INSERT INTO user_address (user_id, full_address, default_address) VALUES
+(4, '123 Đường ABC, Quận 1, TP.HCM', 0),
+(4, '456 Đường XYZ, Quận 3, TP.HCM', 0),
+(1, '123 Nguyễn Trãi, Hà Nội', 1),
+(2, '56 Lê Lợi, Hà Nội', 0);
 
 UPDATE `casestudy`.`dish` SET `picture_url` = 'eat_food/cua_rang_me.jpg' WHERE (`id` = '1');
 UPDATE `casestudy`.`dish` SET `picture_url` = 'eat_food/tom_hung_nuong.jpg' WHERE (`id` = '2');
@@ -202,5 +198,16 @@ UPDATE `casestudy`.`dish` SET `picture_url` = 'drinks/tra-chanh-dao.jpg' WHERE (
 UPDATE `casestudy`.`dish` SET `picture_url` = 'drinks/tra-chanh-bac-ha.jpg' WHERE (`id` = '22');
 UPDATE `casestudy`.`dish` SET `picture_url` = 'drinks/tra-gung-mat-ong.jpg' WHERE (`id` = '23');
 UPDATE `casestudy`.`dish` SET `picture_url` = 'drinks/meo-khi-pha-che-tra-kiwi.jpg' WHERE (`id` = '24');
+
+
+UPDATE `casestudy`.`category` SET `picture_url` = 'com.jpg' WHERE (`id` = '1');
+UPDATE `casestudy`.`category` SET `picture_url` = 'pho.jpg' WHERE (`id` = '2');
+UPDATE `casestudy`.`category` SET `picture_url` = 'bun.jpg' WHERE (`id` = '3');
+UPDATE `casestudy`.`category` SET `picture_url` = 'hai-san.jpg' WHERE (`id` = '4');
+UPDATE `casestudy`.`category` SET `picture_url` = 'ga.jpg' WHERE (`id` = '5');
+UPDATE `casestudy`.`category` SET `picture_url` = 'rau.jpg' WHERE (`id` = '6');
+UPDATE `casestudy`.`category` SET `picture_url` = 'tra-sua.jpg' WHERE (`id` = '7');
+UPDATE `casestudy`.`category` SET `picture_url` = 'tra-chanh.jpg' WHERE (`id` = '8');
+UPDATE `casestudy`.`category` SET `picture_url` = 'trai-cay.jpg ' WHERE (`id` = '9');
 
 
