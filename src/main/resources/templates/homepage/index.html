@@ -132,8 +132,6 @@
   .category-item:nth-child(7) { animation-delay: 0.7s; }
   .category-item:nth-child(8) { animation-delay: 0.8s; }
 
-  /* Floating animation for category items - removed for subtler effect */
-
   /* Pulse animation for active category */
   @keyframes pulse {
     0% { box-shadow: 0 0 0 0 rgba(238, 77, 45, 0.7); }
@@ -149,7 +147,6 @@
 </style>
 <body>
 
-<!-- Sử dụng Navbar Fragment -->
 <div th:replace="~{user/fragments/_navbar :: navbar}"></div>
 
 <div class="container py-4">
@@ -158,7 +155,6 @@
     Danh mục món ăn
   </h3>
   <div class="category-scroll">
-    <!-- Các category -->
     <div class="category-item" th:each="row: ${categories}" th:data-category-id="${row.id}"
          th:classappend="${categoryId != null && categoryId == row.id} ? 'active' : ''">
       <img th:src="@{'/images/category/' + ${row.getPictureUrl()}}" th:alt="${row.name}">
@@ -169,7 +165,6 @@
   </div>
 </div>
 
-<!-- Header Section -->
 <div class="main-header" style="background: linear-gradient(135deg, #f5f5f5 0%, #ffffff 100%); border: 1px solid rgba(238, 77, 45, 0.1); box-shadow: 0 4px 15px rgba(238, 77, 45, 0.1);">
   <div class="container">
     <h1 style="text-align: center; color: #ee4d2d;" class="header-title" th:if="${search == null or search.isEmpty()} and ${categoryId == null} and ${menuType == null}">
@@ -194,10 +189,8 @@
   </div>
 </div>
 
-<!-- Main Content -->
 <main class="container">
 
-  <!-- Results Info -->
   <div class="results-info">
     <div class="results-count">
       <strong>KHU VỰC</strong>
@@ -213,9 +206,7 @@
     </select>
   </div>
 
-  <!-- Dishes Grid -->
   <div class="dishes-grid">
-    <!-- Lặp qua từng món ăn từ tất cả nhà hàng -->
     <th:block th:each="restaurantEntry : ${dishesByRestaurant}">
       <div class="dish-card" th:each="dish : ${restaurantEntry.value}">
         <div class="dish-image-container">
@@ -253,16 +244,19 @@
             <a th:href="@{/dish/{id}(id=${dish.id})}" class="view-btn">
               <i class="fas fa-eye me-1"></i> Xem
             </a>
-            <button type="button" class="btn add-cart-btn add-to-cart-btn" th:data-dish-id="${dish.id}">
-              <i class="fas fa-plus"></i> Thêm
-            </button>
+            <form th:action="@{/cart/add}" method="POST" class="add-to-cart-form" style="display: inline-block;">
+              <input type="hidden" name="dishId" th:value="${dish.id}" />
+              <input type="hidden" name="quantity" value="1" />
+              <button type="button" class="btn add-cart-btn add-to-cart-btn" th:data-dish-id="${dish.id}">
+                <i class="fas fa-plus"></i> Thêm
+              </button>
+            </form>
           </div>
         </div>
       </div>
     </th:block>
   </div>
 
-  <!-- Empty State -->
   <div th:if="${#maps.isEmpty(dishesByRestaurant)}" class="empty-state">
     <i class="fas fa-utensils"></i>
     <h4>Không tìm thấy món ăn phù hợp</h4>
@@ -273,7 +267,6 @@
   </div>
 </main>
 
-<!-- Toast Notification -->
 <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 1050">
   <div id="add-to-cart-toast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
     <div class="toast-header bg-success text-white">
@@ -300,7 +293,6 @@
 
 <nav th:if="${dishesPage.totalPages > 1}">
   <ul class="pagination">
-    <!-- Nút Previous -->
     <li class="page-item" th:classappend="${dishesPage.first} ? 'disabled'">
       <a class="page-link"
          th:href="@{/home(page=${dishesPage.number - 1}, search=${search}, category=${categoryId}, menu=${menuType})}">
@@ -308,7 +300,6 @@
       </a>
     </li>
 
-    <!-- Các số trang -->
     <li class="page-item"
         th:each="i : ${#numbers.sequence(0, dishesPage.totalPages - 1)}"
         th:classappend="${i == dishesPage.number} ? 'active'">
@@ -317,7 +308,6 @@
          th:text="${i + 1}">1</a>
     </li>
 
-    <!-- Nút Next -->
     <li class="page-item" th:classappend="${dishesPage.last} ? 'disabled'">
       <a class="page-link"
          th:href="@{/home(page=${dishesPage.number + 1}, search=${search}, category=${categoryId}, menu=${menuType})}">
@@ -360,39 +350,6 @@
 <script th:src="@{/js/cart/cart.js}"></script>
 
 <script>
-  // Add to cart functionality
-  document.querySelectorAll('.add-to-cart-btn').forEach(button => {
-    button.addEventListener('click', function(e) {
-      e.preventDefault();
-      e.stopPropagation();
-
-      // Add loading state
-      const originalContent = this.innerHTML;
-      this.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
-      this.disabled = true;
-
-      // Simulate API call delay
-      setTimeout(() => {
-        // Restore button
-        this.innerHTML = originalContent;
-        this.disabled = false;
-
-        // Show success feedback
-        this.classList.add('bg-success');
-        this.innerHTML = '<i class="fas fa-check"></i> Đã thêm';
-
-        setTimeout(() => {
-          this.classList.remove('bg-success');
-          this.innerHTML = originalContent;
-        }, 2000);
-
-        // Show toast
-        const toast = new bootstrap.Toast(document.getElementById('add-to-cart-toast'));
-        toast.show();
-      }, 500);
-    });
-  });
-
   // Favorite functionality
   document.querySelectorAll('.favorite-badge').forEach(badge => {
     badge.addEventListener('click', function(e) {
@@ -438,60 +395,13 @@
     item.addEventListener('click', function(e) {
       e.preventDefault();
 
-      // Remove active class from all category items
-      document.querySelectorAll('.category-item').forEach(cat => {
-        cat.classList.remove('active');
-        cat.style.transform = '';
-        cat.style.boxShadow = '';
-      });
-
-      // Add active class to clicked category
+      document.querySelectorAll('.category-item').forEach(cat => cat.classList.remove('active'));
       this.classList.add('active');
-      this.style.transform = 'translateY(-3px)';
-      this.style.boxShadow = '0 6px 20px rgba(238, 77, 45, 0.3)';
 
-      // Add ripple effect
-      const ripple = document.createElement('div');
-      ripple.style.position = 'absolute';
-      ripple.style.borderRadius = '50%';
-      ripple.style.background = 'rgba(238, 77, 45, 0.3)';
-      ripple.style.transform = 'scale(0)';
-      ripple.style.animation = 'ripple 0.6s linear';
-      ripple.style.left = '50%';
-      ripple.style.top = '50%';
-      ripple.style.width = '100px';
-      ripple.style.height = '100px';
-      ripple.style.marginLeft = '-50px';
-      ripple.style.marginTop = '-50px';
-      ripple.style.pointerEvents = 'none';
-
-      this.style.position = 'relative';
-      this.appendChild(ripple);
-
-      setTimeout(() => {
-        ripple.remove();
-      }, 600);
-
-      // Get category ID and implement filtering logic
       const categoryId = this.getAttribute('data-category-id');
-      console.log('Filter by category ID:', categoryId);
-
-      // Redirect to home page with category filter
       window.location.href = `/home?category=${categoryId}`;
     });
   });
-
-  // Add ripple animation
-  const style = document.createElement('style');
-  style.textContent = `
-    @keyframes ripple {
-      to {
-        transform: scale(4);
-        opacity: 0;
-      }
-    }
-  `;
-  document.head.appendChild(style);
 
   // Sort dropdown functionality
   document.querySelector('.sort-dropdown').addEventListener('change', function() {
@@ -499,33 +409,6 @@
     // Implement sorting logic here
   });
 
-  // Smooth scroll for category filters on mobile
-  const categoryFilters = document.querySelector('.category-filters');
-  let isDown = false;
-  let startX;
-  let scrollLeft;
-
-  categoryFilters.addEventListener('mousedown', (e) => {
-    isDown = true;
-    startX = e.pageX - categoryFilters.offsetLeft;
-    scrollLeft = categoryFilters.scrollLeft;
-  });
-
-  categoryFilters.addEventListener('mouseleave', () => {
-    isDown = false;
-  });
-
-  categoryFilters.addEventListener('mouseup', () => {
-    isDown = false;
-  });
-
-  categoryFilters.addEventListener('mousemove', (e) => {
-    if (!isDown) return;
-    e.preventDefault();
-    const x = e.pageX - categoryFilters.offsetLeft;
-    const walk = (x - startX) * 2;
-    categoryFilters.scrollLeft = scrollLeft - walk;
-  });
 </script>
 
 </body>
