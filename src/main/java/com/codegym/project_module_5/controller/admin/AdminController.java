@@ -2,18 +2,15 @@ package com.codegym.project_module_5.controller.admin;
 
 import com.codegym.project_module_5.model.restaurant_model.Dish;
 import com.codegym.project_module_5.model.restaurant_model.Restaurant;
-import com.codegym.project_module_5.model.shipper_model.Shipper;
 import com.codegym.project_module_5.model.user_model.User;
 import com.codegym.project_module_5.service.order_service.IOrderService;
 import com.codegym.project_module_5.service.restaurant_service.IDishService;
 import com.codegym.project_module_5.service.restaurant_service.IRestaurantService;
-import com.codegym.project_module_5.service.shipper_service.IShipperService;
 import com.codegym.project_module_5.service.user_service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.HashMap;
@@ -168,7 +165,7 @@ public class AdminController {
     }
     @PostMapping("/restaurants/approvals/partner/approve/{id}")
     public String approvePartnerRequest(@PathVariable Long id) {
-        restaurantService.approveParter(id);
+        restaurantService.approvePartner(id);
         return "redirect:/admin/restaurants/partner-requests";  
     }
     @PostMapping("/restaurant/approvals/partner/reject/{id}")
