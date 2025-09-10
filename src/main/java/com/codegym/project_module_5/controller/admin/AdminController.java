@@ -168,7 +168,7 @@ public class AdminController {
     }
     @PostMapping("/restaurants/approvals/partner/approve/{id}")
     public String approvePartnerRequest(@PathVariable Long id) {
-        restaurantService.approveParter(id);
+        restaurantService.approvePartner(id);
         return "redirect:/admin/restaurants/partner-requests";  
     }
     @PostMapping("/restaurant/approvals/partner/reject/{id}")

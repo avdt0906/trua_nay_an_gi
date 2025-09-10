@@ -15,6 +15,8 @@ public interface IRestaurantService extends IGeneralService<Restaurant> {
     Restaurant toggleLockStatus(Long restaurantId);
     List<Restaurant> getPendingApprovalRestaurants();
     List<Restaurant> getPartnerRequests();
-    void approveParter(Long restaurantId);
+    void approvePartner(Long restaurantId);
     void rejectPartner(Long restaurantId);
+    double calculateTotalRevenue(Long restaurantId);
 }
+

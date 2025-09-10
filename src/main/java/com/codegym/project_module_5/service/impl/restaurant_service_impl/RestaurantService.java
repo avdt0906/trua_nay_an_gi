@@ -158,8 +158,8 @@ public class RestaurantService implements IRestaurantService {
     }
 
     @Override
-    public void approveParter(Long restaurantId) {
-       iRestaurantRepository.findById(restaurantId).ifPresent(r -> {
+    public void approvePartner(Long restaurantId) {
+        iRestaurantRepository.findById(restaurantId).ifPresent(r -> {
             r.setIsLongTermPartner(true);
             r.setPartnerRequest(false);
             iRestaurantRepository.save(r);
@@ -173,7 +173,7 @@ public class RestaurantService implements IRestaurantService {
             r.setPartnerRequest(false);
             iRestaurantRepository.save(r);
         });
-  
+    }
     @Override
     public double calculateTotalRevenue(Long restaurantId) {
         System.out.println("=== DEBUG REVENUE CALCULATION ===");
