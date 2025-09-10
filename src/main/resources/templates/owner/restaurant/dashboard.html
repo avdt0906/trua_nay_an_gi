@@ -259,8 +259,8 @@
                             <div class="card card-stat border-start border-warning border-4">
                                 <div class="card-body">
                                     <div>
-                                        <p class="card-category text-muted mb-1">Doanh thu (Tháng)</p>
-                                        <h4 class="card-title mb-0">34,245,000đ</h4>
+                                        <p class="card-category text-muted mb-1">Tổng doanh thu</p>
+                                        <h4 class="card-title mb-0" th:text="${#numbers.formatDecimal(totalRevenue, 0, 'COMMA', 0, 'POINT')} + 'đ'">0đ</h4>
                                     </div>
                                     <div class="stat-icon">
                                         <i class="fas fa-dollar-sign"></i>
