@@ -26,8 +26,10 @@ public class FileStorageService {
                 Files.createDirectories(uploadPath);
             }
             Files.copy(file.getInputStream(), uploadPath.resolve(fileName), StandardCopyOption.REPLACE_EXISTING);
+            System.out.println("Avatar saved to: " + uploadPath.resolve(fileName).toString());
             return avatarBaseUrl + fileName; // Chỉ lưu link vào DB
         } catch (IOException e) {
+            System.err.println("Error saving avatar: " + e.getMessage());
             throw new RuntimeException("Could not store file: " + e.getMessage());
         }
     }

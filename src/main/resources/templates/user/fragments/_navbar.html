@@ -63,7 +63,7 @@
 
                 <div class="dropdown" th:if="${isAuthenticated}">
                     <a class="d-flex align-items-center text-decoration-none dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        <img th:src="${#strings.isEmpty(currentUser?.avatarUrl) ? '/images/logo_nguoi_dung.png' : currentUser.avatarUrl}"
+                        <img th:src="${#strings.isEmpty(currentUser?.avatarUrl) ? '/images/logo/logo_nguoi_dung.png' : currentUser.avatarUrl}"
                              alt="avatar" width="30" height="30" class="rounded-circle me-2">
                         <span th:text="${currentUser != null ? currentUser.fullName : 'Tài khoản'}"></span>
                     </a>

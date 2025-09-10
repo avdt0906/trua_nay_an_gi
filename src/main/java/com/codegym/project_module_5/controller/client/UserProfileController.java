@@ -48,17 +48,26 @@ public class UserProfileController {
         dto.setPhone(user.getPhone());
         dto.setAvatarUrl(user.getAvatarUrl());
         model.addAttribute("user", dto);
-        return "user/editprofile";
+        return "user/edit_profile";
     }
 
     @PostMapping("/update-avatar")
     public String updateAvatar(@RequestParam("avatarFile") MultipartFile avatarFile) {
         String username = getCurrentUsername();
-        if (!avatarFile.isEmpty()) {
-            String avatarUrl = fileStorageService.saveAvatar(avatarFile);
-            userService.updateAvatar(username, avatarUrl);
+        try {
+            if (!avatarFile.isEmpty()) {
+                String avatarUrl = fileStorageService.saveAvatar(avatarFile);
+                if (avatarUrl != null) {
+                    userService.updateAvatar(username, avatarUrl);
+                    return "redirect:/profile/edit?avatarUpdated";
+                } else {
+                    return "redirect:/profile/edit?avatarError";
+                }
+            }
+            return "redirect:/profile/edit?avatarError";
+        } catch (Exception e) {
+            return "redirect:/profile/edit?avatarError";
         }
-        return "redirect:/profile/edit?avatarUpdated";
     }
 
     @PostMapping("/update")
