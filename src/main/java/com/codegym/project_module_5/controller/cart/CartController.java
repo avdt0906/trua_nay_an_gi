@@ -117,17 +117,21 @@ public class CartController {
     }
 
     @PostMapping("/add")
-    public ResponseEntity<String> addToCart(@RequestParam("dishId") Long dishId,
-                                            @RequestParam(value = "quantity", defaultValue = "1") int quantity,
-                                            HttpSession session) {
+    @ResponseBody // Thêm @ResponseBody để Spring tự động chuyển Map thành JSON
+    public ResponseEntity<?> addToCart(@RequestParam("dishId") Long dishId,
+                                       @RequestParam(value = "quantity", defaultValue = "1") int quantity,
+                                       HttpSession session) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         boolean isAuthenticated = authentication != null && authentication.isAuthenticated() && !(authentication instanceof AnonymousAuthenticationToken);
 
         Optional<Dish> dishOptional = dishService.findById(dishId);
         if (dishOptional.isEmpty()) {
-            return ResponseEntity.badRequest().body("Sản phẩm không tồn tại!");
+            // Trả về lỗi dưới dạng JSON
+            return ResponseEntity.badRequest().body(Map.of("message", "Sản phẩm không tồn tại!"));
         }
         Dish dish = dishOptional.get();
+
+        int totalCartItems = 0;
 
         if (isAuthenticated) {
             String username = authentication.getName();
@@ -135,8 +139,9 @@ public class CartController {
                     .orElseThrow(() -> new RuntimeException("User not found"));
             try {
                 cartService.addToCart(currentUser, dish, quantity);
+                totalCartItems = cartService.getCartItems(currentUser).size(); // Lấy số lượng item sau khi thêm
             } catch (IllegalArgumentException ex) {
-                return ResponseEntity.badRequest().body(ex.getMessage());
+                return ResponseEntity.badRequest().body(Map.of("message", ex.getMessage()));
             }
         } else {
             Map<Long, Integer> cart = (Map<Long, Integer>) session.getAttribute("cart");
@@ -150,15 +155,21 @@ public class CartController {
                     Long existingRestaurantId = anyDishOpt.get().getRestaurant().getId();
                     Long newRestaurantId = dish.getRestaurant().getId();
                     if (!existingRestaurantId.equals(newRestaurantId)) {
-                        return ResponseEntity.badRequest().body("Chỉ được đặt món từ một nhà hàng trong mỗi đơn");
+                        return ResponseEntity.badRequest().body(Map.of("message", "Chỉ được đặt món từ một nhà hàng trong mỗi đơn"));
                     }
                 }
             }
             cart.put(dishId, cart.getOrDefault(dishId, 0) + quantity);
             session.setAttribute("cart", cart);
+            totalCartItems = cart.size(); // Lấy số lượng item sau khi thêm
         }
 
-        return ResponseEntity.ok("Thêm vào giỏ hàng thành công!");
+        // Trả về đối tượng Map, Spring sẽ tự chuyển thành JSON
+        Map<String, Object> response = new HashMap<>();
+        response.put("message", "Thêm vào giỏ hàng thành công!");
+        response.put("cartItemCount", totalCartItems);
+
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/checkout")
@@ -189,13 +200,7 @@ public class CartController {
         if (authentication == null || !authentication.isAuthenticated() || (authentication instanceof AnonymousAuthenticationToken)) {
             return "redirect:/account/login";
         }
-
-        // === SỬA LỖI: Thêm biến isAuthenticated vào model ===
-        // Thêm dòng này để navbar có thể render chính xác
         model.addAttribute("isAuthenticated", true);
-
-        // === SỬA LỖI NHỎ: Thay selectedDishIds thành selectedItemIds ===
-        // Biến được truyền vào là selectedItemIds, nên cần kiểm tra đúng biến đó.
         if (selectedItemIds == null || selectedItemIds.isEmpty()) {
             return "redirect:/cart";
         }
