@@ -34,7 +34,7 @@ public class DishRestaurantController {
 
 
     @GetMapping("/dish_list")
-    public ModelAndView dishList(@RequestParam(value = "search", required = false) String search,@PageableDefault(size = 2) Pageable pageable) {
+    public ModelAndView dishList(@RequestParam(value = "search", required = false) String search,@PageableDefault(size = 10) Pageable pageable) {
         ModelAndView mv = new ModelAndView("owner/dish/dish_list");
         String username = getCurrentUsername();
         Optional<Restaurant> restaurantOptional = restaurantService.findByUsername(username);
