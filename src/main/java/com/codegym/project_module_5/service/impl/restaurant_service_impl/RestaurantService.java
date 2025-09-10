@@ -4,10 +4,14 @@ import com.codegym.project_module_5.model.restaurant_model.Restaurant;
 import com.codegym.project_module_5.model.restaurant_model.Coupon;
 import com.codegym.project_module_5.model.user_model.Role;
 import com.codegym.project_module_5.model.user_model.User;
+import com.codegym.project_module_5.model.order_model.Orders;
+import com.codegym.project_module_5.model.order_model.OrderDetail;
 import com.codegym.project_module_5.model.dto.request.RestaurantRegisterRequest;
 import com.codegym.project_module_5.repository.restaurant_repository.IRestaurantRepository;
 import com.codegym.project_module_5.repository.user_repository.IRoleRepository;
 import com.codegym.project_module_5.repository.user_repository.IUserRepository;
+import com.codegym.project_module_5.repository.order_repository.IOrderRepository;
+import com.codegym.project_module_5.repository.order_repository.IOrderDetailRepository;
 import com.codegym.project_module_5.service.impl.user_service_impl.EmailService;
 import com.codegym.project_module_5.service.restaurant_service.IRestaurantService;
 import lombok.extern.slf4j.Slf4j;
@@ -34,6 +38,12 @@ public class RestaurantService implements IRestaurantService {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private IOrderRepository orderRepository;
+
+    @Autowired
+    private IOrderDetailRepository orderDetailRepository;
 
     private final EmailService emailService;
 
@@ -140,5 +150,42 @@ public class RestaurantService implements IRestaurantService {
     @Override
     public List<Restaurant> getPendingApprovalRestaurants() {
         return iRestaurantRepository.findByIsApprovedIsNull();
+    }
+
+    public double calculateTotalRevenue(Long restaurantId) {
+        System.out.println("=== DEBUG REVENUE CALCULATION ===");
+        System.out.println("Restaurant ID: " + restaurantId);
+        
+        List<Orders> orders = (List<Orders>) orderRepository.findAllByRestaurantId(restaurantId);
+        System.out.println("Total orders found: " + orders.size());
+        
+        double totalRevenue = 0.0;
+        
+        for (Orders order : orders) {
+            System.out.println("Order ID: " + order.getId() + ", Status: " + order.getOrderStatus().getName());
+            
+            if ("COMPLETED".equals(order.getOrderStatus().getName()) || "DELIVERED".equals(order.getOrderStatus().getName())) {
+                double orderAmount = 0.0;
+                List<OrderDetail> details = (List<OrderDetail>) orderDetailRepository.findAllByOrderId(order.getId());
+                System.out.println("Order details count: " + details.size());
+                
+                for (OrderDetail detail : details) {
+                    double itemTotal = detail.getDish().getPrice() * detail.getQuantity();
+                    orderAmount += itemTotal;
+                    System.out.println("Dish: " + detail.getDish().getName() + ", Price: " + detail.getDish().getPrice() + ", Qty: " + detail.getQuantity() + ", Total: " + itemTotal);
+                }
+                
+                double netAmount = orderAmount - 15000;
+                double commission = netAmount >= 200_000_000 ? 0.10 : netAmount <= 100_000_000 ? 0.05 : 0.075;
+                double orderRevenue = netAmount * (1 - commission);
+                totalRevenue += orderRevenue;
+                
+                System.out.println("Order Amount: " + orderAmount + ", Net Amount: " + netAmount + ", Commission: " + commission + ", Order Revenue: " + orderRevenue);
+            }
+        }
+        
+        System.out.println("Total Revenue: " + totalRevenue);
+        System.out.println("=== END DEBUG ===");
+        return totalRevenue;
     }
 }
