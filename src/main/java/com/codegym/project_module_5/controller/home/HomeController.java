@@ -48,7 +48,7 @@ public class HomeController {
                 && authentication.isAuthenticated()
                 && !(authentication instanceof AnonymousAuthenticationToken);
 
-        model.addAttribute("isAuthenticated", isAuthenticated);
+//        model.addAttribute("isAuthenticated", isAuthenticated);
 
         if (isAuthenticated) {
             String username = authentication.getName();

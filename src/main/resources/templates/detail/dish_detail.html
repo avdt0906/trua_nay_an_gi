@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<html lang="vi" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,23 +8,31 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="/css/dish_detail.css"/>
     <style>
+        body {
+            background-color: #f8f9fa;
+        }
         .dish-hero {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             padding: 3rem 0;
+            border-bottom-left-radius: 30px;
+            border-bottom-right-radius: 30px;
         }
         .dish-image {
             width: 100%;
-            height: 400px;
+            max-width: 400px;
+            height: auto;
+            aspect-ratio: 1 / 1;
             object-fit: cover;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+            border: 5px solid white;
         }
         .dish-info-card {
             background: white;
             border-radius: 15px;
             padding: 2rem;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            box-shadow: 0 5px 25px rgba(0,0,0,0.08);
             margin-bottom: 2rem;
         }
         .coupon-card {
@@ -37,88 +45,98 @@
         }
         .similar-dish-card {
             background: white;
-            border-radius: 10px;
+            border-radius: 15px;
             overflow: hidden;
-            box-shadow: 0 3px 15px rgba(0,0,0,0.1);
-            transition: transform 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
         .similar-dish-card:hover {
-            transform: translateY(-5px);
+            transform: translateY(-8px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.12);
         }
         .similar-dish-image {
             width: 100%;
-            height: 200px;
+            height: 180px;
             object-fit: cover;
         }
         .order-btn {
             background: linear-gradient(45deg, #ff6b6b, #ee5a24);
             border: none;
-            padding: 1rem 2rem;
+            padding: 0.8rem 1.8rem;
             border-radius: 50px;
             color: white;
             font-weight: bold;
             font-size: 1.1rem;
             transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(255,107,107,0.3);
         }
         .order-btn:hover {
             transform: scale(1.05);
-            box-shadow: 0 10px 25px rgba(255,107,107,0.4);
+            box-shadow: 0 10px 25px rgba(255,107,107,0.5);
         }
         .price-tag {
-            background: #ff6b6b;
+            background: rgba(255,255,255,0.2);
             color: white;
-            padding: 0.5rem 1rem;
+            padding: 0.5rem 1.2rem;
             border-radius: 25px;
             font-weight: bold;
-            font-size: 1.2rem;
+            font-size: 1.4rem;
         }
         .restaurant-info {
             background: #f8f9fa;
             border-radius: 10px;
-            padding: 1rem;
+            padding: 1.5rem;
             margin-bottom: 1rem;
+            border: 1px solid #e9ecef;
+        }
+        .sidebar-sticky {
+            position: sticky;
+            top: 20px;
+        }
+        .quantity-selector .form-control {
+            border-left: 0;
+            border-right: 0;
+            border-radius: 0;
+            box-shadow: none;
+        }
+        .quantity-selector .btn {
+            border-radius: 50%;
+            width: 38px;
+            height: 38px;
         }
     </style>
 </head>
-<body style="background-color: #f8f9fa;">
+<body>
 
-<!-- Navbar -->
-<nav class="navbar navbar-expand-lg bg-white border-bottom sticky-top shadow-sm">
-    <div class="container">
-        <a class="navbar-brand d-flex align-items-center" href="/">
-            <img src="/images/logo/logo_thiet_ke.png" alt="Logo" width="40" height="40" class="me-2 rounded-circle">
-            <span class="fw-bold">FoodDelivery</span>
-        </a>
-        <div class="d-flex align-items-center">
-            <a href="/home" class="btn btn-outline-secondary me-2">
-                <i class="fas fa-arrow-left me-1"></i>Quay lại
-            </a>
-        </div>
-    </div>
-</nav>
+<div th:replace="~{user/fragments/_navbar :: navbar}"></div>
 
-<!-- Hero Section -->
+<div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 1100"></div>
+
 <div class="dish-hero">
     <div class="container">
         <div class="row align-items-center">
-            <div class="col-lg-6">
+            <div class="col-lg-6 mb-4 mb-lg-0">
                 <h1 class="display-4 fw-bold mb-3" th:text="${dish.name}">Tên món ăn</h1>
-                <p class="lead mb-4" th:text="${dish.description}">Mô tả món ăn</p>
-                <div class="d-flex align-items-center gap-3 mb-3">
-                    <span class="price-tag" th:text="'₫' + ${#numbers.formatDecimal(dish.price, 0, 'COMMA', 0, 'POINT')}">₫0</span>
-                    <span class="badge bg-success" th:if="${dish.isAvailable}">Có sẵn</span>
-                    <span class="badge bg-danger" th:unless="${dish.isAvailable}">Hết hàng</span>
+                <p class="lead mb-4" th:text="${dish.description}">Mô tả ngắn gọn về món ăn này.</p>
+                <div class="d-flex align-items-center gap-3 mb-4">
+                    <span class="price-tag" th:text="'₫' + ${#numbers.formatDecimal(dish.price, 0, 'COMMA', 0, 'POINT')}">₫50.000</span>
+                    <span class="badge fs-6 rounded-pill" th:classappend="${dish.isAvailable} ? 'bg-success-subtle text-success-emphasis' : 'bg-danger-subtle text-danger-emphasis'" th:text="${dish.isAvailable} ? 'Còn hàng' : 'Hết hàng'">Trạng thái</span>
                 </div>
-                <!-- ADJUSTMENT: Button state is now synchronized with dish availability. If unavailable, it's disabled and has a different style. -->
-                <button class="order-btn" th:if="${dish.isAvailable}">
-                    <i class="fas fa-shopping-cart me-2"></i>Đặt hàng ngay
-                </button>
+                <div th:if="${dish.isAvailable}" class="d-flex align-items-center gap-3">
+                    <div class="quantity-selector d-flex align-items-center">
+                        <button type="button" class="btn btn-light quantity-btn" data-action="decrease"><i class="fas fa-minus"></i></button>
+                        <input type="number" class="form-control text-center mx-1 quantity-input" value="1" min="1" max="99" readonly style="width: 60px; background-color: white;">
+                        <button type="button" class="btn btn-light quantity-btn" data-action="increase"><i class="fas fa-plus"></i></button>
+                    </div>
+                    <button type="button" class="order-btn add-to-cart-btn" th:data-dish-id="${dish.id}">
+                        <i class="fas fa-shopping-cart me-2"></i>Thêm vào giỏ
+                    </button>
+                </div>
                 <button class="order-btn btn-unavailable" th:unless="${dish.isAvailable}" disabled>
                     <i class="fas fa-ban me-2"></i>Hiện không thể đặt
                 </button>
             </div>
             <div class="col-lg-6 text-center">
-                <!-- ADJUSTMENT: Wrapped image in a div for better centering and added a fallback in case the image fails to load (using onerror) -->
                 <img th:src="@{'/images/dish/' + ${dish.getPictureUrl()}}" th:alt="${dish.name}"
                      onerror="this.onerror=null; this.src='/images/dish/placeholder.jpg';" class="dish-image" />
             </div>
@@ -128,83 +146,57 @@
 
 <div class="container my-5">
     <div class="row">
-        <!-- Cột chính -->
         <div class="col-lg-8">
-            <!-- Thông tin cơ bản -->
             <div class="dish-info-card">
-                <h3 class="mb-4">
-                    <i class="fas fa-info-circle text-primary me-2"></i>
-                    Thông tin cơ bản
-                </h3>
+                <h3 class="mb-4"><i class="fas fa-info-circle text-primary me-2"></i>Thông tin chi tiết</h3>
                 <div class="row">
                     <div class="col-md-6">
-                        <p><strong>Danh mục:</strong> <span th:text="${dish.category?.name}">Danh mục</span></p>
-                        <p><strong>Tag:</strong> <span th:text="${dish.tag?.name}">Tag</span></p>
-                        <p><strong>Giá:</strong> <span class="text-danger fw-bold" th:text="'₫' + ${#numbers.formatDecimal(dish.price, 0, 'COMMA', 0, 'POINT')}">₫0</span></p>
+                        <p><strong><i class="fas fa-folder me-2"></i>Danh mục:</strong> <span th:text="${dish.category?.name}">Danh mục</span></p>
+                        <p><strong><i class="fas fa-tag me-2"></i>Tag:</strong> <span th:text="${dish.tag?.name}">Tag</span></p>
                     </div>
                     <div class="col-md-6">
-                        <p><strong>Nhà hàng:</strong> <span th:text="${restaurant.name}">Tên nhà hàng</span></p>
-                        <p><strong>Địa chỉ:</strong> <span th:text="${restaurant.address}">Địa chỉ</span></p>
-                        <p><strong>Trạng thái:</strong>
-                            <span class="badge bg-success" th:if="${restaurant.isOpen}">Đang mở</span>
-                            <span class="badge bg-danger" th:unless="${restaurant.isOpen}">Đã đóng</span>
-                        </p>
+                        <p><strong><i class="fas fa-utensils me-2"></i>Nhà hàng:</strong> <span th:text="${restaurant.name}">Tên nhà hàng</span></p>
+                        <p><strong><i class="fas fa-map-marker-alt me-2"></i>Địa chỉ:</strong> <span th:text="${restaurant.address}">Địa chỉ</span></p>
                     </div>
                 </div>
-                <div class="mt-3">
-                    <p><strong>Mô tả:</strong></p>
-                    <p class="text-muted" th:text="${dish.description != null ? dish.description : 'Chưa có mô tả'}">Mô tả món ăn</p>
-                </div>
+                <hr>
+                <p><strong>Mô tả:</strong></p>
+                <p class="text-muted" th:text="${dish.description != null ? dish.description : 'Chưa có mô tả'}">Mô tả đầy đủ của món ăn.</p>
             </div>
 
             <div class="dish-info-card" th:if="${dishOptions != null and !dishOptions.isEmpty()}">
-                <h3 class="mb-4">
-                    <i class="fas fa-plus-circle text-success me-2"></i>
-                    Topping & Lựa chọn thêm
-                </h3>
+                <h3 class="mb-4"><i class="fas fa-plus-circle text-success me-2"></i>Lựa chọn thêm</h3>
                 <div class="list-group">
-                    <div class="list-group-item d-flex justify-content-between align-items-center"
-                         th:each="option : ${dishOptions}">
-                        <!-- Thông tin bên trái -->
+                    <div class="list-group-item d-flex justify-content-between align-items-center" th:each="option : ${dishOptions}">
                         <div>
                             <h6 class="mb-1 fw-bold" th:text="${option.name}">Tên topping</h6>
                             <small class="text-muted" th:text="${option.description}">Mô tả topping</small>
                         </div>
-
-                        <!-- Giá + trạng thái + nút thêm -->
                         <div class="d-flex align-items-center gap-2">
-                <span class="badge bg-danger rounded-pill"
-                      th:text="'₫' + ${#numbers.formatDecimal(option.price, 0, 'COMMA', 0, 'POINT')}">₫0</span>
-                            <span class="badge bg-success" th:if="${option.isAvailable}">Còn</span>
-                            <span class="badge bg-secondary" th:unless="${option.isAvailable}">Hết</span>
-
-                            <!-- Nút thêm -->
-                            <button type="button" class="btn btn-sm btn-outline-primary ms-2"
-                                    th:if="${option.isAvailable}">
-                                <i class="fas fa-plus"></i>
-                            </button>
+                            <span class="badge bg-danger rounded-pill" th:text="'+ ₫' + ${#numbers.formatDecimal(option.price, 0, 'COMMA', 0, 'POINT')}">₫0</span>
+                            <span th:if="${option.isAvailable}">
+                                <button type="button" class="btn btn-sm btn-outline-primary ms-2 add-to-cart-btn" th:data-dish-id="${option.id}" data-is-option="true">
+                                    <i class="fas fa-plus"></i> Thêm
+                                </button>
+                            </span>
+                            <span th:unless="${option.isAvailable}" class="badge bg-secondary">Hết</span>
                         </div>
                     </div>
                 </div>
             </div>
 
             <div class="dish-info-card" th:if="${!similarDishes.isEmpty()}">
-                <h5 class="mb-3">
-                    <i class="fas fa-heart text-danger me-2"></i>
-                    Món dành riêng cho bạn
-                </h5>
+                <h3 class="mb-4"><i class="fas fa-heart text-danger me-2"></i>Có thể bạn cũng thích</h3>
                 <div class="row">
-                    <div class="col-md-6 mb-3" th:each="similarDish : ${similarDishes}">
-                        <div class="similar-dish-card">
-                            <img th:src="@{'/images/dish/' + ${similarDish.pictureUrl}}"
-                                 th:alt="${similarDish.name}" class="similar-dish-image"/>
+                    <div class="col-md-6 col-lg-4 mb-3" th:each="similarDish : ${similarDishes}">
+                        <div class="similar-dish-card h-100">
+                            <a th:href="@{/dish/{id}(id=${similarDish.id})}">
+                                <img th:src="@{'/images/dish/' + ${similarDish.pictureUrl}}" th:alt="${similarDish.name}" class="similar-dish-image"/>
+                            </a>
                             <div class="p-3">
                                 <h6 class="mb-1" th:text="${similarDish.name}">Tên món</h6>
-                                <p class="text-danger fw-bold mb-2"
-                                   th:text="'₫' + ${#numbers.formatDecimal(similarDish.price, 0, 'COMMA', 0, 'POINT')}">₫0</p>
-                                <a th:href="@{/dish/{id}(id=${similarDish.id})}" class="btn btn-sm btn-outline-primary">
-                                    Xem chi tiết
-                                </a>
+                                <p class="text-danger fw-bold mb-2" th:text="'₫' + ${#numbers.formatDecimal(similarDish.price, 0, 'COMMA', 0, 'POINT')}">₫0</p>
+                                <a th:href="@{/dish/{id}(id=${similarDish.id})}" class="btn btn-sm btn-outline-primary w-100">Xem chi tiết</a>
                             </div>
                         </div>
                     </div>
@@ -212,49 +204,33 @@
             </div>
         </div>
 
-        <!-- Cột bên phải -->
         <div class="col-lg-4">
-            <!-- Thông tin nhà hàng -->
-            <div class="dish-info-card">
-                <h5 class="mb-3">
-                    <i class="fas fa-store text-primary me-2"></i>
-                    Thông tin nhà hàng
-                </h5>
-                <div class="restaurant-info">
-                    <h6 th:text="${restaurant.name}">Tên nhà hàng</h6>
-                    <p class="mb-2" th:text="${restaurant.address}">Địa chỉ</p>
-                    <p class="mb-2" th:if="${restaurant.phone}" th:text="'Điện thoại: ' + ${restaurant.phone}">Điện thoại</p>
-                    <p class="mb-0" th:if="${restaurant.description}" th:text="${restaurant.description}">Mô tả</p>
+            <div class="sidebar-sticky">
+                <div class="dish-info-card">
+                    <h5 class="mb-3"><i class="fas fa-store text-primary me-2"></i>Thông tin nhà hàng</h5>
+                    <div class="restaurant-info">
+                        <h6 th:text="${restaurant.name}">Tên nhà hàng</h6>
+                        <p class="mb-2"><i class="fas fa-map-marker-alt me-2 text-muted"></i><span th:text="${restaurant.address}">Địa chỉ</span></p>
+                        <p class="mb-2" th:if="${restaurant.phone}"><i class="fas fa-phone me-2 text-muted"></i><span th:text="${restaurant.phone}">Điện thoại</span></p>
+                        <p class="mb-0">
+                            <strong>Trạng thái:</strong>
+                            <span class="badge" th:classappend="${restaurant.isOpen} ? 'bg-success' : 'bg-danger'" th:text="${restaurant.isOpen} ? 'Đang mở cửa' : 'Tạm đóng cửa'"></span>
+                        </p>
+                    </div>
+                    <a th:href="@{/restaurant_client/{id}(id=${restaurant.getId()})}" class="btn btn-outline-primary w-100">
+                        <i class="fas fa-eye me-2"></i>Xem nhà hàng
+                    </a>
                 </div>
-                <a th:href="@{/restaurant_client/{id}(id=${restaurant.getId()})}" class="btn btn-outline-primary w-100">
-                    <i class="fas fa-eye me-2"></i>Xem nhà hàng
-                </a>
-            </div>
 
-            <!-- Danh sách coupon -->
-            <div class="dish-info-card" th:if="${!coupons.isEmpty()}">
-                <h3 class="mb-4">
-                    <i class="fas fa-tags text-primary me-2"></i>
-                    Khuyến mãi hôm nay
-                </h3>
-                <div class="row">
-                    <div class="col-12 mb-3" th:each="coupon : ${coupons}">
+                <div class="dish-info-card" th:if="${!coupons.isEmpty()}">
+                    <h5 class="mb-3"><i class="fas fa-tags text-warning me-2"></i>Khuyến mãi có sẵn</h5>
+                    <div th:each="coupon : ${coupons}">
                         <div class="coupon-card">
-                            <h5 class="mb-2" th:text="${coupon.name}">Tên coupon</h5>
-                            <p class="mb-2" th:text="${coupon.description}">Mô tả coupon</p>
-                            <div class="d-flex justify-content-between align-items-center">
-                                <span th:if="${coupon.fixedDiscount != null}"
-                                      th:text="'Giảm ₫' + ${#numbers.formatDecimal(coupon.fixedDiscount, 0, 'COMMA', 0, 'POINT')}">
-                                    Giảm ₫0
-                                </span>
-                                <span th:if="${coupon.percentDiscount != null}"
-                                      th:text="'Giảm ' + ${coupon.percentDiscount} + '%'">
-                                    Giảm 0%
-                                </span>
-                                <span th:if="${coupon.minOrder != null}"
-                                      th:text="'Đơn tối thiểu: ₫' + ${#numbers.formatDecimal(coupon.minOrder, 0, 'COMMA', 0, 'POINT')}">
-                                    Đơn tối thiểu: ₫0
-                                </span>
+                            <h6 class="mb-1" th:text="${coupon.name}">Tên coupon</h6>
+                            <p class="mb-2 small" th:text="${coupon.description}">Mô tả coupon</p>
+                            <div class="d-flex justify-content-between align-items-center small">
+                                <span th:if="${coupon.fixedDiscount != null}" th:text="'Giảm ₫' + ${#numbers.formatDecimal(coupon.fixedDiscount, 0, 'COMMA', 0, 'POINT')}">Giảm ₫0</span>
+                                <span th:if="${coupon.percentDiscount != null}" th:text="'Giảm ' + ${coupon.percentDiscount} + '%'">Giảm 0%</span>
                             </div>
                         </div>
                     </div>
@@ -264,13 +240,143 @@
     </div>
 </div>
 
-<!-- Footer -->
-<footer class="bg-dark text-white text-center py-4 mt-5">
+<footer class="bg-dark text-white text-center py-4 mt-auto">
     <div class="container">
         <p class="mb-0">&copy; 2024 FoodDelivery. Tất cả quyền được bảo lưu.</p>
     </div>
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script type="text/javascript">
+    /**
+     * Hàm này chịu trách nhiệm gọi API để lấy số lượng item trong giỏ hàng
+     * và cập nhật lại con số trên icon giỏ hàng ở navbar.
+     */
+    function updateCartCount() {
+        fetch('/cart/count')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Lỗi khi lấy số lượng giỏ hàng.');
+                }
+                return response.json();
+            })
+            .then(count => {
+                const cartCountElement = document.getElementById('cart-item-count');
+                if (cartCountElement) {
+                    cartCountElement.textContent = count;
+                    cartCountElement.style.display = count > 0 ? 'inline-block' : 'none';
+                }
+            })
+            .catch(error => {
+                console.error('Không thể cập nhật số lượng giỏ hàng:', error);
+                const cartCountElement = document.getElementById('cart-item-count');
+                if (cartCountElement) {
+                    cartCountElement.style.display = 'none'; // Ẩn đi nếu có lỗi
+                }
+            });
+    }
+
+    /**
+     * Sự kiện chính: Sẽ được kích hoạt sau khi toàn bộ trang HTML đã được tải xong.
+     */
+    document.addEventListener('DOMContentLoaded', function () {
+
+        // 1. Tải số lượng giỏ hàng ngay khi vào trang
+        updateCartCount();
+
+        // 2. Xử lý tăng/giảm số lượng cho sản phẩm chính
+        const quantitySelector = document.querySelector('.quantity-selector');
+        if (quantitySelector) {
+            const decreaseBtn = quantitySelector.querySelector('[data-action="decrease"]');
+            const increaseBtn = quantitySelector.querySelector('[data-action="increase"]');
+            const input = quantitySelector.querySelector('.quantity-input');
+
+            decreaseBtn.addEventListener('click', () => {
+                let currentValue = parseInt(input.value, 10);
+                if (currentValue > 1) {
+                    input.value = currentValue - 1;
+                }
+            });
+
+            increaseBtn.addEventListener('click', () => {
+                let currentValue = parseInt(input.value, 10);
+                if (currentValue < 99) { // Giới hạn số lượng tối đa
+                    input.value = currentValue + 1;
+                }
+            });
+        }
+
+        // 3. Xử lý hiển thị thông báo (Toast)
+        const toastContainer = document.querySelector('.toast-container');
+        function showToast(message, isSuccess = true) {
+            const toastId = 'toast-' + Math.random().toString(36).substr(2, 9);
+            const toastIcon = isSuccess
+                ? '<i class="fas fa-check-circle text-success me-2"></i>'
+                : '<i class="fas fa-times-circle text-danger me-2"></i>';
+
+            const toastHTML = `
+            <div id="${toastId}" class="toast align-items-center text-bg-${isSuccess ? 'light' : 'danger'}" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="d-flex">
+                    <div class="toast-body">
+                        ${toastIcon}
+                        ${message}
+                    </div>
+                    <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+            </div>`;
+            toastContainer.insertAdjacentHTML('beforeend', toastHTML);
+            const toastElement = document.getElementById(toastId);
+            const toast = new bootstrap.Toast(toastElement, { delay: 3000 });
+            toast.show();
+            toastElement.addEventListener('hidden.bs.toast', () => toastElement.remove());
+        }
+
+        // 4. Xử lý sự kiện nhấn nút "Thêm vào giỏ"
+        const addToCartButtons = document.querySelectorAll('.add-to-cart-btn');
+        addToCartButtons.forEach(button => {
+            button.addEventListener('click', function () {
+                const dishId = this.dataset.dishId;
+                const isOption = this.dataset.isOption === 'true';
+                let quantity = 1;
+
+                // Nếu là sản phẩm chính (không phải topping), lấy số lượng từ input
+                if (!isOption) {
+                    const quantityInput = this.closest('.d-flex').querySelector('.quantity-input');
+                    if (quantityInput) {
+                        quantity = quantityInput.value;
+                    }
+                }
+
+                const formData = new FormData();
+                formData.append('dishId', dishId);
+                formData.append('quantity', quantity);
+
+                // Gửi yêu cầu AJAX đến server
+                fetch('/cart/add', {
+                    method: 'POST',
+                    headers: { 'Accept': 'application/json' }, // Báo cho server biết client muốn nhận JSON
+                    body: formData
+                })
+                    .then(response => {
+                        // Nếu response không OK, thử đọc lỗi JSON từ server
+                        if (!response.ok) {
+                            return response.json().then(err => { throw new Error(err.message || 'Lỗi không xác định từ server.'); });
+                        }
+                        return response.json(); // Mong đợi nhận về JSON
+                    })
+                    .then(data => {
+                        showToast(data.message || 'Thêm vào giỏ hàng thành công!', true);
+                        // Sau khi thêm thành công, gọi lại hàm để cập nhật số lượng
+                        updateCartCount();
+                    })
+                    .catch(error => {
+                        console.error('Lỗi khi thêm vào giỏ hàng:', error);
+                        showToast(error.message || 'Có lỗi xảy ra, vui lòng thử lại.', false);
+                    });
+            });
+        });
+    });
+</script>
+
 </body>
 </html>
