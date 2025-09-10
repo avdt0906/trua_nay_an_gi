@@ -131,7 +131,7 @@ public class RestaurantService implements IRestaurantService {
 
     public List<Coupon> getCouponsByRestaurantId(Long restaurantId) {
         return iRestaurantRepository.findCouponsByRestaurantId(restaurantId);
-        }
+    }
 
 
     @Override
@@ -141,6 +141,7 @@ public class RestaurantService implements IRestaurantService {
         restaurant.setIsLocked(!restaurant.getIsLocked());
         return iRestaurantRepository.save(restaurant);
     }
+
     @Override
     public void delete(Long id) {
         iRestaurantRepository.deleteById(id);
@@ -158,8 +159,8 @@ public class RestaurantService implements IRestaurantService {
     }
 
     @Override
-    public void approveParter(Long restaurantId) {
-       iRestaurantRepository.findById(restaurantId).ifPresent(r -> {
+    public void approvePartner(Long restaurantId) {
+        iRestaurantRepository.findById(restaurantId).ifPresent(r -> {
             r.setIsLongTermPartner(true);
             r.setPartnerRequest(false);
             iRestaurantRepository.save(r);
@@ -168,45 +169,46 @@ public class RestaurantService implements IRestaurantService {
 
     @Override
     public void rejectPartner(Long restaurantId) {
-       iRestaurantRepository.findById(restaurantId).ifPresent(r -> {
+        iRestaurantRepository.findById(restaurantId).ifPresent(r -> {
             r.setIsLongTermPartner(false);
             r.setPartnerRequest(false);
             iRestaurantRepository.save(r);
         });
-  
+    }
+
     @Override
     public double calculateTotalRevenue(Long restaurantId) {
         System.out.println("=== DEBUG REVENUE CALCULATION ===");
         System.out.println("Restaurant ID: " + restaurantId);
-        
+
         List<Orders> orders = (List<Orders>) orderRepository.findAllByRestaurantId(restaurantId);
         System.out.println("Total orders found: " + orders.size());
-        
+
         double totalRevenue = 0.0;
-        
+
         for (Orders order : orders) {
             System.out.println("Order ID: " + order.getId() + ", Status: " + order.getOrderStatus().getName());
-            
+
             if ("COMPLETED".equals(order.getOrderStatus().getName()) || "DELIVERED".equals(order.getOrderStatus().getName())) {
                 double orderAmount = 0.0;
                 List<OrderDetail> details = (List<OrderDetail>) orderDetailRepository.findAllByOrderId(order.getId());
                 System.out.println("Order details count: " + details.size());
-                
+
                 for (OrderDetail detail : details) {
                     double itemTotal = detail.getDish().getPrice() * detail.getQuantity();
                     orderAmount += itemTotal;
                     System.out.println("Dish: " + detail.getDish().getName() + ", Price: " + detail.getDish().getPrice() + ", Qty: " + detail.getQuantity() + ", Total: " + itemTotal);
                 }
-                
+
                 double netAmount = orderAmount - 15000;
                 double commission = netAmount >= 200_000_000 ? 0.10 : netAmount <= 100_000_000 ? 0.05 : 0.075;
                 double orderRevenue = netAmount * (1 - commission);
                 totalRevenue += orderRevenue;
-                
+
                 System.out.println("Order Amount: " + orderAmount + ", Net Amount: " + netAmount + ", Commission: " + commission + ", Order Revenue: " + orderRevenue);
             }
         }
-        
+
         System.out.println("Total Revenue: " + totalRevenue);
         System.out.println("=== END DEBUG ===");
         return totalRevenue;
