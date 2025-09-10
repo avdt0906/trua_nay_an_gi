@@ -26,6 +26,7 @@ public class Restaurant {
     private String logoUrl;
     private String description;
     private Boolean isLongTermPartner = false;
+    private Boolean partnerRequest;
     private Boolean isOpen = true;
     private Boolean isLocked = false;
     private Boolean isApproved;

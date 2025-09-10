@@ -10,93 +10,27 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
     <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;700&display=swap" rel="stylesheet">
 
-    <style>
-        :root {
-            --sidebar-width: 260px;
-            --background-color: #f4f7fc;
-            --sidebar-background: #1e293b;
-            --sidebar-text-color: #cbd5e1;
-            --sidebar-active-background: #334155;
-            --sidebar-hover-background: #293548;
-            --primary-color: #3b82f6;
-        }
+    <!-- Sidebar Styles -->
+    <th:block th:replace="admin/fragments/navbar :: sidebar-styles"></th:block>
 
+    <style>
         body {
             background-color: var(--background-color);
             font-family: 'Be Vietnam Pro', sans-serif;
         }
-
         .wrapper {
             display: flex;
             width: 100%;
             min-height: 100vh;
         }
-
-        /* --- SIDEBAR --- */
-        #sidebar {
-            width: var(--sidebar-width);
-            min-width: var(--sidebar-width);
-            background-color: var(--sidebar-background);
-            color: var(--sidebar-text-color);
-            transition: all 0.3s;
-        }
-
-        .sidebar-header {
-            padding: 1.25rem 1.5rem;
-            text-align: center;
-            border-bottom: 1px solid #334155;
-        }
-
-        .sidebar-header .navbar-brand {
-            color: #fff;
-            font-weight: 700;
-            font-size: 1.5rem;
-        }
-
-        .sidebar-nav .nav-link {
-            padding: 0.85rem 1.5rem;
-            color: var(--sidebar-text-color);
-            font-weight: 500;
-            display: flex;
-            align-items: center;
-            border-left: 4px solid transparent;
-            transition: background-color 0.2s, color 0.2s, border-left 0.2s;
-        }
-
-        .sidebar-nav .nav-link i {
-            width: 30px;
-            text-align: center;
-            font-size: 1.1rem;
-            margin-right: 0.75rem;
-        }
-
-        .sidebar-nav .nav-link:hover {
-            background-color: var(--sidebar-hover-background);
-            color: #fff;
-        }
-
-        .sidebar-nav .nav-link.active {
-            background-color: var(--sidebar-active-background);
-            color: #fff;
-            border-left-color: var(--primary-color);
-        }
-
-        .sidebar-footer {
-            padding: 1.5rem;
-            border-top: 1px solid #334155;
-        }
-
-        /* --- CONTENT --- */
         #content {
             flex-grow: 1;
             padding: 2rem;
             max-width: calc(100% - var(--sidebar-width));
+            transition: all 0.3s;
         }
-
         @media (max-width: 992px) {
             #sidebar {
                 margin-left: -var(--sidebar-width);
@@ -108,44 +42,21 @@
                 max-width: 100%;
             }
         }
+        .card {
+            border-radius: 0.75rem;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+        }
     </style>
 </head>
 <body>
 
 <div class="wrapper">
     <!-- Sidebar -->
-    <nav id="sidebar" class="d-flex flex-column">
-        <div class="sidebar-header">
-            <a class="navbar-brand" th:href="@{/admin/dashboard}">
-                <i class="fas fa-user-shield me-2"></i>Admin
-            </a>
-        </div>
-
-        <ul class="nav flex-column sidebar-nav p-2">
-            <li class="nav-item">
-                <a class="nav-link" th:classappend="${activePage == 'dashboard'} ? 'active'" th:href="@{/admin/dashboard}">
-                    <i class="fas fa-tachometer-alt"></i>
-                    <span>Dashboard</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" th:classappend="${activePage == 'list'} ? 'active'" th:href="@{/admin/list}">
-                    <i class="fas fa-store"></i>
-                    <span>Quản lý Chủ quán</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" th:classappend="${activePage == 'shipper'} ? 'active'" th:href="@{/admin/shippers}">
-                    <i class="fas fa-truck-fast"></i>
-                    <span>Quản lý Vận chuyển</span>
-                </a>
-            </li>
-        </ul>
-
-        <div class="sidebar-footer mt-auto text-center">
-            <small class="text-muted" style="font-size: 0.8rem;">&copy; 2025 Admin Panel</small>
-        </div>
-    </nav>
+    <div th:replace="admin/fragments/navbar :: sidebar(${activePage})"></div>
 
     <!-- Page Content -->
     <div id="content">
@@ -157,12 +68,12 @@
                     <p class="text-muted mb-0">Tổng quan hệ thống và các số liệu quan trọng.</p>
                 </div>
                 <div class="dropdown">
-                    <button class="btn btn-light d-flex align-items-center rounded-pill" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    <button class="btn btn-light d-flex align-items-center rounded-pill shadow-sm" type="button" id="userDropdown" data-bs-toggle="dropdown">
                         <i class="fas fa-user me-2"></i>
                         <span class="d-none d-sm-inline">Admin</span>
                         <i class="fas fa-chevron-down ms-2 small"></i>
                     </button>
-                    <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0" aria-labelledby="userDropdown">
+                    <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0">
                         <li><a class="dropdown-item" th:href="@{/logout}">
                             <i class="fas fa-sign-out-alt fa-fw me-2 text-muted"></i>Đăng xuất
                         </a></li>
@@ -171,9 +82,9 @@
             </div>
 
             <div class="row g-4">
-                <!-- Cột trái: Thống kê & Món ăn nổi bật -->
+                <!-- Cột trái -->
                 <div class="col-lg-8">
-                    <!-- Thống kê dạng danh sách -->
+                    <!-- Thống kê -->
                     <div class="card border-0 shadow-sm mb-4">
                         <div class="card-header bg-white border-0 pt-3">
                             <h5 class="card-title fw-bold mb-0">Thống kê chung</h5>
@@ -181,38 +92,28 @@
                         <div class="card-body">
                             <ul class="list-group list-group-flush">
                                 <li class="list-group-item d-flex justify-content-between align-items-center px-0">
-                                    <div>
-                                        <i class="fas fa-store text-primary me-3 fa-lg"></i>
-                                        <span>Số lượng Chủ nhà hàng</span>
-                                    </div>
+                                    <div><i class="fas fa-store text-primary me-3 fa-lg"></i> Số lượng Chủ nhà hàng</div>
                                     <span class="badge bg-primary rounded-pill fs-6" th:text="${ownerCount}">0</span>
                                 </li>
                                 <li class="list-group-item d-flex justify-content-between align-items-center px-0">
-                                    <div>
-                                        <i class="fas fa-users text-success me-3 fa-lg"></i>
-                                        <span>Số lượng Khách hàng</span>
-                                    </div>
+                                    <div><i class="fas fa-users text-success me-3 fa-lg"></i> Số lượng Khách hàng</div>
                                     <span class="badge bg-success rounded-pill fs-6" th:text="${customerCount}">0</span>
                                 </li>
                                 <li class="list-group-item d-flex justify-content-between align-items-center px-0">
-                                    <div>
-                                        <i class="fas fa-receipt text-info me-3 fa-lg"></i>
-                                        <span>Tổng số Đơn hàng</span>
-                                    </div>
+                                    <div><i class="fas fa-receipt text-info me-3 fa-lg"></i> Tổng số Đơn hàng</div>
                                     <span class="badge bg-info rounded-pill fs-6" th:text="${orderCount}">0</span>
                                 </li>
                             </ul>
                         </div>
                     </div>
 
-                    <!-- Top Món Ăn Nổi Bật - Đã cập nhật sang dạng danh sách -->
+                    <!-- Món ăn nổi bật -->
                     <div class="card border-0 shadow-sm">
                         <div class="card-header bg-white border-0 pt-3">
                             <h5 class="card-title fw-bold mb-0">⭐ Món Ăn Nổi Bật</h5>
                         </div>
                         <div class="card-body p-0">
                             <ul class="list-group list-group-flush">
-                                <!-- Loop through top dishes -->
                                 <li class="list-group-item d-flex align-items-center p-3" th:each="dish : ${topDishes}">
                                     <img th:src="${dish.pictureUrl}" alt="Dish Image" style="width: 60px; height: 60px; object-fit: cover; border-radius: 0.5rem;" class="me-3">
                                     <div class="me-auto">
@@ -224,7 +125,6 @@
                                         <span class="badge bg-danger" th:if="${dish.discount > 0}" th:text="'-' + ${dish.discount} + '%'">-15%</span>
                                     </div>
                                 </li>
-                                <!-- Fallback message -->
                                 <li class="list-group-item" th:if="${topDishes == null or topDishes.isEmpty()}">
                                     <p class="text-center text-muted my-2">Không có món ăn nào để hiển thị.</p>
                                 </li>
@@ -233,14 +133,13 @@
                     </div>
                 </div>
 
-                <!-- Cột phải: Biểu đồ -->
+                <!-- Cột phải -->
                 <div class="col-lg-4">
                     <div class="card border-0 shadow-sm">
                         <div class="card-header bg-white border-0 pt-3">
                             <h5 class="card-title fw-bold mb-0">Doanh thu 6 tháng gần nhất</h5>
                         </div>
                         <div class="card-body">
-                            <!-- Biểu đồ sẽ được vẽ vào đây -->
                             <canvas id="revenueChart"></canvas>
                         </div>
                     </div>
@@ -252,18 +151,12 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
 <script th:inline="javascript">
-    /*<![CDATA[*/
-
     const chartLabels = /*[[${chartLabels}]]*/ ['Thg 1', 'Thg 2', 'Thg 3', 'Thg 4', 'Thg 5', 'Thg 6'];
     const chartData = /*[[${chartData}]]*/ [120, 190, 300, 500, 200, 350];
 
-    /*]]>*/
-
     document.addEventListener('DOMContentLoaded', function () {
-        const ctx = document.getElementById('revenueChart').getContext('2d');
-        const revenueChart = new Chart(ctx, {
+        new Chart(document.getElementById('revenueChart'), {
             type: 'bar',
             data: {
                 labels: chartLabels,
@@ -273,27 +166,17 @@
                     backgroundColor: 'rgba(59, 130, 246, 0.5)',
                     borderColor: 'rgba(59, 130, 246, 1)',
                     borderWidth: 1,
-                    borderRadius: 4
+                    borderRadius: 6
                 }]
             },
             options: {
                 responsive: true,
-                maintainAspectRatio: true,
-                scales: {
-                    y: {
-                        beginAtZero: true
-                    }
-                },
-                plugins: {
-                    legend: {
-                        display: false
-                    }
-                }
+                animation: { duration: 800, easing: 'easeOutQuart' },
+                scales: { y: { beginAtZero: true } },
+                plugins: { legend: { display: false } }
             }
         });
     });
 </script>
-
 </body>
 </html>
-

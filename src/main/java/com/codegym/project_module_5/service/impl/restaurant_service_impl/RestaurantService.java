@@ -152,6 +152,29 @@ public class RestaurantService implements IRestaurantService {
         return iRestaurantRepository.findByIsApprovedIsNull();
     }
 
+    @Override
+    public List<Restaurant> getPartnerRequests() {
+        return iRestaurantRepository.findByPartnerRequestTrueAndIsLongTermPartnerFalse();
+    }
+
+    @Override
+    public void approveParter(Long restaurantId) {
+       iRestaurantRepository.findById(restaurantId).ifPresent(r -> {
+            r.setIsLongTermPartner(true);
+            r.setPartnerRequest(false);
+            iRestaurantRepository.save(r);
+        });
+    }
+
+    @Override
+    public void rejectPartner(Long restaurantId) {
+       iRestaurantRepository.findById(restaurantId).ifPresent(r -> {
+            r.setIsLongTermPartner(false);
+            r.setPartnerRequest(false);
+            iRestaurantRepository.save(r);
+        });
+  
+    @Override
     public double calculateTotalRevenue(Long restaurantId) {
         System.out.println("=== DEBUG REVENUE CALCULATION ===");
         System.out.println("Restaurant ID: " + restaurantId);

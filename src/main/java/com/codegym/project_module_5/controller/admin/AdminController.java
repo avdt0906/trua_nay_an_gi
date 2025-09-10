@@ -160,5 +160,21 @@ public class AdminController {
         }
         return "redirect:/admin/restaurants/pending";
     }
+    @GetMapping("/restaurants/partner-requests")
+    public String getPartnerRequests(Model model) {
+        List<Restaurant> partnerRequests = restaurantService.getPartnerRequests();
+        model.addAttribute("partnerRequests", partnerRequests);
+        return "admin/partner_pending_list";
+    }
+    @PostMapping("/restaurants/approvals/partner/approve/{id}")
+    public String approvePartnerRequest(@PathVariable Long id) {
+        restaurantService.approveParter(id);
+        return "redirect:/admin/restaurants/partner-requests";  
+    }
+    @PostMapping("/restaurant/approvals/partner/reject/{id}")
+    public String rejectPartnerRequest(@PathVariable Long id) {
+        restaurantService.rejectPartner(id);
+        return "redirect:/admin/restaurants/partner-requests";  
+    }
 
 }

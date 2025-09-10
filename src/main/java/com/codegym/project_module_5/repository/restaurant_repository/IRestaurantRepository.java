@@ -19,5 +19,5 @@ public interface IRestaurantRepository extends JpaRepository<Restaurant, Long> {
     List<Coupon> findCouponsByRestaurantId(@Param("restaurantId") Long restaurantId);
 
     List<Restaurant> findByIsApprovedIsNull();
-
+    List<Restaurant> findByPartnerRequestTrueAndIsLongTermPartnerFalse();
 }
