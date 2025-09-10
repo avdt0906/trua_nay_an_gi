@@ -5,21 +5,23 @@
     <title>Quản lý Đối tác vận chuyển</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <th:block th:replace="admin/fragments/navbar :: sidebar-styles"></th:block>
     <style>
         body {
             background-color: #f8f9fa;
             font-family: 'Roboto', sans-serif;
         }
 
-        .navbar {
-            box-shadow: 0 2px 4px rgba(0, 0, 0, .08);
+        .wrapper {
+            display: flex;
+            width: 100%;
+            min-height: 100vh;
         }
-
-        .table-container {
-            background-color: #ffffff;
+        #content {
+            flex-grow: 1;
             padding: 2rem;
-            border-radius: 0.75rem;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, .05);
+            max-width: calc(100% - var(--sidebar-width));
+            transition: all 0.3s;
         }
 
         .table thead {
@@ -27,74 +29,75 @@
             color: #ffffff;
         }
 
-        .btn-action {
-            margin: 0 2px;
-            width: 38px; /* Fixed width for alignment */
-        }
     </style>
 </head>
 <body>
+<div class="wrapper">
 
-<!-- Sử dụng Navbar Fragment -->
-<div th:replace="~{admin/fragments/navbar :: navbar}"></div>
+    <!-- Sử dụng Navbar Fragment -->
+    <div th:replace="admin/fragments/navbar :: sidebar(${activePage})"></div>
 
-<!-- Main Content -->
-<main class="container mt-4">
-    <div class="detail-container">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <a th:href="@{/admin/shippers}" class="btn btn-outline-secondary">
-                <i class="fas fa-arrow-left me-1"></i> Quay lại danh sách
-            </a>
-        </div>
+    <div id="content">
+        <!-- Main Content -->
+        <main>
+            <div class="detail-container">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <a th:href="@{/admin/shippers}" class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left me-1"></i> Quay lại danh sách
+                    </a>
+                </div>
 
-        <div class="row">
-            <!-- Shipper Details Card -->
-            <div class="mb-4">
-                <div class="card h-100">
-                    <div class="card-header bg-dark text-white">
-                        <h5 class="mb-0"><i class="fas fa-user-tie me-2"></i>Thông tin Đối tác vận chuyển</h5>
+                <div class="row">
+                    <!-- Shipper Details Card -->
+                    <div class="mb-4">
+                        <div class="card h-100">
+                            <div class="card-header bg-dark text-white">
+                                <h5 class="mb-0"><i class="fas fa-user-tie me-2"></i>Thông tin Đối tác vận chuyển</h5>
+                            </div>
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <strong>ID:</strong>
+                                    <span th:text="${shipper.id}"></span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <strong>Tên đối tác vận chuyển:</strong>
+                                    <span th:text="${shipper.name}"></span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <strong>Số điện thoại:</strong>
+                                    <span th:text="${shipper.phone}"></span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <strong>Giá:</strong>
+                                    <span th:text="${shipper.price}"></span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <strong>Thời gian vận chuyển:</strong>
+                                    <span th:text="${shipper.deliverMinute} + ' phút'"></span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <strong>Trạng thái:</strong>
+                                    <div th:if="${shipper != null}">
+                                        <span th:if="${shipper.isAvailable}"
+                                              class="badge bg-danger">Đang hoạt động</span>
+                                        <span th:unless="${shipper.isAvailable}" class="badge bg-success">Không hoạt động</span>
+                                    </div>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <strong>Khóa:</strong>
+                                    <div th:if="${shipper != null}">
+                                        <span th:if="${shipper.isLocked}" class="badge bg-danger">Đang khoá</span>
+                                        <span th:unless="${shipper.isLocked}" class="badge bg-success">Không khoá</span>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
                     </div>
-                    <ul class="list-group list-group-flush">
-                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                            <strong>ID:</strong>
-                            <span th:text="${shipper.id}"></span>
-                        </li>
-                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                            <strong>Tên đối tác vận chuyển:</strong>
-                            <span th:text="${shipper.name}"></span>
-                        </li>
-                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                            <strong>Số điện thoại:</strong>
-                            <span th:text="${shipper.phone}"></span>
-                        </li>
-                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                            <strong>Giá:</strong>
-                            <span th:text="${shipper.price}"></span>
-                        </li>
-                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                            <strong>Thời gian vận chuyển:</strong>
-                            <span th:text="${shipper.deliverMinute} + ' phút'"></span>
-                        </li>
-                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                            <strong>Trạng thái:</strong>
-                            <div th:if="${shipper != null}">
-                                <span th:if="${shipper.isAvailable}" class="badge bg-danger">Đang hoạt động</span>
-                                <span th:unless="${shipper.isAvailable}" class="badge bg-success">Không hoạt động</span>
-                            </div>
-                        </li>
-                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                            <strong>Khóa:</strong>
-                            <div th:if="${shipper != null}">
-                                <span th:if="${shipper.isLocked}" class="badge bg-danger">Đang khoá</span>
-                                <span th:unless="${shipper.isLocked}" class="badge bg-success">Không khoá</span>
-                            </div>
-                        </li>
-                    </ul>
                 </div>
             </div>
-        </div>
+        </main>
     </div>
-</main>
+</div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script>
     const confirmModal = document.getElementById('confirmModal');

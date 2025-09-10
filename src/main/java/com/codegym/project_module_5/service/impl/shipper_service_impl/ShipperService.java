@@ -32,4 +32,11 @@ public class ShipperService implements IShipperService {
     public void delete(Long id) {
         shipperRepository.deleteById(id);
     }
+
+    @Override
+    public void toggleLock(Long id) {
+        Shipper shipper = shipperRepository.findById(id).get();
+        shipper.setIsLocked(!shipper.getIsLocked());
+        shipperRepository.save(shipper);
+    }
 }

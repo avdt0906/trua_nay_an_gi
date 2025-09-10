@@ -1,172 +1,183 @@
 <!DOCTYPE html>
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
 <head>
-  <meta charset="UTF-8">
-  <title>Quản lý Đối tác vận chuyển</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <style>
-    body {
-      background-color: #f8f9fa;
-      font-family: 'Roboto', sans-serif;
-    }
-    .navbar {
-      box-shadow: 0 2px 4px rgba(0,0,0,.08);
-    }
-    .table-container {
-      background-color: #ffffff;
-      padding: 2rem;
-      border-radius: 0.75rem;
-      box-shadow: 0 4px 8px rgba(0,0,0,.05);
-    }
-    .table thead {
-      background-color: #343a40;
-      color: #ffffff;
-    }
-    .btn-action {
-      margin: 0 2px;
-      width: 38px; /* Fixed width for alignment */
-    }
-  </style>
+    <meta charset="UTF-8">
+    <title>Quản lý Đối tác vận chuyển</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <th:block th:replace="admin/fragments/navbar :: sidebar-styles"></th:block>
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        .wrapper {
+            display: flex;
+            width: 100%;
+            min-height: 100vh;
+        }
+        #content {
+            flex-grow: 1;
+            padding: 2rem;
+            max-width: calc(100% - var(--sidebar-width));
+            transition: all 0.3s;
+        }
+
+        .table-container {
+            background-color: #ffffff;
+            padding: 2rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, .05);
+        }
+
+        .table thead {
+            background-color: #343a40;
+            color: #ffffff;
+        }
+
+        .btn-action {
+            margin: 0 2px;
+            width: 38px; /* Fixed width for alignment */
+        }
+    </style>
 </head>
 <body>
+<div class="wrapper">
 
-<!-- Sử dụng Navbar Fragment -->
-<div th:replace="~{admin/fragments/navbar :: navbar}"></div>
+    <!-- Sử dụng Navbar Fragment -->
+    <div th:replace="admin/fragments/navbar :: sidebar(${activePage})"></div>
 
-<!-- Main Content -->
-<main class="container mt-4">
-  <div class="table-container">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-      <h1 class="h3 mb-0">Danh sách Đối tác vận chuyển</h1>
-      <a href="#" class="btn btn-primary" th:href="@{/admin/shippers/add_shipper_form}">
-        <i class="fas fa-plus me-1"></i> Thêm mới
-      </a>
-    </div>
+    <div id="content">
+        <!-- Main Content -->
+        <main>
+            <div class="table-container">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h1 class="h3 mb-0">Danh sách Đối tác vận chuyển</h1>
+                    <a class="btn btn-primary" th:href="@{/admin/shippers/add_shipper_form}">
+                        <i class="fas fa-plus me-1"></i> Thêm mới
+                    </a>
+                </div>
 
-    <!-- Flash Messages -->
-    <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
-      <span th:text="${successMessage}"></span>
-      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-    <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
-      <span th:text="${errorMessage}"></span>
-      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
+                <!-- Flash Messages -->
+                <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
+                    <span th:text="${successMessage}"></span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <span th:text="${errorMessage}"></span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
 
-    <div th:if="${shippers.isEmpty()}">
-      <div class="alert alert-info" role="alert">
-        Chưa có đối tác vận chuyển nào được đăng ký.
-      </div>
-    </div>
+                <div th:if="${shippers.isEmpty()}">
+                    <div class="alert alert-info" role="alert">
+                        Chưa có đối tác vận chuyển nào được đăng ký.
+                    </div>
+                </div>
 
-    <div th:if="${!shippers.isEmpty()}">
-      <div class="table-responsive">
-        <table class="table table-hover align-middle">
-          <thead>
-          <tr>
-            <th scope="col">ID</th>
-            <th scope="col">Tên đối tác vận chuyển</th>
-            <th scope="col">Trạng thái</th>
-            <th scope="col">Khóa</th>
-            <th scope="col" class="text-center">Thao tác</th>
-          </tr>
-          </thead>
-          <tbody>
-          <tr th:each="shipper : ${shippers}">
-            <th scope="row" th:text="${shipper.id}"></th>
-            <td th:text="${shipper.name}"></td>
-            <td>
-              <div th:if="${shipper != null}">
-                <span th:if="${shipper.isAvailable}" class="badge bg-danger">Đang hoạt động</span>
-                <span th:unless="${shipper.isAvailable}" class="badge bg-success">Không hoạt động</span>
-              </div>
-            </td>
-              <td>
-              <div th:if="${shipper != null}">
-                <span th:if="${shipper.isLocked}" class="badge bg-danger">Đang khoá</span>
-                <span th:unless="${shipper.isLocked}" class="badge bg-success">Không khoá</span>
-              </div>
-            </td>
-            <td class="text-center">
-              <a th:href="@{/admin/shippers/{id}(id=${shipper.id})}" class="btn btn-sm btn-info btn-action" title="Chi tiết">
-                <i class="fas fa-edit"></i>
-              </a>
-              <a href="#" class="btn btn-sm btn-danger btn-action" title="Xóa">
-                <i class="fas fa-trash"></i>
-              </a>
-              <!-- Button to trigger modal -->
-              <button th:if="${shipper != null}" type="button" class="btn btn-sm btn-warning btn-action"
-                      th:data-action="@{/admin/shippers/toggle-lock/{id}(id=${shipper.id})}"
-                      th:data-restaurant-name="${shipper.name}"
-                      th:data-is-locked="${shipper.isLocked}"
-                      th:title="${shipper.isLocked ? 'Mở khóa Đối tác vận chuyển' : 'Khóa Đối tác vận chuyển'}"
-                      data-bs-toggle="modal" data-bs-target="#confirmModal">
-                <i class="fas" th:classappend="${shipper.isLocked ? 'fa-lock-open' : 'fa-lock'}"></i>
-              </button>
-            </td>
-          </tr>
-          </tbody>
-        </table>
-      </div>
+                <div th:if="${!shippers.isEmpty()}">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead>
+                            <tr>
+                                <th scope="col">ID</th>
+                                <th scope="col">Tên đối tác vận chuyển</th>
+                                <th scope="col">Khóa</th>
+                                <th scope="col" class="text-center">Thao tác</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="shipper : ${shippers}">
+                                <th scope="row" th:text="${shipper.id}"></th>
+                                <td th:text="${shipper.name}"></td>
+                                <td>
+                                    <div th:if="${shipper != null}">
+                                        <span th:if="${shipper.isLocked}" class="badge bg-danger">Đang khoá</span>
+                                        <span th:unless="${shipper.isLocked}" class="badge bg-success">Không khoá</span>
+                                    </div>
+                                </td>
+                                <td class="text-center">
+                                    <a th:href="@{/admin/shippers/{id}(id=${shipper.id})}"
+                                       class="btn btn-sm btn-info btn-action" title="Chi tiết">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <a href="#" class="btn btn-sm btn-danger btn-action" title="Xóa">
+                                        <i class="fas fa-trash"></i>
+                                    </a>
+                                    <!-- Button to trigger modal -->
+                                    <button th:if="${shipper != null}" type="button"
+                                            class="btn btn-sm btn-warning btn-action"
+                                            th:data-action="@{/admin/shippers/toggle_lock/{id}(id=${shipper.id})}"
+                                            th:data-shipper-name="${shipper.name}"
+                                            th:data-is-locked="${shipper.isLocked}"
+                                            th:title="${shipper.isLocked ? 'Mở khóa Đối tác vận chuyển' : 'Khóa Đối tác vận chuyển'}"
+                                            data-bs-toggle="modal" data-bs-target="#confirmModal">
+                                        <i class="fas"
+                                           th:classappend="${shipper.isLocked ? 'fa-lock-open' : 'fa-lock'}"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
     </div>
-  </div>
-</main>
-
-<!-- Confirmation Modal -->
-<div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="confirmModalLabel">Xác nhận hành động</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body" id="confirmModalBody">
-        <!-- Content will be set by JavaScript -->
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-        <form id="confirmActionForm" method="post" class="d-inline">
-          <button type="submit" class="btn btn-warning" id="confirmActionButton">Xác nhận</button>
-        </form>
-      </div>
+    <!-- Confirmation Modal -->
+    <div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="confirmModalLabel">Xác nhận hành động</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="confirmModalBody">
+                    <!-- Content will be set by JavaScript -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                    <form id="confirmActionForm" method="post" class="d-inline">
+                        <button type="submit" class="btn btn-warning" id="confirmActionButton">Xác nhận</button>
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
-  </div>
 </div>
-
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-  const confirmModal = document.getElementById('confirmModal');
-  if (confirmModal) {
-    confirmModal.addEventListener('show.bs.modal', function (event) {
-      // Button that triggered the modal
-      const button = event.relatedTarget;
+    const confirmModal = document.getElementById('confirmModal');
+    if (confirmModal) {
+        confirmModal.addEventListener('show.bs.modal', function (event) {
+            // Button that triggered the modal
+            const button = event.relatedTarget;
 
-      // Extract info from data-* attributes
-      const actionUrl = button.getAttribute('data-action');
-      const shipperName = button.getAttribute('data-shipper-name');
-      const isLocked = button.getAttribute('data-is-locked') === 'true';
+            // Extract info from data-* attributes
+            const actionUrl = button.getAttribute('data-action');
+            const shipperName = button.getAttribute('data-shipper-name');
+            const isLocked = button.getAttribute('data-is-locked') === 'true';
 
-      // Update the modal's content
-      const modalBody = confirmModal.querySelector('#confirmModalBody');
-      const confirmButton = confirmModal.querySelector('#confirmActionButton');
-      const confirmForm = confirmModal.querySelector('#confirmActionForm');
+            // Update the modal's content
+            const modalBody = confirmModal.querySelector('#confirmModalBody');
+            const confirmButton = confirmModal.querySelector('#confirmActionButton');
+            const confirmForm = confirmModal.querySelector('#confirmActionForm');
 
-      if (isLocked) {
-        modalBody.textContent = `Bạn có chắc chắn muốn MỞ KHÓA Đối tác vận chuyển "${shipperName}"?`;
-        confirmButton.classList.remove('btn-warning');
-        confirmButton.classList.add('btn-success');
-        confirmButton.textContent = 'Mở khóa';
-      } else {
-        modalBody.textContent = `Bạn có chắc chắn muốn KHÓA Đối tác vận chuyển "${shipperName}"?`;
-        confirmButton.classList.remove('btn-success');
-        confirmButton.classList.add('btn-warning');
-        confirmButton.textContent = 'Khóa';
-      }
+            if (isLocked) {
+                modalBody.textContent = `Bạn có chắc chắn muốn MỞ KHÓA Đối tác vận chuyển "${shipperName}"?`;
+                confirmButton.classList.remove('btn-warning');
+                confirmButton.classList.add('btn-success');
+                confirmButton.textContent = 'Mở khóa';
+            } else {
+                modalBody.textContent = `Bạn có chắc chắn muốn KHÓA Đối tác vận chuyển "${shipperName}"?`;
+                confirmButton.classList.remove('btn-success');
+                confirmButton.classList.add('btn-warning');
+                confirmButton.textContent = 'Khóa';
+            }
 
-      confirmForm.setAttribute('action', actionUrl);
-    });
-  }
+            confirmForm.setAttribute('action', actionUrl);
+        });
+    }
 </script>
 </body>
 </html>

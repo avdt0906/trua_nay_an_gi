@@ -44,4 +44,11 @@ public class ShipperController {
         mv.addObject("shipper", shipper);
         return mv;
     }
+
+    @PostMapping("/toggle_lock/{id}")
+    public ModelAndView toggleShipperLock(@PathVariable("id") Long id) {
+        ModelAndView mv = new ModelAndView("redirect:/admin/shippers");
+        shipperService.toggleLock(id);
+        return mv;
+    }
 }
