@@ -185,7 +185,7 @@ UPDATE `casestudy`.`dish` SET `picture_url` = 'eat_food/com_tam_ga_nuong.jpg' WH
 UPDATE `casestudy`.`dish` SET `picture_url` = 'eat_food/com-tam-cha-ca.jpg' WHERE (`id` = '9');
 UPDATE `casestudy`.`dish` SET `picture_url` = 'eat_food/pho-bo-tai.jpg' WHERE (`id` = '10');
 UPDATE `casestudy`.`dish` SET `picture_url` = 'eat_food/bun-cha-ca.jpg' WHERE (`id` = '11');
-UPDATE `casestudy`.`dish` SET `picture_url` = 'eat_food/ga-nuong-la-chanh.jpg' WHERE (`id` = '12');
+UPDATE `casestudy`.`dish` SET `picture_url` = 'eat_food/ga-nuong-la-tranh.jpg' WHERE (`id` = '12');
 UPDATE `casestudy`.`dish` SET `picture_url` = 'drinks/tra-sua-chan-trau-duong-den.jpg' WHERE (`id` = '13');
 UPDATE `casestudy`.`dish` SET `picture_url` = 'drinks/tra-sua-matcha.jpg' WHERE (`id` = '14');
 UPDATE `casestudy`.`dish` SET `picture_url` = 'drinks/tra-oolong-kem-cheese.jpg' WHERE (`id` = '15');

@@ -360,7 +360,7 @@
                                         <tbody>
                                         <tr th:each="dish : ${dishes}">
                                             <td>
-                                                <img th:src="${'/images/dish/eat_food/' + dish.pictureUrl}" alt="Dish Image" class="table-dish-img">
+                                                <img th:src="${'/images/dish/' + dish.getPictureUrl()}" alt="Dish Image" class="table-dish-img">
                                             </td>
                                             <td class="fw-bold" th:text="${dish.name}"></td>
                                             <td>
@@ -383,6 +383,11 @@
                                         </tbody>
                                     </table>
                                 </div>
+                                <a class="btn btn-primary" th:if="${dishes.hasPrevious()}"
+                                   th:href="@{/restaurants/dishes/dish_list(page=${dishes.number - 1})}">Previous</a>
+                                <span th:text="${dishes.number + 1}"></span> | <span th:text="${dishes.totalPages}"></span>
+                                <a class="btn btn-primary" th:if="${dishes.hasNext()}"
+                                   th:href="@{/restaurants/dishes/dish_list(page=${dishes.number + 1})}">Next</a>
 
                                 <div class="text-center py-5" th:if="${dishes == null || dishes.isEmpty()}">
                                     <i class="fas fa-utensil-spoon fa-4x text-muted mb-3"></i>

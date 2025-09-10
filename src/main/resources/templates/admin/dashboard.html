@@ -115,7 +115,7 @@
                         <div class="card-body p-0">
                             <ul class="list-group list-group-flush">
                                 <li class="list-group-item d-flex align-items-center p-3" th:each="dish : ${topDishes}">
-                                    <img th:src="${dish.pictureUrl}" alt="Dish Image" style="width: 60px; height: 60px; object-fit: cover; border-radius: 0.5rem;" class="me-3">
+                                    <img th:src="@{'/images/dish/' + ${dish.getPictureUrl()}}" alt="Dish Image" style="width: 60px; height: 60px; object-fit: cover; border-radius: 0.5rem;" class="me-3">
                                     <div class="me-auto">
                                         <h6 class="mb-0 fw-bold" th:text="${dish.name}">Tên món ăn</h6>
                                         <small class="text-muted" th:text="${dish.restaurant.name}">Tên nhà hàng</small>

@@ -9,102 +9,90 @@
   <link rel="stylesheet" href="/css/index.css"/>
 </head>
 <style>
+  /* Wrapper scroll ngang */
   .category-scroll {
     display: flex;
     overflow-x: auto;
-    gap: 1.5rem;
-    scroll-snap-type: x mandatory;
-    padding: 1.5rem 1rem;
+    gap: 1.2rem;
+    padding: 1rem;
     margin-bottom: 2rem;
-    background: linear-gradient(135deg, #f5f5f5 0%, #ffffff 100%);
-    border-radius: 15px;
-    box-shadow: 0 4px 15px rgba(238, 77, 45, 0.1);
-    border: 1px solid rgba(238, 77, 45, 0.1);
+    scroll-snap-type: x mandatory;
+    border-radius: 14px;
+    background: #fff;
+    box-shadow: 0 2px 12px rgba(238, 77, 45, 0.08);
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .category-scroll::-webkit-scrollbar {
+    display: none;
   }
 
+  /* Category item */
   .category-item {
     flex: 0 0 auto;
     scroll-snap-align: center;
     text-align: center;
     cursor: pointer;
-    transition: all 0.3s ease;
-    padding: 0.5rem;
-    border-radius: 12px;
-    background: white;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    padding: 0.6rem;
+    border-radius: 14px;
+    background: #fff;
+    transition: all 0.25s ease;
+    box-shadow: 0 1px 6px rgba(0,0,0,0.08);
+    animation: fadeIn 0.4s ease;
   }
-
   .category-item:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    background: linear-gradient(135deg, #fff 0%, #f8f9fa 100%);
+    transform: translateY(-3px);
+    box-shadow: 0 4px 14px rgba(0,0,0,0.12);
   }
 
+  /* Ảnh tròn */
   .category-item img {
-    width: 80px;
-    height: 80px;
-    object-fit: cover;
+    width: 75px;
+    height: 75px;
     border-radius: 50%;
+    object-fit: cover;
     border: 3px solid transparent;
-    background: linear-gradient(45deg, #ee4d2d, #ff6633, #ff7043);
-    background-clip: padding-box;
     transition: all 0.3s ease;
-    position: relative;
   }
-
   .category-item:hover img {
+    border-color: #ee4d2d;
     transform: scale(1.05);
-    border: 3px solid #ee4d2d;
-    box-shadow: 0 0 15px rgba(238, 77, 45, 0.2);
   }
 
+  /* Tên */
   .category-name {
-    margin-top: 0.8rem;
-    font-size: 0.85rem;
+    margin-top: 0.5rem;
+    font-size: 0.9rem;
     font-weight: 600;
     color: #495057;
     transition: color 0.3s ease;
   }
-
   .category-item:hover .category-name {
     color: #ee4d2d;
   }
-
-  .category-item.active {
-    background: linear-gradient(135deg, #ee4d2d 0%, #ff6633 100%);
-    color: white;
-    transform: translateY(-3px);
-    box-shadow: 0 6px 20px rgba(238, 77, 45, 0.3);
-  }
-
-  .category-item.active .category-name {
-    color: white;
-    font-weight: 700;
-  }
-
-  .category-item.active img {
-    border: 3px solid white;
-    box-shadow: 0 0 25px rgba(255, 255, 255, 0.5);
-  }
-
   .category-name a {
     text-decoration: none;
     color: inherit;
-    transition: all 0.3s ease;
   }
 
-  .category-name a:hover {
-    color: #ee4d2d;
+  /* Active state */
+  .category-item.active {
+    background: linear-gradient(135deg, #ee4d2d, #ff6633);
+    color: #fff;
+    transform: translateY(-4px);
+    box-shadow: 0 6px 18px rgba(238, 77, 45, 0.3);
+  }
+  .category-item.active img {
+    border-color: #fff;
+  }
+  .category-item.active .category-name {
+    color: #fff;
   }
 
-  /* Ẩn thanh cuộn hoàn toàn */
-  .category-scroll::-webkit-scrollbar {
-    display: none;
-  }
-
-  .category-scroll {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
+  /* Hiệu ứng fade-in khi load */
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
   }
 
   /* Animation cho category items */

@@ -12,9 +12,9 @@ import java.util.List;
 public interface IDishService extends IGeneralService<Dish> {
     Page<Dish> findAll(Pageable pageable);
 
-    Iterable<Dish> findAllByRestaurantId(Long restaurantId);
+    Page<Dish> findAllByRestaurantId(Long restaurantId, Pageable pageable);
 
-    Iterable<Dish> findAllByRestaurantIdAndNameContainingIgnoreCase(Long restaurantId, String name);
+    Page<Dish> findAllByRestaurantIdAndNameContainingIgnoreCase(Long restaurantId, String name, Pageable pageable);
 
     Iterable<Dish> findAllAvailableDishes();
 

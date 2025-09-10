@@ -7,6 +7,10 @@ import com.codegym.project_module_5.repository.restaurant_repository.ICategoryRe
 import com.codegym.project_module_5.service.restaurant_service.IDishService;
 import com.codegym.project_module_5.service.restaurant_service.IRestaurantService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.bind.DefaultValue;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
@@ -30,22 +34,22 @@ public class DishRestaurantController {
 
 
     @GetMapping("/dish_list")
-    public ModelAndView dishList(@RequestParam(value = "search", required = false) String search) {
+    public ModelAndView dishList(@RequestParam(value = "search", required = false) String search,@PageableDefault(size = 2) Pageable pageable) {
         ModelAndView mv = new ModelAndView("owner/dish/dish_list");
         String username = getCurrentUsername();
         Optional<Restaurant> restaurantOptional = restaurantService.findByUsername(username);
 
         if (restaurantOptional.isPresent()) {
             Restaurant restaurant = restaurantOptional.get();
-            Iterable<Dish> dishes;
+            Page<Dish> dishes;
             if (search != null && !search.isEmpty()) {
-                dishes = dishService.findAllByRestaurantIdAndNameContainingIgnoreCase(restaurant.getId(), search);
+                dishes = dishService.findAllByRestaurantIdAndNameContainingIgnoreCase(restaurant.getId(), search, pageable);
             } else {
-                dishes = dishService.findAllByRestaurantId(restaurant.getId());
+                dishes = dishService.findAllByRestaurantId(restaurant.getId(), pageable);
             }
             mv.addObject("dishes", dishes);
             mv.addObject("restaurant", restaurant);
-            mv.addObject("search", search); // Để giữ lại từ khóa tìm kiếm trên ô input
+            mv.addObject("search", search);
             return mv;
         } else {
             // Nếu chủ quán chưa có nhà hàng, chuyển hướng đến trang đăng ký.
