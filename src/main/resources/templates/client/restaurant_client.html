@@ -36,6 +36,24 @@
         .add-btn:hover { background: #d84315; }
         .qr-section { background: var(--shopee-orange); border-radius: 8px; padding: 1rem; text-align: center; color: white; }
         .qr-section img { width: 150px; height: 150px; background: white; padding: 8px; border-radius: 8px; margin-bottom: 0.5rem; }
+
+        .text-shopee {
+            color: var(--shopee-orange);
+        }
+        .review-item {
+            font-size: 0.9rem;
+        }
+        .review-item i {
+            width: 18px;
+        }
+        .card {
+            border-radius: 12px;
+        }
+        .card-header {
+            font-size: 1rem;
+            border-bottom: 1px solid #eee;
+        }
+
     </style>
 </head>
 <body>
@@ -57,7 +75,7 @@
 <div class="container mt-3">
     <!-- Breadcrumb -->
     <nav aria-label="breadcrumb">
-        <ol class="breadcrumb">
+        <ol class="breadcrumb" th:object="${evaluate}">
             <li class="breadcrumb-item"><a th:href="@{/home}">Home</a></li>
             <li class="breadcrumb-item"><a href="#">Hà Nội</a></li>
             <li class="breadcrumb-item active" th:text="${restaurant.name}">Tên nhà hàng</li>
@@ -122,11 +140,46 @@
             </div>
         </div>
 
-        <!-- QR Code -->
+        <!-- Evaluate Card -->
         <div class="col-md-3">
-            <div class="qr-section">
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=ShopeeFood" alt="QR code">
-                <p>Quét mã để đặt món<br>trên app Shopee</p>
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-white fw-bold text-shopee">
+                    Đánh giá khách hàng
+                </div>
+                <div class="card-body p-3" style="max-height: 350px; overflow-y: auto;">
+                    <div th:if="${evaluate == null or evaluate.isEmpty()}">
+                        <p class="text-muted text-center">Chưa có đánh giá nào.</p>
+                    </div>
+
+                    <div th:each="row : ${evaluate}" class="review-item border-bottom pb-2 mb-3">
+                        <p class="mb-1 fw-semibold">
+                            <i class="fas fa-user-circle text-secondary me-1"></i>
+                            Khách hàng
+                        </p>
+                        <p class="mb-1 small">
+                            <i class="fas fa-comment-dots text-primary me-1"></i>
+                            <span th:text="${row.getComment()}">Bình luận...</span>
+                        </p>
+                        <p class="mb-1 small text-warning">
+                    <span th:each="star : ${#numbers.sequence(1, row.getStar())}">
+                        <i class="fas fa-star"></i>
+                    </span>
+                            <span th:each="star : ${#numbers.sequence(row.getStar()+1, 5)}">
+                        <i class="far fa-star"></i>
+                    </span>
+                        </p>
+                        <p class="mb-1 small">
+                            <i class="fas fa-star text-warning"></i>
+                            <span class="text-muted">Đặc trưng: </span>
+                            <span th:text="${row.getOutstanding_features()}">Đặc trưng</span>
+                        </p>
+                        <p class="mb-0 small">
+                            <i class="fas fa-check-circle text-success"></i>
+                            <span class="text-muted">Chất lượng: </span>
+                            <span th:text="${row.getProduct_quality()}">Chất lượng</span>
+                        </p>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
