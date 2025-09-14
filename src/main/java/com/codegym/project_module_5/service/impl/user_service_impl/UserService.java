@@ -37,9 +37,10 @@ public class UserService implements IUserService {
 
     @Override
     public User register(RegisterRequest request) {
+        System.out.println("Registering user: " + request.getUsername() + " | " + request.getEmail());
+
         Role userRole = roleRepository.findByName("CUSTOMER")
                 .orElseThrow(() -> new RuntimeException("Default role not found"));
-        Set<Role> userRoles = Set.of(userRole);
 
         User user = new User();
         user.setUsername(request.getUsername());
@@ -47,8 +48,11 @@ public class UserService implements IUserService {
         user.setEmail(request.getEmail());
         user.setPhone(request.getPhone());
         user.setFullName(request.getFullName());
-        user.setRoles(userRoles);
-        return userRepository.save(user);
+        user.setRoles(Set.of(userRole));
+
+        User saved = userRepository.save(user);
+        System.out.println("User saved: " + saved.getId());
+        return saved;
     }
 
     @Override
@@ -134,17 +138,17 @@ public class UserService implements IUserService {
         return userAddressRepository.findById(id);
     }
 
-    public UserAddress updateAddress( Long addressId,UserAddressRequest addressRequest) {
-    UserAddress existingAddress = userAddressRepository.findById(addressId)
-            .orElseThrow(() -> new RuntimeException("Address not found"));
+    public UserAddress updateAddress(Long addressId, UserAddressRequest addressRequest) {
+        UserAddress existingAddress = userAddressRepository.findById(addressId)
+                .orElseThrow(() -> new RuntimeException("Address not found"));
 
-    existingAddress.setName(addressRequest.getName());
-    existingAddress.setPhone(addressRequest.getPhone());
-    existingAddress.setFullAddress(addressRequest.getFullAddress());
-    existingAddress.setLatitude(addressRequest.getLatitude());
-    existingAddress.setLongitude(addressRequest.getLongitude());
-    existingAddress.setDefaultAddress(addressRequest.isDefaultAddress());
+        existingAddress.setName(addressRequest.getName());
+        existingAddress.setPhone(addressRequest.getPhone());
+        existingAddress.setFullAddress(addressRequest.getFullAddress());
+        existingAddress.setLatitude(addressRequest.getLatitude());
+        existingAddress.setLongitude(addressRequest.getLongitude());
+        existingAddress.setDefaultAddress(addressRequest.isDefaultAddress());
 
-    return userAddressRepository.save(existingAddress);
-}
+        return userAddressRepository.save(existingAddress);
+    }
 }
