@@ -70,7 +70,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/css/**", "/js/**", "/images/**").permitAll()
                         .requestMatchers("/", "/home", "/dish/**", "/restaurant_client/**").permitAll()
-                        .requestMatchers("/account/**","/register","/verify-otp/profile/").permitAll()
+                        .requestMatchers("/account/**","/register","/verify-otp").permitAll()
 
                         // *** THÊM DÒNG NÀY ĐỂ CHO PHÉP TRUY CẬP GIỎ HÀNG ***
                         .requestMatchers("/cart/**").permitAll()
