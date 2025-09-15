@@ -9,49 +9,55 @@
   <link rel="stylesheet" href="/css/index.css"/>
 </head>
 <style>
-  /* Wrapper scroll ngang */
   .category-scroll {
     display: flex;
+    justify-content: center;
     overflow-x: auto;
-    gap: 1.2rem;
-    padding: 1rem;
-    margin-bottom: 2rem;
+    gap: 1rem;
+    padding: 0.8rem 1rem;
+    margin-bottom: 1.5rem;
     scroll-snap-type: x mandatory;
-    border-radius: 14px;
-    background: #fff;
-    box-shadow: 0 2px 12px rgba(238, 77, 45, 0.08);
-    -ms-overflow-style: none;
     scrollbar-width: none;
+    -ms-overflow-style: none;
+
+    /* Xóa nền trắng + shadow */
+    background: transparent;
+    box-shadow: none;
+    border-radius: 0;
   }
   .category-scroll::-webkit-scrollbar {
     display: none;
   }
 
-  /* Category item */
+
   .category-item {
     flex: 0 0 auto;
-    scroll-snap-align: center;
+    width: 90px;
     text-align: center;
     cursor: pointer;
-    padding: 0.6rem;
+    padding: 0.5rem;
     border-radius: 14px;
-    background: #fff;
+
+    /* Cho nền trong suốt để trùng với màu nền ngoài */
+    background: transparent;
+
     transition: all 0.25s ease;
-    box-shadow: 0 1px 6px rgba(0,0,0,0.08);
-    animation: fadeIn 0.4s ease;
+    box-shadow: none; /* bỏ bóng nếu không muốn thấy khung */
   }
+
+
   .category-item:hover {
     transform: translateY(-3px);
-    box-shadow: 0 4px 14px rgba(0,0,0,0.12);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.12);
   }
 
   /* Ảnh tròn */
   .category-item img {
-    width: 75px;
-    height: 75px;
+    width: 65px;
+    height: 65px;
     border-radius: 50%;
     object-fit: cover;
-    border: 3px solid transparent;
+    border: 2px solid transparent;
     transition: all 0.3s ease;
   }
   .category-item:hover img {
@@ -61,11 +67,10 @@
 
   /* Tên */
   .category-name {
-    margin-top: 0.5rem;
-    font-size: 0.9rem;
+    margin-top: 0.4rem;
+    font-size: 0.8rem;
     font-weight: 600;
     color: #495057;
-    transition: color 0.3s ease;
   }
   .category-item:hover .category-name {
     color: #ee4d2d;
@@ -79,8 +84,8 @@
   .category-item.active {
     background: linear-gradient(135deg, #ee4d2d, #ff6633);
     color: #fff;
-    transform: translateY(-4px);
-    box-shadow: 0 6px 18px rgba(238, 77, 45, 0.3);
+    transform: translateY(-3px);
+    box-shadow: 0 4px 14px rgba(238, 77, 45, 0.25);
   }
   .category-item.active img {
     border-color: #fff;
@@ -89,49 +94,29 @@
     color: #fff;
   }
 
-  /* Hiệu ứng fade-in khi load */
+  /* Hiệu ứng load */
   @keyframes fadeIn {
     from { opacity: 0; transform: translateY(10px); }
     to { opacity: 1; transform: translateY(0); }
   }
-
-  /* Animation cho category items */
-  @keyframes slideInFromLeft {
-    from {
-      opacity: 0;
-      transform: translateX(-50px);
-    }
-    to {
-      opacity: 1;
-      transform: translateX(0);
-    }
-  }
-
   .category-item {
-    animation: slideInFromLeft 0.6s ease forwards;
+    animation: fadeIn 0.5s ease;
   }
 
-  .category-item:nth-child(1) { animation-delay: 0.1s; }
-  .category-item:nth-child(2) { animation-delay: 0.2s; }
-  .category-item:nth-child(3) { animation-delay: 0.3s; }
-  .category-item:nth-child(4) { animation-delay: 0.4s; }
-  .category-item:nth-child(5) { animation-delay: 0.5s; }
-  .category-item:nth-child(6) { animation-delay: 0.6s; }
-  .category-item:nth-child(7) { animation-delay: 0.7s; }
-  .category-item:nth-child(8) { animation-delay: 0.8s; }
-
-  /* Pulse animation for active category */
-  @keyframes pulse {
-    0% { box-shadow: 0 0 0 0 rgba(238, 77, 45, 0.7); }
-    70% { box-shadow: 0 0 0 10px rgba(238, 77, 45, 0); }
-    100% { box-shadow: 0 0 0 0 rgba(238, 77, 45, 0); }
+  /* Responsive cho màn nhỏ */
+  @media (max-width: 576px) {
+    .category-item {
+      width: 75px;
+    }
+    .category-item img {
+      width: 55px;
+      height: 55px;
+    }
+    .category-name {
+      font-size: 0.75rem;
+    }
   }
 
-
-  /* Smooth scroll behavior */
-  .category-scroll {
-    scroll-behavior: smooth;
-  }
 </style>
 <body>
 
