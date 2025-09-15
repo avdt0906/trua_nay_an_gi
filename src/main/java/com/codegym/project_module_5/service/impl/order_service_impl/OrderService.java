@@ -2,12 +2,14 @@ package com.codegym.project_module_5.service.impl.order_service_impl;
 
 import com.codegym.project_module_5.model.order_model.OrderStatus;
 import com.codegym.project_module_5.model.order_model.Orders;
+import com.codegym.project_module_5.model.user_model.User;
 import com.codegym.project_module_5.repository.order_repository.IOrderRepository;
 import com.codegym.project_module_5.repository.order_repository.IOrderStatusRepository;
 import com.codegym.project_module_5.service.order_service.IOrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -64,5 +66,11 @@ public class OrderService implements IOrderService {
             }
         }
         return false;
+    }
+
+
+    @Override
+    public List<Orders> findOrdersByUser(User user) {
+        return orderRepository.findAllByUserOrderByCreatedAtDesc(user);
     }
 }

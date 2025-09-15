@@ -24,15 +24,15 @@
             <!-- Menu chính (căn giữa) -->
             <ul class="navbar-nav mx-auto">
                 <li class="nav-item">
-                    <a class="nav-link" th:href="@{/home(menu='best-price')}" 
+                    <a class="nav-link" th:href="@{/home(menu='best-price')}"
                        th:classappend="${menuType == 'best-price'} ? 'active' : ''">Món ăn giá tốt</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" th:href="@{/home(menu='nearby')}" 
+                    <a class="nav-link" th:href="@{/home(menu='nearby')}"
                        th:classappend="${menuType == 'nearby'} ? 'active' : ''">Món ngon gần bạn</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" th:href="@{/home(menu='hot-pick')}" 
+                    <a class="nav-link" th:href="@{/home(menu='hot-pick')}"
                        th:classappend="${menuType == 'hot-pick'} ? 'active' : ''">Món ngon hot pick</a>
                 </li>
             </ul>
@@ -68,10 +68,11 @@
                         <span th:text="${currentUser != null ? currentUser.fullName : 'Tài khoản'}"></span>
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end">
-                        <li><a class="dropdown-item" th:href="@{/profile/edit}">Trang cá nhân</a></li>
-                        <li><a class="dropdown-item" th:href="@{/addresses}">Địa chỉ của tôi</a></li>
+                        <li><a class="dropdown-item" th:href="@{/profile/edit}"><i class="fas fa-user-circle me-2"></i>Trang cá nhân</a></li>
+                        <li><a class="dropdown-item" th:href="@{/addresses}"><i class="fas fa-map-marker-alt me-2"></i>Địa chỉ của tôi</a></li>
+                        <li><a class="dropdown-item" th:href="@{/orders/history}"><i class="fas fa-history me-2"></i>Lịch sử mua hàng</a></li>
                         <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item" th:href="@{/logout}">Đăng xuất</a></li>
+                        <li><a class="dropdown-item" th:href="@{/logout}"><i class="fas fa-sign-out-alt me-2"></i>Đăng xuất</a></li>
                     </ul>
                 </div>
             </div>
