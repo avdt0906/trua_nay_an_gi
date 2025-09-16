@@ -372,12 +372,16 @@
                                                 <span class="badge text-bg-secondary" th:unless="${dish.isAvailable}">Hết hàng</span>
                                             </td>
                                             <td class="text-end">
+                                                <a th:href="@{'/order_statistic/' + ${dish.id}}" class="btn btn-sm btn-outline-info rounded-circle btn-action" title="Chỉnh sửa">
+                                                    <i class="fa-regular fa-eye"></i>
+                                                </a>
                                                 <a th:href="@{'/restaurants/dishes/edit_dish_form/' + ${dish.id}}" class="btn btn-sm btn-outline-info rounded-circle btn-action" title="Chỉnh sửa">
                                                     <i class="fas fa-edit"></i>
                                                 </a>
                                                 <a th:href="@{'/restaurants/dishes/delete_dish/' + ${dish.id}}" class="btn btn-sm btn-outline-danger rounded-circle btn-action" title="Xóa">
                                                     <i class="fas fa-trash"></i>
                                                 </a>
+                                                
                                             </td>
                                         </tr>
                                         </tbody>
