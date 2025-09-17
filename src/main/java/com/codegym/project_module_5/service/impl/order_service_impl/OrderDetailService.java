@@ -44,4 +44,5 @@ public class OrderDetailService implements IOrderDetailService {
     public List<OrderDetail> findByDishId(Long orderId) {
         return orderDetailRepository.findByDishId(orderId);
     }
+
 }
