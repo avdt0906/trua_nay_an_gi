@@ -57,6 +57,8 @@ public class CartController {
     @Autowired
     private IOrderStatusRepository orderStatusRepository;
 
+    // ... (các phương thức khác giữ nguyên)
+
     @GetMapping
     public String viewCart(Model model, HttpSession session) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -117,7 +119,7 @@ public class CartController {
     }
 
     @PostMapping("/add")
-    @ResponseBody // Thêm @ResponseBody để Spring tự động chuyển Map thành JSON
+    @ResponseBody
     public ResponseEntity<?> addToCart(@RequestParam("dishId") Long dishId,
                                        @RequestParam(value = "quantity", defaultValue = "1") int quantity,
                                        HttpSession session) {
@@ -126,7 +128,6 @@ public class CartController {
 
         Optional<Dish> dishOptional = dishService.findById(dishId);
         if (dishOptional.isEmpty()) {
-            // Trả về lỗi dưới dạng JSON
             return ResponseEntity.badRequest().body(Map.of("message", "Sản phẩm không tồn tại!"));
         }
         Dish dish = dishOptional.get();
@@ -139,7 +140,7 @@ public class CartController {
                     .orElseThrow(() -> new RuntimeException("User not found"));
             try {
                 cartService.addToCart(currentUser, dish, quantity);
-                totalCartItems = cartService.getCartItems(currentUser).size(); // Lấy số lượng item sau khi thêm
+                totalCartItems = cartService.getCartItems(currentUser).size();
             } catch (IllegalArgumentException ex) {
                 return ResponseEntity.badRequest().body(Map.of("message", ex.getMessage()));
             }
@@ -161,10 +162,9 @@ public class CartController {
             }
             cart.put(dishId, cart.getOrDefault(dishId, 0) + quantity);
             session.setAttribute("cart", cart);
-            totalCartItems = cart.size(); // Lấy số lượng item sau khi thêm
+            totalCartItems = cart.size();
         }
 
-        // Trả về đối tượng Map, Spring sẽ tự chuyển thành JSON
         Map<String, Object> response = new HashMap<>();
         response.put("message", "Thêm vào giỏ hàng thành công!");
         response.put("cartItemCount", totalCartItems);
@@ -324,7 +324,10 @@ public class CartController {
     }
 
     @PostMapping("/place-order")
-    public String placeOrder(@RequestParam(name = "selectedItems", required = false) List<Long> selectedItemIds, HttpSession session) {
+    public String placeOrder(@RequestParam(name = "selectedItems", required = false) List<Long> selectedItemIds,
+                             @RequestParam("address") String address,
+                             HttpSession session,
+                             RedirectAttributes redirectAttributes) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         boolean isAuthenticated = authentication != null && authentication.isAuthenticated()
                 && !(authentication instanceof AnonymousAuthenticationToken);
@@ -364,10 +367,17 @@ public class CartController {
                     return orderStatusRepository.save(s);
                 });
 
+        double totalPrice = 0;
+        for (CartItem item : itemsToOrder) {
+            totalPrice += item.getDish().getPrice() * item.getQuantity();
+        }
+
         Orders order = new Orders();
         order.setUser(currentUser);
         order.setRestaurant(restaurantOpt.get());
         order.setOrderStatus(status);
+        order.setTotalPrice(totalPrice);
+        order.setAddress(address);
         Object note = session.getAttribute("orderNote");
         if (note != null) order.setCustomerNote(note.toString());
         orderService.save(order);
@@ -377,6 +387,7 @@ public class CartController {
             od.setOrder(order);
             od.setDish(ci.getDish());
             od.setQuantity((long) ci.getQuantity());
+            od.setPrice(ci.getDish().getPrice()); // <-- THÊM DÒNG NÀY
             orderDetailService.save(od);
         }
 
@@ -388,7 +399,28 @@ public class CartController {
         session.removeAttribute("orderNote");
         session.removeAttribute("appliedCoupon");
 
-        return "redirect:/cart";
+        redirectAttributes.addFlashAttribute("successMessage", "Cảm ơn bạn đã tin tưởng và đặt hàng.");
+        return "redirect:/cart/order-success?orderId=" + order.getId();
+    }
+
+    @GetMapping("/order-success")
+    public String showOrderSuccess(@RequestParam("orderId") Long orderId, Model model) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        boolean isAuthenticated = authentication != null && authentication.isAuthenticated() && !(authentication instanceof AnonymousAuthenticationToken);
+        model.addAttribute("isAuthenticated", isAuthenticated);
+        if (isAuthenticated) {
+            String username = authentication.getName();
+            User currentUser = userService.findByUsername(username).orElse(null);
+            model.addAttribute("currentUser", currentUser);
+        }
+
+        Optional<Orders> orderOptional = orderService.findById(orderId);
+        if (orderOptional.isPresent()) {
+            model.addAttribute("order", orderOptional.get());
+        } else {
+            return "redirect:/";
+        }
+        return "cart/order-success";
     }
 
     @PostMapping("/apply-coupon")
@@ -457,5 +489,3 @@ public class CartController {
         }
     }
 }
-
-

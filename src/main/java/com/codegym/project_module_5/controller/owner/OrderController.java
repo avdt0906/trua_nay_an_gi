@@ -86,4 +86,9 @@ public class OrderController {
         }
         return null;
     }
+    @PostMapping("/update-status/{id}")
+    public String updateOrderStatus(@PathVariable Long id) {
+        orderService.updateOrderStatus(id);
+        return "redirect:/owner/orders";
+    }
 }
