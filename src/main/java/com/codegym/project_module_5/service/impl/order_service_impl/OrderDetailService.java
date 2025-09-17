@@ -6,6 +6,7 @@ import com.codegym.project_module_5.service.order_service.IOrderDetailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -37,5 +38,10 @@ public class OrderDetailService implements IOrderDetailService {
     @Override
     public Iterable<OrderDetail> findAllByOrderId(Long orderId) {
         return orderDetailRepository.findAllByOrderId(orderId);
+    }
+
+    @Override
+    public List<OrderDetail> findByDishId(Long orderId) {
+        return orderDetailRepository.findByDishId(orderId);
     }
 }
