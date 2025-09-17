@@ -2,12 +2,15 @@ package com.codegym.project_module_5.controller.admin;
 
 import com.codegym.project_module_5.model.restaurant_model.Dish;
 import com.codegym.project_module_5.model.restaurant_model.Restaurant;
+import com.codegym.project_module_5.model.user_model.Role;
 import com.codegym.project_module_5.model.user_model.User;
+import com.codegym.project_module_5.service.impl.role_service_impl.RoleService;
 import com.codegym.project_module_5.service.order_service.IOrderService;
 import com.codegym.project_module_5.service.restaurant_service.IDishService;
 import com.codegym.project_module_5.service.restaurant_service.IRestaurantService;
 import com.codegym.project_module_5.service.user_service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -32,6 +35,9 @@ public class AdminController {
     private IRestaurantService restaurantService;
     @Autowired
     private IDishService dishService;
+    @Autowired
+    private RoleService roleService;
+
     /**
      * Chuyển hướng từ /admin sang /admin/dashboard.
      * 
@@ -157,21 +163,65 @@ public class AdminController {
         }
         return "redirect:/admin/restaurants/pending";
     }
+
     @GetMapping("/restaurants/partner-requests")
     public String getPartnerRequests(Model model) {
         List<Restaurant> partnerRequests = restaurantService.getPartnerRequests();
         model.addAttribute("partnerRequests", partnerRequests);
         return "admin/partner_pending_list";
     }
+
     @PostMapping("/restaurants/approvals/partner/approve/{id}")
     public String approvePartnerRequest(@PathVariable Long id) {
         restaurantService.approvePartner(id);
-        return "redirect:/admin/restaurants/partner-requests";  
+        return "redirect:/admin/restaurants/partner-requests";
     }
+
     @PostMapping("/restaurant/approvals/partner/reject/{id}")
     public String rejectPartnerRequest(@PathVariable Long id) {
         restaurantService.rejectPartner(id);
-        return "redirect:/admin/restaurants/partner-requests";  
+        return "redirect:/admin/restaurants/partner-requests";
+    }
+
+    @GetMapping("/users/list")
+    public String listUsers(@RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "size", defaultValue = "10") int size,
+            Model model) {
+        Page<User> usersPage = userService.findAllUsers(page, size);
+
+        model.addAttribute("users", usersPage.getContent());
+        model.addAttribute("currentPage", usersPage.getNumber());
+        model.addAttribute("totalPages", usersPage.getTotalPages());
+        model.addAttribute("totalItems", usersPage.getTotalElements());
+        model.addAttribute("activePage", "list");
+
+        return "admin/user_list";
+    }
+
+    @PostMapping("/users/delete/{id}")
+    public String deleteUser(@PathVariable Long id) {
+        userService.deleteById(id);
+        return "redirect:/admin/users/list";
+    }
+
+    // Hiển thị form
+    @GetMapping("/users/edit/{id}")
+    public String showEditForm(@PathVariable Long id, Model model) {
+        User user = userService.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+        List<Role> allRoles = roleService.findAll(); 
+        model.addAttribute("user", user);
+        model.addAttribute("allRoles", allRoles);
+        return "admin/user_edit";
+    }
+
+    // Xử lý cập nhật
+    @PostMapping("/users/update/{id}")
+    public String updateUser(@PathVariable Long id,
+            @ModelAttribute("user") User formUser) {
+        // Lưu ý: Bạn có thể cần nạp user cũ, merge role, hoặc encode password
+        userService.updateUser(id, formUser);
+        return "redirect:/admin/users/list";
     }
 
 }

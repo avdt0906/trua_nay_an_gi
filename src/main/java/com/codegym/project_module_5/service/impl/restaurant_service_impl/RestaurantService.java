@@ -98,6 +98,8 @@ public class RestaurantService implements IRestaurantService {
             restaurant.setDescription(request.getDescription());
             restaurant.setIsOpen(false);
             restaurant.setIsLocked(false);
+            restaurant.setRlatitude(request.getRlatitude());
+            restaurant.setRlongitude(request.getRlongitude());
             restaurant.setIsLongTermPartner(false);
 
 

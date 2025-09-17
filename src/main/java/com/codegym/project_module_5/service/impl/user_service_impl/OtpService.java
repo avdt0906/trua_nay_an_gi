@@ -1,9 +1,13 @@
 package com.codegym.project_module_5.service.impl.user_service_impl;
 
 import java.sql.Timestamp;
+import java.time.Instant;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import com.codegym.project_module_5.common.OtpStatus;
 import com.codegym.project_module_5.model.user_model.VerificationCode;
 import com.codegym.project_module_5.repository.user_repository.IVerificationCodeRepository;
 
@@ -11,6 +15,7 @@ import jakarta.transaction.Transactional;
 
 @Service
 public class OtpService {
+    private static final Logger log = LoggerFactory.getLogger(OtpService.class);
     private final IVerificationCodeRepository verificationCodeRepository;
     private final EmailService emailService;
 
@@ -39,23 +44,26 @@ public class OtpService {
     }
 
     @Transactional
-    public boolean verifyOtp(String email, String code) {
-        System.out.println("Verify request - Email: " + email + " | Code: " + code);
-        return verificationCodeRepository.findByEmailAndCode(email.trim(), code.trim())
+    public OtpStatus verifyOtp(String email, String code) {
+        String normalizedEmail = email.trim().toLowerCase();
+        String normalizedCode = code.trim();
+
+        log.info("Verify OTP: email={}, code={}", normalizedEmail, normalizedCode);
+
+        return verificationCodeRepository.findByEmailAndCode(normalizedEmail, normalizedCode)
                 .map(vc -> {
-                    System.out.println("Found OTP in DB: " + vc);
-                    if (vc.getExpiresAt().before(new Timestamp(System.currentTimeMillis()))) {
-                        System.out.println("OTP expired");
-                        verificationCodeRepository.deleteByEmail(email.trim());
-                        return false;
+                    if (vc.getExpiresAt().toInstant().isBefore(Instant.now())) {
+                        log.warn("OTP expired for email={}", normalizedEmail);
+                        verificationCodeRepository.deleteByEmail(normalizedEmail);
+                        return OtpStatus.EXPIRED;
                     }
-                    verificationCodeRepository.deleteByEmail(email.trim());
-                    return true;
+                    verificationCodeRepository.deleteByEmail(normalizedEmail);
+                    log.info("OTP valid for email={}, deleted from DB", normalizedEmail);
+                    return OtpStatus.VALID;
                 })
                 .orElseGet(() -> {
-                    System.out.println("Không tìm thấy OTP trong DB");
-                    return false;
+                    log.warn("OTP not found for email={}", normalizedEmail);
+                    return OtpStatus.INVALID;
                 });
     }
-
 }
