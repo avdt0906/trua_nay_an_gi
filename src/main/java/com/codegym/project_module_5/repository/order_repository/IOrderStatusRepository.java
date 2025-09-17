@@ -8,4 +8,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface IOrderStatusRepository extends JpaRepository<OrderStatus, Long> {
     Optional<OrderStatus> findByName(String name);
+
 }
