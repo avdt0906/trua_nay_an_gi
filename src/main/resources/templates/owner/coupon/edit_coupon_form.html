@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Edit Coupon</title>
+</head>
+<body>
+<h1>Edit Coupon</h1>
+<form th:action="@{'/owner/coupon/edit/' + ${coupon.id}}" th:object="${coupon}" method="post">
+    <label>Name:</label>
+    <input type="text" th:field="*{name}" required/><br/>
+    <label>Restaurant:</label>
+    <select th:field="*{restaurant}" required>
+        <option th:each="r : ${restaurants}" th:value="${r}" th:text="${r.name}" th:selected="${r.id} == ${coupon.restaurant.id}"></option>
+    </select><br/>
+    <label>Fixed Discount:</label>
+    <input type="number" step="0.01" th:field="*{fixedDiscount}"/><br/>
+    <label>Percent Discount:</label>
+    <input type="number" th:field="*{percentDiscount}"/><br/>
+    <label>Min Order:</label>
+    <input type="number" step="0.01" th:field="*{minOrder}"/><br/>
+    <label>Max Discount:</label>
+    <input type="number" step="0.01" th:field="*{maxDiscount}"/><br/>
+    <label>Description:</label>
+    <textarea th:field="*{description}"></textarea><br/>
+    <label>Available:</label>
+    <input type="checkbox" th:field="*{isAvailable}"/><br/>
+    <button type="submit">Update</button>
+</form>
+<a th:href="@{/owner/coupon}">Back to List</a>
+</body>
+</html>
+
