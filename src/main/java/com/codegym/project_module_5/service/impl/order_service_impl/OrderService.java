@@ -17,7 +17,7 @@ public class OrderService implements IOrderService {
     private IOrderRepository orderRepository;
 
     @Autowired
-    private IOrderStatusRepository orderStatusRepository; // Cần thêm repository này
+    private IOrderStatusRepository orderStatusRepository;
 
     @Override
     public Iterable<Orders> findAll() {
