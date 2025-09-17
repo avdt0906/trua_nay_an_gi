@@ -39,6 +39,12 @@ public class Orders {
     private Coupon coupon;
     private String customerNote;
 
+    @NotNull
+    private String address;
+    @NotNull
+    @Column(name = "total_price")
+    private Double totalPrice;
+
     @Column(name = "created_at")
     private LocalDateTime createdAt = LocalDateTime.now();
 }
