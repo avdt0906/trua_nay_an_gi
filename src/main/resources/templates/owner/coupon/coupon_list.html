@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Danh sách món ăn</title>
+    <title>Danh sách coupon</title>
     <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,900|Roboto+Slab:400,700|Material+Icons" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -261,10 +261,8 @@
 
 <div class="wrapper">
     <div th:replace="owner/restaurant/dashboard :: restaurant-sidebar"></div>
-
     <div class="main-panel">
         <div th:replace="owner/restaurant/dashboard :: restaurant-navbar"></div>
-
         <div class="content pt-2">
             <div class="container-fluid">
                 <div class="row">
@@ -273,56 +271,61 @@
                             <div class="card-header">
                                 <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
                                     <div>
-                                        <h4 class="card-title">Danh sách món ăn</h4>
-                                        <p class="card-category">Quản lý thực đơn của nhà hàng</p>
+                                        <h4 class="card-title">Danh sách coupon</h4>
                                     </div>
                                     <div class="d-flex align-items-center gap-2">
-                                        <form th:action="@{/restaurants/dishes/dish_list}" method="get" class="mb-0">
-                                            <div class="input-group">
-                                                <input type="text" class="form-control" placeholder="Tìm kiếm món ăn..." name="search" th:value="${search}">
-                                                <button class="btn btn-outline-secondary" type="submit">
-                                                    <i class="fas fa-search"></i>
-                                                </button>
-                                            </div>
-                                        </form>
-                                        <a th:href="@{/restaurants/dishes/add_dish_form}" class="btn btn-primary">
+                                        <a th:href="@{/restaurants/coupons/add_coupon_form}" class="btn btn-primary">
                                             <i class="fas fa-plus me-1"></i> Thêm mới
                                         </a>
                                     </div>
                                 </div>
                             </div>
                             <div class="card-body p-0">
-                                <div class="table-responsive" th:if="${dishes != null && !dishes.isEmpty()}">
+                                <div class="table-responsive" th:if="${coupons != null && !coupons.isEmpty()}">
                                     <table class="table table-hover">
                                         <thead>
                                         <tr>
-                                            <th>Hình ảnh</th>
-                                            <th>Tên món ăn</th>
-                                            <th>Danh mục</th>
-                                            <th>Giá</th>
+                                            <th>Mã Coupon</th>
+                                            <th>Giảm theo giá</th>
+                                            <th>Giảm theo %</th>
+                                            <th>Giảm tối thiểu</th>
+                                            <th>Giảm tối đa</th>
+                                            <th>Mô tả</th>
                                             <th>Trạng thái</th>
                                             <th class="text-end">Hành động</th>
                                         </tr>
                                         </thead>
                                         <tbody>
-                                        <tr th:each="dish : ${dishes}">
+                                        <tr th:each="coupon : ${coupons}">
+                                            <td class="fw-bold" th:text="${coupon.name}"></td>
                                             <td>
-                                                <img th:src="${'/images/dish/' + dish.getPictureUrl()}" alt="Dish Image" class="table-dish-img">
+                                                <span class="fw-bold" th:if="${coupon.fixedDiscount != null}"
+                                                      th:text="${#numbers.formatDecimal(coupon.fixedDiscount, 0, 'COMMA', 0, 'POINT')} + ' đ'"></span>
                                             </td>
-                                            <td class="fw-bold" th:text="${dish.name}"></td>
                                             <td>
-                                                <span class="badge text-bg-info" th:text="${dish.category.name}"></span>
+                                                <span class="fw-bold" th:if="${coupon.percentDiscount != null}"
+                                                      th:text="${#numbers.formatDecimal(coupon.percentDiscount, 0, 'COMMA', 0, 'POINT')} + ' %'"></span>
                                             </td>
-                                            <td class="text-danger fw-bold" th:text="${#numbers.formatDecimal(dish.price, 0, 'COMMA', 0, 'POINT')} + ' đ'"></td>
                                             <td>
-                                                <span class="badge text-bg-success" th:if="${dish.isAvailable}">Có sẵn</span>
-                                                <span class="badge text-bg-secondary" th:unless="${dish.isAvailable}">Hết hàng</span>
+                                                <span class="fw-bold" th:if="${coupon.maxDiscount != null}"
+                                                      th:text="${#numbers.formatDecimal(coupon.minOrder, 0, 'COMMA', 0, 'POINT')} + ' đ'"></span>
+                                            </td>
+                                            <td>
+                                                <span class="fw-bold" th:if="${coupon.maxDiscount != null}"
+                                                      th:text="${#numbers.formatDecimal(coupon.maxDiscount, 0, 'COMMA', 0, 'POINT')} + ' đ'"></span>
+                                            </td>
+                                            <td>
+                                                <span th:text="${coupon.description}"></span>
+                                            </td>
+                                            <td>
+                                                <span class="badge text-bg-success" th:if="${coupon.isAvailable}">Có sẵn</span>
+                                                <span class="badge text-bg-secondary" th:unless="${coupon.isAvailable}">Tạm khoá</span>
                                             </td>
                                             <td class="text-end">
-                                                <a th:href="@{'/restaurants/dishes/edit_dish_form/' + ${dish.id}}" class="btn btn-sm btn-outline-info rounded-circle btn-action" title="Chỉnh sửa">
+                                                <a th:href="@{'/restaurants/coupons/edit_coupon_form/' + ${coupon.id}}" class="btn btn-sm btn-outline-info rounded-circle btn-action" title="Chỉnh sửa">
                                                     <i class="fas fa-edit"></i>
                                                 </a>
-                                                <a th:href="@{'/restaurants/dishes/delete_dish/' + ${dish.id}}" class="btn btn-sm btn-outline-danger rounded-circle btn-action" title="Xóa">
+                                                <a th:href="@{'/restaurants/coupons/delete_coupon/' + ${coupon.id}}" class="btn btn-sm btn-outline-danger rounded-circle btn-action" title="Xóa">
                                                     <i class="fas fa-trash"></i>
                                                 </a>
                                             </td>
@@ -330,18 +333,18 @@
                                         </tbody>
                                     </table>
                                 </div>
-                                <a class="btn btn-primary" th:if="${dishes.hasPrevious()}"
-                                   th:href="@{/restaurants/dishes/dish_list(page=${dishes.number - 1})}">Previous</a>
-                                <span th:text="${dishes.number + 1}"></span> | <span th:text="${dishes.totalPages}"></span>
-                                <a class="btn btn-primary" th:if="${dishes.hasNext()}"
-                                   th:href="@{/restaurants/dishes/dish_list(page=${dishes.number + 1})}">Next</a>
+                                <a class="btn btn-primary" th:if="${coupons.hasPrevious()}"
+                                   th:href="@{/restaurants/coupons/coupon_list(page=${coupons.number - 1})}">Previous</a>
+                                <span th:text="${coupons.number + 1}"></span> | <span th:text="${coupons.totalPages}"></span>
+                                <a class="btn btn-primary" th:if="${coupons.hasNext()}"
+                                   th:href="@{/restaurants/coupons/coupon_list(page=${coupons.number + 1})}">Next</a>
 
-                                <div class="text-center py-5" th:if="${dishes == null || dishes.isEmpty()}">
+                                <div class="text-center py-5" th:if="${coupons == null || coupons.isEmpty()}">
                                     <i class="fas fa-utensil-spoon fa-4x text-muted mb-3"></i>
-                                    <h4 class="text-muted">Chưa có món ăn nào</h4>
-                                    <p class="text-muted">Hãy thêm món ăn để bắt đầu phục vụ khách hàng!</p>
-                                    <a th:href="@{/restaurants/dishes/add_dish_form}" class="btn btn-primary btn-lg mt-3">
-                                        <i class="fas fa-plus me-2"></i>Thêm món ăn mới
+                                    <h4 class="text-muted">Chưa có coupon nào</h4>
+                                    <p class="text-muted">Hãy thêm coupon để bắt đầu thu hút khách hàng!</p>
+                                    <a th:href="@{/restaurants/coupons/add_coupon_form}" class="btn btn-primary btn-lg mt-3">
+                                        <i class="fas fa-plus me-2"></i>Thêm coupon mới
                                     </a>
                                 </div>
                             </div>

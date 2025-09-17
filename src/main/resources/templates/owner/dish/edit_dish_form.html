@@ -176,38 +176,10 @@
 <body>
 
 <div class="wrapper">
-    <nav class="sidebar">
-        <!-- Sidebar content from your original file -->
-        <div class="sidebar-header"><h3>QUẢN LÝ NHÀ HÀNG</h3></div>
-        <ul class="nav sidebar-nav flex-column">
-            <li class="nav-item"><a class="nav-link" th:href="@{/restaurants/dashboard}"><i class="fas fa-tachometer-alt"></i> <span>Bảng điều khiển</span></a></li>
-            <li class="nav-item"><a class="nav-link" href="#"><i class="fas fa-user"></i> <span>Hồ sơ người dùng</span></a></li>
-            <li class="nav-item"><a class="nav-link active" th:href="@{/restaurants/dishes/dish_list}"><i class="fas fa-utensils"></i> <span>Danh sách món ăn</span></a></li>
-            <li class="nav-item"><a class="nav-link" href="#"><i class="fas fa-clipboard-list"></i> <span>Đơn hàng</span></a></li>
-            <li class="nav-item"><a class="nav-link" href="#"><i class="fas fa-bell"></i> <span>Thông báo</span></a></li>
-        </ul>
-    </nav>
+    <div th:replace="owner/restaurant/dashboard :: restaurant-sidebar"></div>
 
     <div class="main-panel">
-        <nav class="navbar navbar-expand-lg navbar-main mb-4">
-            <!-- Navbar content from your original file -->
-            <div class="container-fluid">
-                <button class="btn btn-link p-0 me-3" type="button" id="sidebarToggle"><i class="fas fa-indent sidebar-toggle-icon"></i></button>
-                <h4 class="fw-light m-0">Chỉnh Sửa Món Ăn</h4>
-                <div class="collapse navbar-collapse justify-content-end">
-                    <ul class="navbar-nav align-items-center">
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownProfile" role="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="fas fa-user"></i></a>
-                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownProfile">
-                                <li><a class="dropdown-item" href="#">Hồ sơ</a></li>
-                                <li><hr class="dropdown-divider"></li>
-                                <li><a class="dropdown-item" th:href="@{/logout}">Đăng xuất</a></li>
-                            </ul>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </nav>
+        <div th:replace="owner/restaurant/dashboard :: restaurant-navbar"></div>
 
         <div class="content pt-2">
             <div class="container-fluid">
