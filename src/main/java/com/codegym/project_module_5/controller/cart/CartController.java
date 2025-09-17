@@ -360,10 +360,10 @@ public class CartController {
             return "redirect:/cart/detail";
         }
 
-        OrderStatus status = orderStatusRepository.findByName("PENDING")
+        OrderStatus status = orderStatusRepository.findByName("Chờ xác nhận")
                 .orElseGet(() -> {
                     OrderStatus s = new OrderStatus();
-                    s.setName("PENDING");
+                    s.setName("Chờ xác nhận");
                     return orderStatusRepository.save(s);
                 });
 
