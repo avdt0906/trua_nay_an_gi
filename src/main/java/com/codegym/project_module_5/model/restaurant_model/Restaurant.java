@@ -30,5 +30,7 @@ public class Restaurant {
     private Boolean isOpen = true;
     private Boolean isLocked = false;
     private Boolean isApproved;
+    private Double rlatitude;
+    private Double rlongitude;  
     private Double wallet = 0.0d;
 }

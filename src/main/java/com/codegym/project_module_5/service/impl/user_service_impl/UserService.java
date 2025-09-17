@@ -11,6 +11,7 @@ import com.codegym.project_module_5.repository.user_repository.IUserRepository;
 import com.codegym.project_module_5.service.user_service.IUserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -149,6 +150,31 @@ public class UserService implements IUserService {
         existingAddress.setLongitude(addressRequest.getLongitude());
         existingAddress.setDefaultAddress(addressRequest.isDefaultAddress());
 
-        return userAddressRepository.save(existingAddress);
+    return userAddressRepository.save(existingAddress);
+}
+
+    @Override
+    public Page<User> findAllUsers(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return userRepository.findAll(pageable);
+    }
+
+    @Override
+    public void deleteById(Long id) {
+        userRepository.deleteById(id);
+    }
+
+    @Override
+    public User updateUser(Long id, User updatedUser) {
+        User existingUser = userRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+        existingUser.setFullName(updatedUser.getFullName());
+        existingUser.setUsername(updatedUser.getUsername());
+        existingUser.setEmail(updatedUser.getEmail());
+        existingUser.setPhone(updatedUser.getPhone());
+        existingUser.setRoles(updatedUser.getRoles());
+
+        return userRepository.save(existingUser);
     }
 }

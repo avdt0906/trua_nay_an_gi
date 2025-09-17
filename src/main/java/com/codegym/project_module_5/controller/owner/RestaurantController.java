@@ -10,6 +10,7 @@ import com.codegym.project_module_5.model.order_model.OrderDetail;
 import java.util.List;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
@@ -27,6 +28,8 @@ import java.util.Optional;
 @Controller
 @RequestMapping("/restaurants")
 public class RestaurantController {
+    @Value("${mapbox.api.key}")
+    private String mapboxApiKey;
 
     @Autowired
     private IRestaurantService restaurantService;
@@ -37,9 +40,9 @@ public class RestaurantController {
     @Autowired
     private IOrderDetailRepository orderDetailRepository;
 
-
     @GetMapping("/signup")
     public String showSignupForm(Model model) {
+        model.addAttribute("mapboxApiKey", mapboxApiKey);
         model.addAttribute("restaurant", new RestaurantRegisterRequest());
         return "owner/restaurant/register_restaurant";
     }
@@ -50,6 +53,7 @@ public class RestaurantController {
             BindingResult bindingResult,
             Principal principal,
             Model model) {
+        
 
         if (bindingResult.hasErrors()) {
             model.addAttribute("restaurant", request);
@@ -76,15 +80,15 @@ public class RestaurantController {
     public ModelAndView showDashboard() {
         ModelAndView mv = new ModelAndView("owner/restaurant/dashboard");
         Optional<Restaurant> restaurant = restaurantService.findByUsername(getCurrentUsername());
-        
+
         if (restaurant.isPresent()) {
             Restaurant restaurantData = restaurant.get();
             mv.addObject("restaurant", restaurantData);
-            
+
             double totalRevenue = calculateTestRevenue(restaurantData.getId());
             mv.addObject("totalRevenue", totalRevenue);
         }
-        
+
         return mv;
     }
 
@@ -97,27 +101,27 @@ public class RestaurantController {
     }
 
     private double calculateTestRevenue(Long restaurantId) {
-        
+
         List<Orders> orders = (List<Orders>) orderRepository.findAllByRestaurantId(restaurantId);
-        
+
         double totalRevenue = 0.0;
-        
+
         for (Orders order : orders) {
             System.out.println("Order ID: " + order.getId() + ", Status: " + order.getOrderStatus().getName());
-            
+
             double orderAmount = 0;
             List<OrderDetail> details = (List<OrderDetail>) orderDetailRepository.findAllByOrderId(order.getId());
-            
+
             for (OrderDetail detail : details) {
                 double itemTotal = detail.getDish().getPrice() * detail.getQuantity();
                 orderAmount += itemTotal;
             }
-            
+
             double netAmount = orderAmount - 15000;
             double commission = netAmount >= 200_000_000 ? 0.10 : netAmount <= 100_000_000 ? 0.05 : 0.075;
             double orderRevenue = netAmount * (1 - commission);
             totalRevenue += orderRevenue;
-            
+
         }
 
         return totalRevenue;
