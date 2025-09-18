@@ -36,4 +36,6 @@ public interface IDishService extends IGeneralService<Dish> {
     List<Dish> findHotPickDishes(Pageable pageable);
     
     List<Dish> findNearbyDishes(Pageable pageable);
+
+    List<Dish> findDishesByRestaurantId(Long restaurantId);
 }
