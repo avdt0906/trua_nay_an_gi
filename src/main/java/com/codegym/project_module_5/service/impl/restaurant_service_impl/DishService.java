@@ -104,4 +104,9 @@ public class DishService implements IDishService {
     public List<Dish> findNearbyDishes(Pageable pageable) {
         return dishRepository.findNearbyDishes(pageable);
     }
+
+    @Override
+    public List<Dish> findDishesByRestaurantId(Long restaurantId) {
+        return dishRepository.findDishesByRestaurantId(restaurantId);
+    }
 }
