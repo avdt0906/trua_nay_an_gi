@@ -60,15 +60,21 @@ public class CouponRestaurantController {
         return mv;
     }
 
-//    @GetMapping("/{id}")
-//    public ResponseEntity<Coupon> getCouponById(@PathVariable Long id) {
-//        Coupon coupon = couponService.findById(id);
-//        if (coupon == null) {
-//            return ResponseEntity.notFound().build();
-//        }
-//        return ResponseEntity.ok(coupon);
-//    }
-//
+    @GetMapping("/edit_coupon_form/{id}")
+    public ModelAndView showEditCouponForm(@PathVariable("id") Long id) {
+        Optional<Coupon> coupon = couponService.findById(id);
+        ModelAndView mv = new ModelAndView("owner/coupon/edit_coupon_form");
+        mv.addObject("coupon",coupon.get());
+        return mv;
+    }
+
+    @PostMapping("/edit_coupon")
+    public ModelAndView editCoupon(@ModelAttribute("coupon") Coupon coupon){
+        couponService.save(coupon);
+        ModelAndView mv = new ModelAndView("redirect:/restaurants/coupons/coupon_list");
+        return mv;
+    }
+
 //    @PutMapping("/{id}")
 //    public ResponseEntity<Coupon> updateCoupon(@PathVariable Long id, @RequestBody Coupon coupon) {
 //        Coupon updated = couponService.update(id, coupon);
