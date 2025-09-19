@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Controller
-@RequestMapping("/order_statistic")
+@RequestMapping("/restaurants/orders")
 public class OrderStatisticController {
 
     @Autowired
@@ -45,7 +45,7 @@ public class OrderStatisticController {
         return mv;
     }
 
-    @GetMapping("/restaurant/{id}")
+    @GetMapping("")
     public ModelAndView showOrderStatisticByRestaurant(@PathVariable("id") Long restaurantId) {
         ModelAndView modelAndView = new ModelAndView("/owner/order/order_by_restaurant");
         List<Dish> dishList = dishService.findByRestaurantId(restaurantId);
