@@ -50,6 +50,16 @@ public class CouponRestaurantController {
         return mv;
     }
 
+    @PostMapping("/add_coupon")
+    public ModelAndView addCoupon(@ModelAttribute("coupon") Coupon coupon){
+        String username = getCurrentUsername();
+        Optional<Restaurant> restaurant = restaurantService.findByUsername(username);
+        coupon.setRestaurant(restaurant.get());
+        couponService.save(coupon);
+        ModelAndView mv = new ModelAndView("redirect:/restaurants/coupons/coupon_list");
+        return mv;
+    }
+
 //    @GetMapping("/{id}")
 //    public ResponseEntity<Coupon> getCouponById(@PathVariable Long id) {
 //        Coupon coupon = couponService.findById(id);
