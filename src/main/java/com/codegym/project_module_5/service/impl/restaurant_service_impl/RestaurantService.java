@@ -215,4 +215,9 @@ public class RestaurantService implements IRestaurantService {
         System.out.println("=== END DEBUG ===");
         return totalRevenue;
     }
+
+    @Override
+    public Optional<Restaurant> findRestaurantIdByUserId(Long userId) {
+        return iRestaurantRepository.findRestaurantIdByUserId(userId);
+    }
 }

@@ -3,13 +3,17 @@ package com.codegym.project_module_5.controller.owner;
 import com.codegym.project_module_5.model.order_model.OrderDetail;
 import com.codegym.project_module_5.model.order_model.Orders;
 import com.codegym.project_module_5.model.restaurant_model.Dish;
+import com.codegym.project_module_5.model.restaurant_model.Restaurant;
+import com.codegym.project_module_5.model.user_model.User;
 import com.codegym.project_module_5.service.impl.order_service_impl.OrderDetailService;
 import com.codegym.project_module_5.service.impl.order_service_impl.OrderService;
 import com.codegym.project_module_5.service.impl.restaurant_service_impl.DishService;
-import com.codegym.project_module_5.service.restaurant_service.IDishService;
+import com.codegym.project_module_5.service.impl.restaurant_service_impl.RestaurantService;
+import com.codegym.project_module_5.service.impl.user_service_impl.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,6 +35,11 @@ public class OrderStatisticController {
     @Autowired
     private OrderService orderService;
 
+    @Autowired
+    private RestaurantService restaurantService;
+    @Autowired
+    private UserService userService;
+
 
     @GetMapping("/dish/{dishId}")
     public ModelAndView showOrderStatisticByDish(@PathVariable("dishId") Long dishId) {
@@ -48,11 +57,22 @@ public class OrderStatisticController {
         return mv;
     }
 
-    @GetMapping("")
-    public ModelAndView showOrderStatisticByRestaurant(@PathVariable("id") Long restaurantId) {
-        ModelAndView mv = new ModelAndView("/owner/order/order_by_restaurant");
-        List<Orders> orders = (List<Orders>) orderService.findAllByRestaurantId(restaurantId);
+    @GetMapping("/list")
+    public ModelAndView showOrderStatisticByRestaurant() {
+        ModelAndView mv = new ModelAndView("owner/order/order_by_restaurant");
+        String username = getCurrentUsername();
+        Optional<User> user = userService.findByUsername(username);
+        Optional<Restaurant> restaurantOptional = restaurantService.findRestaurantIdByUserId(user.get().getId());
+        List<Orders> orders = (List<Orders>) orderService.findAllByRestaurantId(restaurantOptional.get().getId());
         mv.addObject("ordersList", orders);
         return mv;
-    }   
+    }
+
+    private String getCurrentUsername() {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (principal instanceof UserDetails) {
+            return ((UserDetails) principal).getUsername();
+        }
+        return null;
+    }
 }
