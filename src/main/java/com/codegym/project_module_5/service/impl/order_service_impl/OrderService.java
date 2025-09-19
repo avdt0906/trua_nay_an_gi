@@ -74,7 +74,6 @@ public class OrderService implements IOrderService {
         return orderRepository.findAllByUserOrderByCreatedAtDesc(user);
     }
 
-    //thay đổi trạng thái order status
     @Override
     public void updateOrderStatus(Long orderId) {
         // Tìm đơn hàng trong DB, nếu không có thì không làm gì cả.
@@ -82,19 +81,16 @@ public class OrderService implements IOrderService {
         if (order != null) {
             String currentStatus = order.getOrderStatus().getName();
 
-            // Nếu trạng thái là "Chưa xác nhận", chuyển sang "Đã xác nhận"
             if ("Chưa xác nhận".equals(currentStatus)) {
                 OrderStatus confirmedStatus = orderStatusRepository.findByName("Đã xác nhận")
                         .orElseThrow(() -> new RuntimeException("Lỗi: Không tìm thấy trạng thái 'Đã xác nhận'."));
                 order.setOrderStatus(confirmedStatus);
             }
-            // Nếu trạng thái là "Đã xác nhận", chuyển sang "Đang chế biến"
             else if ("Đã xác nhận".equals(currentStatus)) {
                 OrderStatus preparingStatus = orderStatusRepository.findByName("Đang chế biến")
                         .orElseThrow(() -> new RuntimeException("Lỗi: Không tìm thấy trạng thái 'Đang chế biến'."));
                 order.setOrderStatus(preparingStatus);
             }
-            // Lưu lại sự thay đổi vào DB
             orderRepository.save(order);
         }
     }
