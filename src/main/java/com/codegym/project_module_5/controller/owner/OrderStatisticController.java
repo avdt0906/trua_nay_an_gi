@@ -28,6 +28,9 @@ public class OrderStatisticController {
     @Autowired
     private DishService dishService;
 
+    @Autowired
+    private OrderService orderService;
+
 
     @GetMapping("/dish/{dishId}")
     public ModelAndView showOrderStatisticByDish(@PathVariable("dishId") Long dishId) {
@@ -47,14 +50,9 @@ public class OrderStatisticController {
 
     @GetMapping("")
     public ModelAndView showOrderStatisticByRestaurant(@PathVariable("id") Long restaurantId) {
-        ModelAndView modelAndView = new ModelAndView("/owner/order/order_by_restaurant");
-        List<Dish> dishList = dishService.findByRestaurantId(restaurantId);
-        modelAndView.addObject("dishList", dishList);
-        int total = 0;
-        for (Dish dish : dishList) {
-            total += dish.getRestaurant().getId();
-        }
-        modelAndView.addObject("sum", total);
-        return modelAndView;
-    }
+        ModelAndView mv = new ModelAndView("/owner/order/order_by_restaurant");
+        List<Orders> orders = (List<Orders>) orderService.findAllByRestaurantId(restaurantId);
+        mv.addObject("ordersList", orders);
+        return mv;
+    }   
 }
