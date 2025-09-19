@@ -56,8 +56,7 @@ public class CouponRestaurantController {
         Optional<Restaurant> restaurant = restaurantService.findByUsername(username);
         coupon.setRestaurant(restaurant.get());
         couponService.save(coupon);
-        ModelAndView mv = new ModelAndView("redirect:/restaurants/coupons/coupon_list");
-        return mv;
+        return new ModelAndView("redirect:/restaurants/coupons/coupon_list");
     }
 
     @GetMapping("/edit_coupon_form/{id}")
@@ -71,24 +70,15 @@ public class CouponRestaurantController {
     @PostMapping("/edit_coupon")
     public ModelAndView editCoupon(@ModelAttribute("coupon") Coupon coupon){
         couponService.save(coupon);
-        ModelAndView mv = new ModelAndView("redirect:/restaurants/coupons/coupon_list");
-        return mv;
+        return new ModelAndView("redirect:/restaurants/coupons/coupon_list");
+
     }
 
-//    @PutMapping("/{id}")
-//    public ResponseEntity<Coupon> updateCoupon(@PathVariable Long id, @RequestBody Coupon coupon) {
-//        Coupon updated = couponService.update(id, coupon);
-//        if (updated == null) {
-//            return ResponseEntity.notFound().build();
-//        }
-//        return ResponseEntity.ok(updated);
-//    }
-//
-//    @DeleteMapping("/{id}")
-//    public ResponseEntity<Void> deleteCoupon(@PathVariable Long id) {
-//        couponService.deleteById(id);
-//        return ResponseEntity.noContent().build();
-//    }
+    @GetMapping("/delete_coupon/{id}")
+    public ModelAndView deleteCoupon(@PathVariable("id") Long id) {
+        couponService.delete(id);
+        return new ModelAndView("redirect:/restaurants/coupons/coupon_list");
+    }
 
     private String getCurrentUsername() {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
