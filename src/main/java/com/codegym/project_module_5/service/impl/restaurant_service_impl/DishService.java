@@ -104,4 +104,8 @@ public class DishService implements IDishService {
     public List<Dish> findNearbyDishes(Pageable pageable) {
         return dishRepository.findNearbyDishes(pageable);
     }
+
+    public Page<Dish> search(String keyword, Pageable pageable) {
+        return dishRepository.search(keyword, pageable);
+    }
 }
