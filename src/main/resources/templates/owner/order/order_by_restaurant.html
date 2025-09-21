@@ -8,63 +8,71 @@
     <th:block th:replace="owner/restaurant/dashboard :: restaurant-content"></th:block>
 
     <style>
-        body {
-            background-color: #f8f9fa;
-            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-        }
-
         .page-title {
-            font-weight: bold;
-            color: #6a11cb;
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: #343a40;
             margin-bottom: 20px;
         }
 
-        .card {
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        /* Style cho group nút trạng thái */
+        .status-filter {
+            margin-bottom: 20px;
+        }
+
+        .status-filter button {
+            border: none;
+            padding: 10px 18px;
+            margin-right: 10px;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: #fff;
+        }
+
+        .status-filter button:nth-child(1) {
+            background-color: #28a745; /* Đã giao */
+        }
+        .status-filter button:nth-child(2) {
+            background-color: #ffc107; /* Đang giao */
+            color: #212529;
+        }
+        .status-filter button:nth-child(3) {
+            background-color: #dc3545; /* Chờ xác nhận */
+        }
+
+        .status-filter button:hover {
+            opacity: 0.85;
+            transform: translateY(-2px);
+        }
+
+        /* Bảng */
+        .table {
+            border-radius: 8px;
+            overflow: hidden;
         }
 
         .table thead {
-            background-color: #6a11cb;
+            background: linear-gradient(45deg, #6a11cb, #2575fc);
+        }
+
+        .table thead th {
             color: #fff;
+            font-size: 0.95rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            padding: 12px;
         }
 
         .table tbody td {
-            vertical-align: middle;
+            padding: 10px;
+            font-size: 0.9rem;
         }
 
-        .badge-status {
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 0.85rem;
-        }
-
-        .badge-available {
-            background-color: #28a745;
-            color: #fff;
-        }
-
-        .action-btn {
-            border: none;
-            background: transparent;
-            margin: 0 3px;
-            cursor: pointer;
-        }
-
-        .action-btn i {
-            font-size: 1.1rem;
-        }
-
-        .action-btn.view {
-            color: #17a2b8;
-        }
-
-        .action-btn.edit {
-            color: #007bff;
-        }
-
-        .action-btn.delete {
-            color: #dc3545;
+        .table tbody tr:hover {
+            background-color: #f1f3f5;
+            transition: background-color 0.2s ease;
         }
     </style>
 </head>
@@ -78,18 +86,23 @@
         <div th:replace="owner/restaurant/dashboard :: restaurant-navbar"></div>
         <div class="container">
             <h2 class="page-title">Danh sách đơn hàng</h2>
-            <div class="card">
+            <div class="status-filter">
+                <button type="button">Đã giao</button>
+                <button type="button">Đang giao</button>
+                <button type="button">Chờ xác nhận</button>
+            </div>
+            <div class="card shadow-sm">
                 <div class="card-body">
                     <div class="table-responsive">
                         <table class="table table-bordered table-hover table-striped align-middle mb-0">
-                            <thead class="table-dark text-center">
+                            <thead class="text-center">
                             <tr>
-                                <th>Mã mặt hàng</th>
-                                <th>Tên nhà hàng</th>
-                                <th>Người đặt</th>
-                                <th>Địa chỉ</th>
-                                <th>Ngày đặt</th>
-                                <th>Trạng thái</th>
+                                <td>Mã mặt hàng</td>
+                                <td>Tên nhà hàng</td>
+                                <td>Người đặt</td>
+                                <td>Địa chỉ</td>
+                                <td>Ngày đặt</td>
+                                <td>Trạng thái</td>
                             </tr>
                             </thead>
                             <tbody>
