@@ -81,17 +81,11 @@ public class OrderService implements IOrderService {
         // Tìm đơn hàng trong DB, nếu không có thì không làm gì cả.
         Orders order = orderRepository.findById(orderId).orElse(null);
         if (order != null) {
-            String currentStatus = order.getOrderStatus().getName();
-
-            if ("Chưa xác nhận".equals(currentStatus)) {
-                OrderStatus confirmedStatus = orderStatusRepository.findByName("Đã xác nhận")
-                        .orElseThrow(() -> new RuntimeException("Lỗi: Không tìm thấy trạng thái 'Đã xác nhận'."));
-                order.setOrderStatus(confirmedStatus);
-            }
-            else if ("Đã xác nhận".equals(currentStatus)) {
-                OrderStatus preparingStatus = orderStatusRepository.findByName("Đang chế biến")
-                        .orElseThrow(() -> new RuntimeException("Lỗi: Không tìm thấy trạng thái 'Đang chế biến'."));
-                order.setOrderStatus(preparingStatus);
+            Long currentStatusId = order.getOrderStatus().getId();
+            Long nextNextStatusId = currentStatusId + 1;
+            OrderStatus nextStatus = orderStatusRepository.findById(nextNextStatusId).orElse(null);
+            if (nextStatus != null) {
+                order.setOrderStatus(nextStatus);
             }
             orderRepository.save(order);
         }
