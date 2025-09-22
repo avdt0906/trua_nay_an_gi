@@ -4,9 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chỉnh sửa món ăn</title>
-    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,900|Roboto+Slab:400,700|Material+Icons" />
+    <link rel="stylesheet" type="text/css"
+          href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,900|Roboto+Slab:400,700|Material+Icons"/>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <th:block th:replace="owner/restaurant/dashboard :: restaurant-content"></th:block>
     <style>
         /* --- BIẾN MÀU SẮC VÀ THUỘC TÍNH CHUNG --- */
         :root {
@@ -35,83 +37,147 @@
             color: var(--text-color);
         }
 
-        .wrapper { display: flex; width: 100%; }
+        .wrapper {
+            display: flex;
+            width: 100%;
+        }
 
         /* --- Sidebar --- */
         .sidebar {
             width: var(--sidebar-width);
-            position: fixed; top: 0; left: 0; height: 100vh; z-index: 1030;
-            background: var(--sidebar-bg); color: var(--sidebar-text);
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            z-index: 1030;
+            background: var(--sidebar-bg);
+            color: var(--sidebar-text);
             transition: width var(--transition-speed) ease;
             overflow-x: hidden;
         }
+
         .sidebar .sidebar-header {
-            padding: 20px; text-align: center;
+            padding: 20px;
+            text-align: center;
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
+
         .sidebar .sidebar-header h3 {
-            color: #fff; font-weight: 500; margin: 0; font-size: 1.2rem;
-            white-space: nowrap; transition: opacity var(--transition-speed) ease;
+            color: #fff;
+            font-weight: 500;
+            margin: 0;
+            font-size: 1.2rem;
+            white-space: nowrap;
+            transition: opacity var(--transition-speed) ease;
         }
-        .sidebar-nav { padding: 20px 0; }
-        .sidebar-nav .nav-item { list-style: none; }
+
+        .sidebar-nav {
+            padding: 20px 0;
+        }
+
+        .sidebar-nav .nav-item {
+            list-style: none;
+        }
+
         .sidebar-nav .nav-link {
-            color: var(--sidebar-text); display: flex; align-items: center;
-            padding: 12px 25px; margin: 4px 15px; border-radius: var(--border-radius);
-            text-decoration: none; transition: all 0.2s ease; white-space: nowrap;
+            color: var(--sidebar-text);
+            display: flex;
+            align-items: center;
+            padding: 12px 25px;
+            margin: 4px 15px;
+            border-radius: var(--border-radius);
+            text-decoration: none;
+            transition: all 0.2s ease;
+            white-space: nowrap;
         }
+
         .sidebar-nav .nav-link i {
-            font-size: 20px; margin-right: 20px; min-width: 30px;
-            text-align: center; transition: margin var(--transition-speed) ease;
+            font-size: 20px;
+            margin-right: 20px;
+            min-width: 30px;
+            text-align: center;
+            transition: margin var(--transition-speed) ease;
         }
+
         .sidebar-nav .nav-link:hover {
-            background: rgba(255, 255, 255, 0.08); color: var(--sidebar-text-hover);
+            background: rgba(255, 255, 255, 0.08);
+            color: var(--sidebar-text-hover);
         }
+
         .sidebar-nav .nav-link.active {
-            background: var(--sidebar-active-bg); color: #fff;
+            background: var(--sidebar-active-bg);
+            color: #fff;
             box-shadow: 0 4px 15px -2px rgba(0, 0, 0, 0.2), 0 7px 10px -5px rgba(138, 43, 226, 0.4);
         }
 
         /* --- Main Panel --- */
         .main-panel {
-            flex-grow: 1; margin-left: var(--sidebar-width); padding: 30px;
+            flex-grow: 1;
+            margin-left: var(--sidebar-width);
+            padding: 30px;
             transition: margin-left var(--transition-speed) ease;
             width: calc(100% - var(--sidebar-width));
         }
 
         /* --- Sidebar Collapse --- */
-        .wrapper.sidebar-collapsed .sidebar { width: var(--sidebar-width-collapsed); }
+        .wrapper.sidebar-collapsed .sidebar {
+            width: var(--sidebar-width-collapsed);
+        }
+
         .wrapper.sidebar-collapsed .main-panel {
             margin-left: var(--sidebar-width-collapsed);
             width: calc(100% - var(--sidebar-width-collapsed));
         }
+
         .wrapper.sidebar-collapsed .sidebar .sidebar-header h3,
-        .wrapper.sidebar-collapsed .sidebar .nav-link span { opacity: 0; visibility: hidden; width: 0; }
-        .wrapper.sidebar-collapsed .sidebar .nav-link i { margin-right: 0; }
-        .wrapper.sidebar-collapsed .sidebar .nav-link { justify-content: center; }
+        .wrapper.sidebar-collapsed .sidebar .nav-link span {
+            opacity: 0;
+            visibility: hidden;
+            width: 0;
+        }
+
+        .wrapper.sidebar-collapsed .sidebar .nav-link i {
+            margin-right: 0;
+        }
+
+        .wrapper.sidebar-collapsed .sidebar .nav-link {
+            justify-content: center;
+        }
 
         /* --- Top Navbar --- */
         .navbar-main {
-            background-color: var(--surface-color); box-shadow: var(--box-shadow);
-            border-radius: var(--border-radius); padding: 0.75rem 1.5rem;
+            background-color: var(--surface-color);
+            box-shadow: var(--box-shadow);
+            border-radius: var(--border-radius);
+            padding: 0.75rem 1.5rem;
         }
+
         .navbar-main .sidebar-toggle-icon {
-            font-size: 1.5rem; color: var(--primary-color);
+            font-size: 1.5rem;
+            color: var(--primary-color);
             transition: all 0.3s ease-in-out;
         }
-        .wrapper.sidebar-collapsed .sidebar-toggle-icon { transform: rotate(180deg); }
+
+        .wrapper.sidebar-collapsed .sidebar-toggle-icon {
+            transform: rotate(180deg);
+        }
 
         /* --- Card Styles --- */
         .card {
-            border: none; margin-bottom: 30px; border-radius: var(--border-radius);
-            background: var(--surface-color); width: 100%;
+            border: none;
+            margin-bottom: 30px;
+            border-radius: var(--border-radius);
+            background: var(--surface-color);
+            width: 100%;
             box-shadow: var(--box-shadow);
             transition: transform 0.2s ease, box-shadow 0.2s ease;
         }
+
         .card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1), 0 6px 6px rgba(0,0,0,0.1);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1), 0 6px 6px rgba(0, 0, 0, 0.1);
         }
+
         .card .card-header {
             padding: 1.25rem 1.5rem;
             border-bottom: 1px solid var(--border-color);
@@ -119,12 +185,25 @@
             border-top-left-radius: var(--border-radius);
             border-top-right-radius: var(--border-radius);
         }
-        .card .card-title { font-weight: 500; }
-        .card .card-category { color: var(--text-muted-color); font-size: 0.9em; }
-        .card .card-body { padding: 1.5rem; }
+
+        .card .card-title {
+            font-weight: 500;
+        }
+
+        .card .card-category {
+            color: var(--text-muted-color);
+            font-size: 0.9em;
+        }
+
+        .card .card-body {
+            padding: 1.5rem;
+        }
 
         /* --- Image Upload Card --- */
-        .card-image-upload { text-align: center; }
+        .card-image-upload {
+            text-align: center;
+        }
+
         .image-preview-container {
             width: 100%;
             padding-top: 75%; /* Aspect ratio 4:3 */
@@ -135,38 +214,59 @@
             border: 2px dashed var(--border-color);
             margin-bottom: 1rem;
         }
+
         .image-preview-container img {
-            position: absolute; top: 0; left: 0;
-            width: 100%; height: 100%; object-fit: cover;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
 
         /* --- Form & Button Styling --- */
-        .form-label { font-weight: 500; }
+        .form-label {
+            font-weight: 500;
+        }
+
         .form-control, .form-select, .input-group-text {
             border: 1px solid var(--border-color);
             border-radius: 0.5rem;
         }
+
         .form-control:focus, .form-select:focus {
             border-color: var(--primary-color);
             box-shadow: 0 0 0 0.25rem rgba(106, 27, 203, 0.25);
         }
-        .input-group-text { background-color: #f8f9fa; }
-        .btn { border-radius: 0.5rem; font-weight: 500; padding: 0.75rem 1.25rem; }
+
+        .input-group-text {
+            background-color: #f8f9fa;
+        }
+
+        .btn {
+            border-radius: 0.5rem;
+            font-weight: 500;
+            padding: 0.75rem 1.25rem;
+        }
+
         .btn-primary {
             background: linear-gradient(60deg, var(--secondary-color), var(--primary-color));
             border: none;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
             transition: all 0.3s ease;
         }
+
         .btn-primary:hover {
             transform: translateY(-2px);
-            box-shadow: 0 7px 14px rgba(0,0,0,0.25);
+            box-shadow: 0 7px 14px rgba(0, 0, 0, 0.25);
         }
 
         /* --- Toggle Switch --- */
         .form-switch .form-check-input {
-            width: 3.5em; height: 1.75em;
+            width: 3.5em;
+            height: 1.75em;
         }
+
         .form-switch .form-check-input:checked {
             background-color: var(--success-color);
             border-color: var(--success-color);
@@ -183,19 +283,23 @@
 
         <div class="content pt-2">
             <div class="container-fluid">
-                <form id="editDishForm" th:action="@{/restaurants/dishes/add_dish}" method="post" th:object="${dish}" enctype="multipart/form-data">
+                <form id="editDishForm" th:action="@{/restaurants/dishes/edit_dish}" method="post" th:object="${dish}"
+                      enctype="multipart/form-data">
                     <input type="hidden" th:field="*{id}">
                     <div class="row">
                         <div class="col-lg-4">
                             <div class="card card-image-upload h-100">
                                 <div class="card-header"><h5 class="card-title">Ảnh Món Ăn</h5></div>
                                 <div class="card-body d-flex flex-column justify-content-between">
-<!--                                    <div class="image-preview-container">-->
-<!--                                        <img id="imagePreview" th:src="*{imageUrl != null ? imageUrl : 'https://placehold.co/600x400/f0f0f0/6c757d?text=Chưa+có+ảnh'}" alt="Xem trước ảnh món ăn">-->
-<!--                                    </div>-->
-                                    <input type="file" id="dishImage" name="imageFile" class="d-none" accept="image/*">
-                                    <label for="dishImage" class="btn btn-secondary w-100">
-                                        <i class="fas fa-camera me-2"></i> Tải ảnh mới
+                                    <div class="image-preview-container">
+                                        <img id="imagePreview"
+                                             src="https://placehold.co/600x400/f0f0f0/6c757d?text=Chọn+ảnh"
+                                             alt="Xem trước ảnh món ăn">
+                                    </div>
+                                    <input type="file" id="pictureFile" name="pictureFile" class="d-none"
+                                           accept="image/*" required>
+                                    <label for="pictureFile" class="btn btn-secondary w-100">
+                                        <i class="fas fa-camera me-2"></i> Tải ảnh lên
                                     </label>
                                 </div>
                             </div>
@@ -210,18 +314,21 @@
                                 <div class="card-body">
                                     <div class="mb-4">
                                         <label for="name" class="form-label">Tên món ăn (Không thể thay đổi)</label>
-                                        <input class="form-control form-control-lg bg-light" type="text" id="name" th:field="*{name}" readonly/>
+                                        <input class="form-control form-control-lg bg-light" type="text" id="name"
+                                               th:field="*{name}" readonly/>
                                     </div>
                                     <div class="mb-4">
                                         <label for="description" class="form-label">Mô tả</label>
-                                        <textarea class="form-control" id="description" th:field="*{description}" rows="4" placeholder="Nhập mô tả hấp dẫn về món ăn..."></textarea>
+                                        <textarea class="form-control" id="description" th:field="*{description}"
+                                                  rows="4" placeholder="Nhập mô tả hấp dẫn về món ăn..."></textarea>
                                     </div>
                                     <div class="row">
                                         <div class="col-md-6 mb-4">
                                             <label for="price" class="form-label">Giá</label>
                                             <div class="input-group">
                                                 <span class="input-group-text"><i class="fas fa-dollar-sign"></i></span>
-                                                <input type="number" class="form-control" id="price" th:field="*{price}" required min="0" step="1000" placeholder="VD: 50000">
+                                                <input type="number" class="form-control" id="price" th:field="*{price}"
+                                                       required min="0" step="1000" placeholder="VD: 50000">
                                                 <span class="input-group-text">VNĐ</span>
                                             </div>
                                         </div>
@@ -229,16 +336,19 @@
                                             <label for="category" class="form-label">Danh mục</label>
                                             <div class="input-group">
                                                 <span class="input-group-text"><i class="fas fa-tags"></i></span>
-                                                <select class="form-select" id="category" th:field="*{category}" required>
+                                                <select class="form-select" id="category" th:field="*{category}"
+                                                        required>
                                                     <option value="">-- Chọn danh mục --</option>
-                                                    <option th:each="cat : ${categories}" th:value="${cat.id}" th:text="${cat.name}"></option>
+                                                    <option th:each="cat : ${categories}" th:value="${cat.id}"
+                                                            th:text="${cat.name}"></option>
                                                 </select>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="card-footer bg-transparent border-0 text-end">
-                                    <a th:href="@{/restaurants/dishes/dish_list}" class="btn btn-outline-secondary me-2">
+                                    <a th:href="@{/restaurants/dishes/dish_list}"
+                                       class="btn btn-outline-secondary me-2">
                                         <i class="fas fa-times me-1"></i> Hủy
                                     </a>
                                     <button type="submit" form="editDishForm" class="btn btn-primary">
@@ -256,7 +366,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-    document.addEventListener("DOMContentLoaded", function() {
+    document.addEventListener("DOMContentLoaded", function () {
         // Sidebar Toggle Script
         const sidebarToggle = document.getElementById('sidebarToggle');
         const wrapper = document.querySelector('.wrapper');
@@ -273,11 +383,11 @@
         // Image Preview Script
         const dishImageInput = document.getElementById('dishImage');
         const imagePreview = document.getElementById('imagePreview');
-        if(dishImageInput && imagePreview) {
-            dishImageInput.addEventListener('change', function(event) {
+        if (dishImageInput && imagePreview) {
+            dishImageInput.addEventListener('change', function (event) {
                 if (event.target.files && event.target.files[0]) {
                     const reader = new FileReader();
-                    reader.onload = function(e) {
+                    reader.onload = function (e) {
                         imagePreview.src = e.target.result;
                     }
                     reader.readAsDataURL(event.target.files[0]);

@@ -8,8 +8,10 @@
           href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,900|Roboto+Slab:400,700|Material+Icons"/>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<th:block th:fragment="restaurant-content">
     <style>
-        /* --- BIẾN MÀU SẮC VÀ THUỘC TÍNH CHUNG --- */
+
         :root {
             --primary-color: #6a11cb;
             --secondary-color: #2575fc;
@@ -228,6 +230,20 @@
             align-items: center;
         }
 
+        /* --- Stat Card Styles (Thẻ thống kê) --- */
+        .card-stat .card-body {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* --- Stat Card Styles (Thẻ thống kê) --- */
+        .card-stat .card-body {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
         .card-stat .stat-icon {
             font-size: 2rem;
             width: 60px;
@@ -238,6 +254,7 @@
             border-radius: 50%;
         }
 
+        /* Nếu bạn dùng Bootstrap 5 thì giữ nguyên như dưới */
         .card-stat.border-success .stat-icon {
             background-color: rgba(var(--bs-success-rgb), 0.1);
             color: var(--success-color);
@@ -257,6 +274,7 @@
             background-color: rgba(var(--bs-info-rgb), 0.1);
             color: var(--info-color);
         }
+
 
         /* --- Chart Card Styles (Thẻ biểu đồ) --- */
         .card-chart .card-body {
@@ -293,11 +311,11 @@
         }
 
     </style>
-</head>
+</th:block>
 <body>
 
 <div class="wrapper">
-    <div th:fragment="restaurant-sidebar">
+    <div th:fragment="restaurant-sidebar" th:object="${restaurant}" class="sidebar">
         <nav class="sidebar">
             <div class="sidebar-header">
                 <h3>QUẢN LÝ NHÀ HÀNG</h3>
@@ -319,7 +337,8 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">
+
+                    <a class="nav-link" th:href="@{/restaurants/orders/list}">
                         <i class="fas fa-clipboard-list"></i> <span>Đơn hàng</span>
                     </a>
                 </li>

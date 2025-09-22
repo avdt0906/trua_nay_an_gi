@@ -18,5 +18,7 @@ public interface IRestaurantService extends IGeneralService<Restaurant> {
     void approvePartner(Long restaurantId);
     void rejectPartner(Long restaurantId);
     double calculateTotalRevenue(Long restaurantId);
+
+    Optional<Restaurant> findRestaurantIdByUserId(Long userId);
 }
 

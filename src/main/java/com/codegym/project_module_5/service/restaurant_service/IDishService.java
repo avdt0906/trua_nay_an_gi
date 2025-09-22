@@ -27,8 +27,7 @@ public interface IDishService extends IGeneralService<Dish> {
     List<Dish> findByRestaurantId(Long restaurantId);
 
     List<Dish> findTop8ByOrderByDiscountDesc();
-    
-    List<Dish> findByCategoryIdAndRestaurantApproved(Long categoryId);
+
     Page<Dish> findByCategoryIdAndRestaurantApproved(Long categoryId, Pageable pageable);
     
     List<Dish> findBestPriceDishes(Pageable pageable);

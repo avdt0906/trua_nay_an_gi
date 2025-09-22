@@ -79,11 +79,7 @@ public class DishService implements IDishService {
     public List<Dish> findByRestaurantId(Long restaurantId) {
         return dishRepository.findByRestaurant_Id(restaurantId);
     }
-    
-    @Override
-    public List<Dish> findByCategoryIdAndRestaurantApproved(Long categoryId) {
-        return dishRepository.findByCategoryIdAndRestaurantApproved(categoryId);
-    }
+
     
     @Override
     public Page<Dish> findByCategoryIdAndRestaurantApproved(Long categoryId, Pageable pageable) {

@@ -50,29 +50,35 @@ public class CouponRestaurantController {
         return mv;
     }
 
-//    @GetMapping("/{id}")
-//    public ResponseEntity<Coupon> getCouponById(@PathVariable Long id) {
-//        Coupon coupon = couponService.findById(id);
-//        if (coupon == null) {
-//            return ResponseEntity.notFound().build();
-//        }
-//        return ResponseEntity.ok(coupon);
-//    }
-//
-//    @PutMapping("/{id}")
-//    public ResponseEntity<Coupon> updateCoupon(@PathVariable Long id, @RequestBody Coupon coupon) {
-//        Coupon updated = couponService.update(id, coupon);
-//        if (updated == null) {
-//            return ResponseEntity.notFound().build();
-//        }
-//        return ResponseEntity.ok(updated);
-//    }
-//
-//    @DeleteMapping("/{id}")
-//    public ResponseEntity<Void> deleteCoupon(@PathVariable Long id) {
-//        couponService.deleteById(id);
-//        return ResponseEntity.noContent().build();
-//    }
+    @PostMapping("/add_coupon")
+    public ModelAndView addCoupon(@ModelAttribute("coupon") Coupon coupon){
+        String username = getCurrentUsername();
+        Optional<Restaurant> restaurant = restaurantService.findByUsername(username);
+        coupon.setRestaurant(restaurant.get());
+        couponService.save(coupon);
+        return new ModelAndView("redirect:/restaurants/coupons/coupon_list");
+    }
+
+    @GetMapping("/edit_coupon_form/{id}")
+    public ModelAndView showEditCouponForm(@PathVariable("id") Long id) {
+        Optional<Coupon> coupon = couponService.findById(id);
+        ModelAndView mv = new ModelAndView("owner/coupon/edit_coupon_form");
+        mv.addObject("coupon",coupon.get());
+        return mv;
+    }
+
+    @PostMapping("/edit_coupon")
+    public ModelAndView editCoupon(@ModelAttribute("coupon") Coupon coupon){
+        couponService.save(coupon);
+        return new ModelAndView("redirect:/restaurants/coupons/coupon_list");
+
+    }
+
+    @GetMapping("/delete_coupon/{id}")
+    public ModelAndView deleteCoupon(@PathVariable("id") Long id) {
+        couponService.delete(id);
+        return new ModelAndView("redirect:/restaurants/coupons/coupon_list");
+    }
 
     private String getCurrentUsername() {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
