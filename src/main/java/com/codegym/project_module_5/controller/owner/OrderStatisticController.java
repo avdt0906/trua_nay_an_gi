@@ -83,4 +83,12 @@ public class OrderStatisticController {
         modelAndView.addObject("ordersList", orderDetailList);
         return modelAndView;
     }
+
+    @GetMapping("/findAllByCoupon/{coupon_id}")
+    public ModelAndView showOrderStatisticByCoupon(@PathVariable("coupon_id") Long couponId) {
+        ModelAndView modelAndView = new ModelAndView("owner/order/order_by_coupon");
+        List<OrderDetail> couponsList = orderDetailService.findAllByOrder_Coupon_Id(couponId);
+        modelAndView.addObject("couponsList", couponsList);
+        return modelAndView;
+    }
 }
