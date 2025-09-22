@@ -45,4 +45,9 @@ public class OrderDetailService implements IOrderDetailService {
         return orderDetailRepository.findByDishId(orderId);
     }
 
+    @Override
+    public List<OrderDetail> findAllByOrder_User_Id(Long userId) {
+        return orderDetailRepository.findAllByOrder_User_Id(userId);
+    }
+
 }

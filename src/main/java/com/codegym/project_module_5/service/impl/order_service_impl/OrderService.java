@@ -122,8 +122,10 @@ public class OrderService implements IOrderService {
         return orderRepository.findAllByOrderStatus_Id(statusId, pageable);
     }
 
+
     @Override
     public Page<Orders> findAll(Pageable pageable) {
         return orderRepository.findAll(pageable);
     }
 }
+
