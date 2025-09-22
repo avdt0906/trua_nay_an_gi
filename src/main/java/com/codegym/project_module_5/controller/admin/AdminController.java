@@ -1,9 +1,12 @@
 package com.codegym.project_module_5.controller.admin;
 
+import com.codegym.project_module_5.model.order_model.Orders;
 import com.codegym.project_module_5.model.restaurant_model.Dish;
 import com.codegym.project_module_5.model.restaurant_model.Restaurant;
 import com.codegym.project_module_5.model.user_model.Role;
 import com.codegym.project_module_5.model.user_model.User;
+import com.codegym.project_module_5.repository.order_repository.IOrderStatusRepository;
+import com.codegym.project_module_5.service.Banner.IBannerService;
 import com.codegym.project_module_5.service.impl.role_service_impl.RoleService;
 import com.codegym.project_module_5.service.order_service.IOrderService;
 import com.codegym.project_module_5.service.restaurant_service.IDishService;
@@ -11,10 +14,14 @@ import com.codegym.project_module_5.service.restaurant_service.IRestaurantServic
 import com.codegym.project_module_5.service.user_service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.data.domain.Sort;
 
 import java.util.HashMap;
 import java.util.List;
@@ -37,6 +44,10 @@ public class AdminController {
     private IDishService dishService;
     @Autowired
     private RoleService roleService;
+    @Autowired
+    private IOrderStatusRepository orderStatusRepository;
+    @Autowired
+    private IBannerService bannerService;
 
     /**
      * Chuyển hướng từ /admin sang /admin/dashboard.
@@ -209,7 +220,7 @@ public class AdminController {
     public String showEditForm(@PathVariable Long id, Model model) {
         User user = userService.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
-        List<Role> allRoles = roleService.findAll(); 
+        List<Role> allRoles = roleService.findAll();
         model.addAttribute("user", user);
         model.addAttribute("allRoles", allRoles);
         return "admin/user_edit";
@@ -222,6 +233,55 @@ public class AdminController {
         // Lưu ý: Bạn có thể cần nạp user cũ, merge role, hoặc encode password
         userService.updateUser(id, formUser);
         return "redirect:/admin/users/list";
+    }
+
+    @GetMapping("/dish/list")
+    public String listDishes(@RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "") String keyword,
+            Model model) {
+
+        int pageSize = 10;
+        Page<Dish> dishPage;
+
+        if (!keyword.isBlank()) {
+            dishPage = dishService.search(keyword, PageRequest.of(page, pageSize));
+        } else {
+            dishPage = dishService.findAll(PageRequest.of(page, pageSize));
+        }
+
+        model.addAttribute("dishes", dishPage.getContent());
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", dishPage.getTotalPages());
+        model.addAttribute("keyword", keyword); // giờ luôn là chuỗi, không null
+
+        return "admin/dish_list";
+    }
+
+    @GetMapping("/orders/list")
+    public String listOrders(
+            @RequestParam(required = false) Long statusId,
+            @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable,
+            Model model) {
+
+        Page<Orders> page = (statusId != null)
+                ? orderService.findAllByOrderStatus_Id(statusId, pageable)
+                : orderService.findAll(pageable);
+
+        model.addAttribute("ordersPage", page);
+        model.addAttribute("orderStatuses", orderStatusRepository.findAll());
+        model.addAttribute("selectedStatus", statusId);
+        return "admin/orders_list";
+    }
+
+    @PostMapping("/banner/update/{dishId}")
+    public String updateBanner(@PathVariable Long dishId,
+                               @RequestParam(required = false, defaultValue = "false") boolean featured,
+                               @RequestParam(required = false, defaultValue = "false") boolean promotion,
+                               RedirectAttributes redirect) {
+
+        bannerService.updateBannerForDish(dishId, featured, promotion);
+        redirect.addFlashAttribute("message", "Cập nhật banner thành công!");
+        return "redirect:/admin/dish/list";
     }
 
 }

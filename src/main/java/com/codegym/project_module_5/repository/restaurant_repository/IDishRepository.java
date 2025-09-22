@@ -45,5 +45,10 @@ public interface IDishRepository extends JpaRepository<Dish, Long> {
     @Query("SELECT d FROM Dish d WHERE d.restaurant.isApproved = true AND d.restaurant.isLocked = false AND d.isAvailable = true ORDER BY RAND()")
     List<Dish> findNearbyDishes(Pageable pageable);
 
+    @Query("SELECT d FROM Dish d " +
+       "WHERE lower(d.name) LIKE lower(concat('%', :keyword, '%')) " +
+       "   OR lower(d.description) LIKE lower(concat('%', :keyword, '%'))")
+    Page<Dish> search(@Param("keyword") String keyword, Pageable pageable);
+
     List<Dish> findDishesByRestaurantId(Long restaurantId);
 }

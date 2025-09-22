@@ -7,6 +7,8 @@ import com.codegym.project_module_5.repository.order_repository.IOrderRepository
 import com.codegym.project_module_5.repository.order_repository.IOrderStatusRepository;
 import com.codegym.project_module_5.service.order_service.IOrderService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -94,7 +96,36 @@ public class OrderService implements IOrderService {
             orderRepository.save(order);
         }
     }
+    @Override
+    public void cancelOrder(Long orderId, User user) {
+        Optional<Orders> orderOptional = orderRepository.findById(orderId);
+        if (orderOptional.isPresent()) {
+            Orders order = orderOptional.get();
+            // Kiểm tra bảo mật: đảm bảo người dùng đang đăng nhập là chủ sở hữu của đơn hàng
+            if (!order.getUser().getId().equals(user.getId())) {
+                throw new SecurityException("Bạn không có quyền hủy đơn hàng này.");
+            }
+
+            // Tìm trạng thái "Đã hủy" (Sửa ID từ 5 thành 6)
+            OrderStatus cancelledStatus = orderStatusRepository.findById(6L)
+                    .orElseThrow(() -> new RuntimeException("Không tìm thấy trạng thái 'Đã hủy'. Vui lòng kiểm tra cơ sở dữ liệu."));
+
+            order.setOrderStatus(cancelledStatus);
+            orderRepository.save(order);
+        } else {
+            throw new RuntimeException("Không tìm thấy đơn hàng với ID: " + orderId);
+        }
+    }
+
+    @Override
+    public Page<Orders> findAllByOrderStatus_Id(Long statusId, Pageable pageable) {
+        return orderRepository.findAllByOrderStatus_Id(statusId, pageable);
+    }
 
 
-
+    @Override
+    public Page<Orders> findAll(Pageable pageable) {
+        return orderRepository.findAll(pageable);
+    }
 }
+

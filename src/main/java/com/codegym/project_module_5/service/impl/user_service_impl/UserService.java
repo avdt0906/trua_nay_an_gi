@@ -9,8 +9,11 @@ import com.codegym.project_module_5.repository.user_repository.IUserAddressRepos
 import com.codegym.project_module_5.repository.user_repository.IRoleRepository;
 import com.codegym.project_module_5.repository.user_repository.IUserRepository;
 import com.codegym.project_module_5.service.user_service.IUserService;
+
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.amqp.RabbitConnectionDetails.Address;
 import org.springframework.data.domain.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -151,7 +154,22 @@ public class UserService implements IUserService {
         existingAddress.setDefaultAddress(addressRequest.isDefaultAddress());
 
     return userAddressRepository.save(existingAddress);
+}   
+   @Transactional
+public void clearDefaultAddress(String username, Long addressId) {
+    User user = userRepository.findByUsername(username)
+            .orElseThrow(() -> new RuntimeException("User not found"));
+
+    userAddressRepository.clearDefaultByUser(user.getId());
+    UserAddress address = userAddressRepository.findById(addressId)
+            .orElseThrow(() -> new RuntimeException("Address not found"));
+    if (!address.getUser().getId().equals(user.getId())) {
+        throw new RuntimeException("Unauthorized action");
+    }
+    address.setDefaultAddress(true);
+    userAddressRepository.save(address);
 }
+
 
     @Override
     public Page<User> findAllUsers(int page, int size) {

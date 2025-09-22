@@ -4,6 +4,9 @@ import com.codegym.project_module_5.model.dto.request.UserAddressRequest;
 import com.codegym.project_module_5.model.user_model.User;
 import com.codegym.project_module_5.model.user_model.UserAddress;
 import com.codegym.project_module_5.service.impl.user_service_impl.UserService;
+
+import java.security.Principal;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -15,7 +18,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import lombok.RequiredArgsConstructor;
 
@@ -79,12 +81,17 @@ public class UserAddressController {
         return "user/edit_address";
     }
 
-   @PostMapping("/update/{id}")
-public String updateAddress(@PathVariable Long id, @ModelAttribute UserAddressRequest addressRequest) {
-    userService.updateAddress(id, addressRequest);
-    return "redirect:/addresses";
+    @PostMapping("/update/{id}")
+    public String updateAddress(@PathVariable Long id, @ModelAttribute UserAddressRequest addressRequest) {
+        userService.updateAddress(id, addressRequest);
+        return "redirect:/addresses";
 
-    
+    }
 
-}
+    @PostMapping("/set-default/{id}")
+    public String setDefault(@PathVariable Long id, Principal principal) {
+        userService.clearDefaultAddress(principal.getName(), id);
+        return "redirect:/addresses";
+    }
+
 }
