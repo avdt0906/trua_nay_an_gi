@@ -12,4 +12,6 @@ public interface IOrderDetailRepository extends JpaRepository<OrderDetail, Long>
     Iterable<OrderDetail> findAllByOrderId(Long orderId);
 
     List<OrderDetail> findByDishId(Long dishId);
+
+    List<OrderDetail> findAllByOrder_User_Id(Long userId);
 }

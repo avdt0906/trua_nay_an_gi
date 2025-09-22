@@ -69,6 +69,14 @@
             padding: 10px;
             font-size: 0.9rem;
         }
+        .table tbody td a {
+            text-decoration: none;
+            color: #007bff;
+        }
+        .table tbody td a:hover {
+                color: #0056b3;
+                text-decoration: underline;
+        }
 
         .table tbody tr:hover {
             background-color: #f1f3f5;
@@ -109,7 +117,10 @@
                             <tr th:each="order : ${ordersList}">
                                 <td th:text="${order.getId()}"></td>
                                 <td th:text="${order.getRestaurant().getName()}"></td>
-                                <td th:text="${order.getUser().getUsername()}"></td>
+                                <td>
+                                    <a th:href="@{'/restaurants/orders/findAllByUser/' + ${order.getUser().getId()}}"
+                                       th:text="${order.getUser().getUsername()}"></a>
+                                </td>
                                 <td th:text="${order.getAddress()}"></td>
                                 <td th:text="${order.getCreatedAt()}"></td>
                                 <td th:text="${order.getOrderStatus().getName()}"></td>

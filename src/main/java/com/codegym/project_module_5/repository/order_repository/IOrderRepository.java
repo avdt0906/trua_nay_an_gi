@@ -14,4 +14,5 @@ import java.util.Optional;
 public interface IOrderRepository extends JpaRepository<Orders, Long> {
     List<Orders> findAllByRestaurantId(Long restaurantId);
     List<Orders> findAllByUserOrderByCreatedAtDesc(User user);
+
 }
