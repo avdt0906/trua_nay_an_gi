@@ -88,4 +88,12 @@ public class OrderStatisticController {
         }
         return null;
     }
+
+    @GetMapping("/findAllByUser/{id}")
+    public ModelAndView showOrderStatisticByUser(@PathVariable("id") Long userId) {
+        ModelAndView modelAndView = new ModelAndView("owner/order/order_by_user");
+        List<OrderDetail> orderDetailList = orderDetailService.findAllByOrder_User_Id(userId);
+        modelAndView.addObject("ordersList", orderDetailList);
+        return modelAndView;
+    }
 }

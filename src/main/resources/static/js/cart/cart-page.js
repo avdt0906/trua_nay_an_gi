@@ -131,9 +131,6 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
-    // =============================================================
-    // === END: ĐOẠN CODE SỬA ĐỔI / THÊM MỚI ===
-    // =============================================================
 
     document.body.addEventListener('click', function(event) {
         const target = event.target;
