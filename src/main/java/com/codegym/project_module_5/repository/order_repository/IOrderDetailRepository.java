@@ -14,4 +14,6 @@ public interface IOrderDetailRepository extends JpaRepository<OrderDetail, Long>
     List<OrderDetail> findByDishId(Long dishId);
 
     List<OrderDetail> findAllByOrder_User_Id(Long userId);
+
+    List<OrderDetail> findAllByOrder_Coupon_Id(Long couponId);
 }

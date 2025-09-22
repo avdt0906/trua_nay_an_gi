@@ -50,4 +50,9 @@ public class OrderDetailService implements IOrderDetailService {
         return orderDetailRepository.findAllByOrder_User_Id(userId);
     }
 
+    @Override
+    public List<OrderDetail> findAllByOrder_Coupon_Id(Long couponId) {
+        return orderDetailRepository.findAllByOrder_Coupon_Id(couponId);
+    }
+
 }
