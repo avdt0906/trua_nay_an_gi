@@ -104,4 +104,3 @@ public class OrderHistoryController {
         return "redirect:/orders/history/detail/" + id;
     }
 }
-
