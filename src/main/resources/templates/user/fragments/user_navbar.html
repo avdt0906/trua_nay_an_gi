@@ -1,4 +1,4 @@
-<!-- templates/user/fragments/_navbar.html -->
+<!-- templates/user/fragments/user_navbar.html -->
 <!DOCTYPE html>
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
 <head>
@@ -69,6 +69,7 @@
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end">
                         <li><a class="dropdown-item" th:href="@{/profile/edit}"><i class="fas fa-user-circle me-2"></i>Trang cá nhân</a></li>
+                        <li><a class="dropdown-item" th:href="@{/restaurants/dashboard}"><i class="fas fa-home me-2"></i>Nhà hàng của tôi</a></li>
                         <li><a class="dropdown-item" th:href="@{/addresses}"><i class="fas fa-map-marker-alt me-2"></i>Địa chỉ của tôi</a></li>
                         <li><a class="dropdown-item" th:href="@{/orders/history}"><i class="fas fa-history me-2"></i>Lịch sử mua hàng</a></li>
                         <li><hr class="dropdown-divider"></li>
