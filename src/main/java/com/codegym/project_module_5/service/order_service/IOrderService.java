@@ -12,5 +12,6 @@ public interface IOrderService extends IGeneralService<Orders> {
     boolean cancelOrder(Long orderId);
     List<Orders> findOrdersByUser(User user);
     void updateOrderStatus(Long orderId);
+    void cancelOrder(Long orderId, User user);
 
 }
