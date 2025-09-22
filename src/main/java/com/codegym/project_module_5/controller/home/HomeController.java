@@ -1,8 +1,10 @@
 package com.codegym.project_module_5.controller.home;
 
+import com.codegym.project_module_5.model.baner_model.Banner;
 import com.codegym.project_module_5.model.restaurant_model.Category;
 import com.codegym.project_module_5.model.restaurant_model.Dish;
 import com.codegym.project_module_5.model.restaurant_model.Restaurant;
+import com.codegym.project_module_5.service.Banner.IBannerService;
 import com.codegym.project_module_5.service.restaurant_service.ICategoryService;
 import com.codegym.project_module_5.service.restaurant_service.IDishService;
 import com.codegym.project_module_5.service.user_service.IUserService;
@@ -35,20 +37,22 @@ public class HomeController {
 
     @Autowired
     private ICategoryService categoryService;
+    @Autowired
+    private IBannerService bannerService;
 
-    @GetMapping(value = {"/", "/home"})
+    @GetMapping(value = { "/", "/home" })
     public String showHome(Model model,
-                           @RequestParam(name = "search", required = false) String search,
-                           @RequestParam(name = "category", required = false) Long categoryId,
-                           @RequestParam(name = "menu", required = false) String menuType,
-                           @PageableDefault(size = 8, sort = "id") Pageable pageable) {
+            @RequestParam(name = "search", required = false) String search,
+            @RequestParam(name = "category", required = false) Long categoryId,
+            @RequestParam(name = "menu", required = false) String menuType,
+            @PageableDefault(size = 8, sort = "id") Pageable pageable) {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         boolean isAuthenticated = authentication != null
                 && authentication.isAuthenticated()
                 && !(authentication instanceof AnonymousAuthenticationToken);
 
-//        model.addAttribute("isAuthenticated", isAuthenticated);
+        // model.addAttribute("isAuthenticated", isAuthenticated);
 
         if (isAuthenticated) {
             String username = authentication.getName();
@@ -86,17 +90,18 @@ public class HomeController {
 
         List<Dish> dishes = dishPage.getContent();
 
-        Map<Restaurant, List<Dish>> dishesByRestaurant =
-                dishes.stream()
-                        .filter(d -> d.getRestaurant() != null)
-                        .collect(Collectors.groupingBy(
-                                Dish::getRestaurant,
-                                LinkedHashMap::new,
-                                Collectors.toList()
-                        ));
+        Map<Restaurant, List<Dish>> dishesByRestaurant = dishes.stream()
+                .filter(d -> d.getRestaurant() != null)
+                .collect(Collectors.groupingBy(
+                        Dish::getRestaurant,
+                        LinkedHashMap::new,
+                        Collectors.toList()));
 
         Iterable<Category> categories = categoryService.findAll();
-
+        List<Banner> featured = bannerService.getFeaturedBanners();
+        List<Banner> promotion = bannerService.getPromotionBanners();
+        model.addAttribute("featuredBanners", featured);
+        model.addAttribute("promotionBanners", promotion);
         model.addAttribute("dishesPage", dishPage);
         model.addAttribute("dishes", dishes);
         model.addAttribute("dishesByRestaurant", dishesByRestaurant);

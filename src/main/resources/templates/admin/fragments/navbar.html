@@ -98,7 +98,7 @@
         </li>
          <li class="nav-item">
             <a class="nav-link" th:classappend="${activePage == 'list'} ? 'active'" th:href="@{/admin/users/list}">
-                <i class="fas fa-store"></i>
+                <i class="fas fa-user-shield"></i>
                 Quản lý tài khoản 
             </a>
         </li>
@@ -108,6 +108,17 @@
                 Quản lý Chủ quán
             </a>
         </li>
+        <li class="nav-item">
+            <a class="nav-link" th:classappend="${activePage == 'restaurant'} ? 'active'" th:href="@{/admin/dish/list}">
+                <i class="fas fa-utensils"></i>
+                Quản lý món ăn
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" th:classappend="${activePage == 'category'} ? 'active'" th:href="@{/admin/orders/list}">
+                <i class="fas fa-th-list"></i>
+                 Quản lý Đơn hàng
+            </a>
         <li class="nav-item">
             <a class="nav-link" th:classappend="${activePage == 'shipper'} ? 'active'" th:href="@{/admin/shippers}">
                 <i class="fas fa-truck-fast"></i>

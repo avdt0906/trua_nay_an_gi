@@ -6,11 +6,15 @@ import com.codegym.project_module_5.service.general_service.IGeneralService;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
 public interface IOrderService extends IGeneralService<Orders> {
     long count();
     Iterable<Orders> findAllByRestaurantId(Long restaurantId);
     boolean cancelOrder(Long orderId);
     List<Orders> findOrdersByUser(User user);
     void updateOrderStatus(Long orderId);
-
+    Page<Orders> findAllByOrderStatus_Id(Long statusId, Pageable pageable);
+    Page<Orders> findAll(Pageable pageable);
 }

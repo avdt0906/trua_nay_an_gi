@@ -7,6 +7,8 @@ import com.codegym.project_module_5.repository.order_repository.IOrderRepository
 import com.codegym.project_module_5.repository.order_repository.IOrderStatusRepository;
 import com.codegym.project_module_5.service.order_service.IOrderService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -95,5 +97,13 @@ public class OrderService implements IOrderService {
         }
     }
 
+    @Override
+    public Page<Orders> findAllByOrderStatus_Id(Long statusId, Pageable pageable) {
+        return orderRepository.findAllByOrderStatus_Id(statusId, pageable);
+    }
 
+    @Override
+    public Page<Orders> findAll(Pageable pageable) {
+        return orderRepository.findAll(pageable);
+    }
 }
