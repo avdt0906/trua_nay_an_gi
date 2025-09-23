@@ -7,9 +7,11 @@ import com.codegym.project_module_5.model.restaurant_model.Restaurant;
 import com.codegym.project_module_5.service.Banner.IBannerService;
 import com.codegym.project_module_5.service.restaurant_service.ICategoryService;
 import com.codegym.project_module_5.service.restaurant_service.IDishService;
+import com.codegym.project_module_5.service.restaurant_service.IRestaurantService;
 import com.codegym.project_module_5.service.user_service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.data.web.PageableDefault;
@@ -22,61 +24,77 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Controller
-@RequestMapping("")
+@RequestMapping
 public class HomeController {
-
     @Autowired
-    private IUserService userService;
+    private IUserService iUserService;
 
     @Autowired
     private IDishService dishService;
 
     @Autowired
     private ICategoryService categoryService;
+
     @Autowired
     private IBannerService bannerService;
 
-    @GetMapping(value = { "/", "/home" })
-    public String showHome(Model model,
-            @RequestParam(name = "search", required = false) String search,
-            @RequestParam(name = "category", required = false) Long categoryId,
-            @RequestParam(name = "menu", required = false) String menuType,
-            @PageableDefault(size = 8, sort = "id") Pageable pageable) {
+    @Autowired
+    private IRestaurantService restaurantService;
+
+    @GetMapping
+    public String index(Model model,
+                        @PageableDefault(value = 8) Pageable pageable,
+                        @RequestParam(name = "search", required = false) String search,
+                        @RequestParam(name = "categoryId", required = false) Long categoryId,
+                        @RequestParam(name = "menuType", required = false, defaultValue = "default") String menuType,
+                        @RequestParam(name = "couponCode", required = false) String couponCode) {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        boolean isAuthenticated = authentication != null
-                && authentication.isAuthenticated()
-                && !(authentication instanceof AnonymousAuthenticationToken);
-
-        // model.addAttribute("isAuthenticated", isAuthenticated);
-
-        if (isAuthenticated) {
-            String username = authentication.getName();
-            userService.findByUsername(username)
-                    .ifPresent(user -> model.addAttribute("currentUser", user));
-        }
+        boolean isAuthenticated = authentication != null && authentication.isAuthenticated() && !(authentication instanceof AnonymousAuthenticationToken);
+        model.addAttribute("isAuthenticated", isAuthenticated);
 
         Page<Dish> dishPage;
-        if (search != null && !search.trim().isEmpty()) {
-            List<Dish> searched = (List<Dish>) dishService.searchAvailableDishesByName(search);
-            dishPage = PageableExecutionUtils.getPage(searched, pageable, () -> searched.size());
+        if (couponCode != null && !couponCode.isEmpty()) {
+            Page<Restaurant> restaurantPage = restaurantService.findByCouponCodeAndIsAcceptedTrue(pageable, couponCode);
+            List<Dish> dishesFromRestaurants = new ArrayList<>();
+            for (Restaurant restaurant : restaurantPage.getContent()) {
+                // SỬA LẠI TÊN PHƯƠNG THỨC CHO ĐÚNG
+                dishesFromRestaurants.addAll(dishService.findByRestaurantId(restaurant.getId()));
+            }
+            // Tạo một trang mới từ danh sách các món ăn đã thu thập
+            dishPage = new PageImpl<>(dishesFromRestaurants, pageable, dishesFromRestaurants.size());
+            model.addAttribute("couponCode", couponCode);
+        }
+        else if (search != null && !search.isEmpty()) {
+            // Sửa lại theo phương thức mới trong IDishService
+            dishPage = dishService.search(search, pageable);
         } else if (categoryId != null) {
+            // Sửa lại theo phương thức mới trong IDishService
             dishPage = dishService.findByCategoryIdAndRestaurantApproved(categoryId, pageable);
-        } else if (menuType != null && !menuType.trim().isEmpty()) {
+        } else if (menuType != null && !menuType.equals("default")) {
             List<Dish> menuDishes;
-            switch (menuType.toLowerCase()) {
-                case "best-price":
-                    menuDishes = dishService.findBestPriceDishes(pageable);
+            switch (menuType) {
+                case "new-dishes":
+                    // Giả sử có phương thức này, nếu không cần tạo mới
+                    // Dựa theo IDishService, không có phương thức này
+                    menuDishes = new ArrayList<>(); // Cần implementation cụ thể
                     break;
-                case "nearby":
-                    menuDishes = dishService.findNearbyDishes(pageable);
+                case "most-ordered":
+                    // Giả sử có phương thức này, nếu không cần tạo mới
+                    // Dựa theo IDishService, không có phương thức này
+                    menuDishes = new ArrayList<>(); // Cần implementation cụ thể
                     break;
-                case "hot-pick":
-                    menuDishes = dishService.findHotPickDishes(pageable);
+                case "best-sellers":
+                    // Giả sử có phương thức này, nếu không cần tạo mới
+                    // Dựa theo IDishService, không có phương thức này
+                    menuDishes = new ArrayList<>(); // Cần implementation cụ thể
                     break;
                 default:
                     menuDishes = new ArrayList<>();
