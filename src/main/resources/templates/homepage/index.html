@@ -10,6 +10,7 @@
   <link rel="stylesheet" href="/css/index.css" />
 </head>
 <style>
+  /* CSS CŨ GIỮ NGUYÊN */
   .category-scroll {
     display: flex;
     justify-content: center;
@@ -20,18 +21,13 @@
     scroll-snap-type: x mandatory;
     scrollbar-width: none;
     -ms-overflow-style: none;
-
-    /* Xóa nền trắng + shadow */
     background: transparent;
     box-shadow: none;
     border-radius: 0;
   }
-
   .category-scroll::-webkit-scrollbar {
     display: none;
   }
-
-
   .category-item {
     flex: 0 0 auto;
     width: 90px;
@@ -39,22 +35,14 @@
     cursor: pointer;
     padding: 0.5rem;
     border-radius: 14px;
-
-    /* Cho nền trong suốt để trùng với màu nền ngoài */
     background: transparent;
-
     transition: all 0.25s ease;
     box-shadow: none;
-    /* bỏ bóng nếu không muốn thấy khung */
   }
-
-
   .category-item:hover {
     transform: translateY(-3px);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
   }
-
-  /* Ảnh tròn */
   .category-item img {
     width: 65px;
     height: 65px;
@@ -63,111 +51,159 @@
     border: 2px solid transparent;
     transition: all 0.3s ease;
   }
-
   .category-item:hover img {
     border-color: #ee4d2d;
     transform: scale(1.05);
   }
-
-  /* Tên */
   .category-name {
     margin-top: 0.4rem;
     font-size: 0.8rem;
     font-weight: 600;
     color: #495057;
   }
-
   .category-item:hover .category-name {
     color: #ee4d2d;
   }
-
   .category-name a {
     text-decoration: none;
     color: inherit;
   }
-
-  /* Active state */
   .category-item.active {
     background: linear-gradient(135deg, #ee4d2d, #ff6633);
     color: #fff;
     transform: translateY(-3px);
     box-shadow: 0 4px 14px rgba(238, 77, 45, 0.25);
   }
-
   .category-item.active img {
     border-color: #fff;
   }
-
   .category-item.active .category-name {
     color: #fff;
   }
-
-  /* Hiệu ứng load */
   @keyframes fadeIn {
-    from {
-      opacity: 0;
-      transform: translateY(10px);
-    }
-
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
   }
-
   .category-item {
     animation: fadeIn 0.5s ease;
   }
-
-  /* Responsive cho màn nhỏ */
   @media (max-width: 576px) {
-    .category-item {
-      width: 75px;
-    }
-
-    .category-item img {
-      width: 55px;
-      height: 55px;
-    }
-
-    .category-name {
-      font-size: 0.75rem;
-    }
-
+    .category-item { width: 75px; }
+    .category-item img { width: 55px; height: 55px; }
+    .category-name { font-size: 0.75rem; }
   }
-
   .banner-card {
     transition: transform .4s ease, box-shadow .4s ease;
     border-radius: 20px;
   }
-
   .banner-card:hover {
     transform: translateY(-6px) scale(1.02);
     box-shadow: 0 12px 25px rgba(0, 0, 0, 0.2);
   }
-
   .banner-img {
     height: 230px;
     object-fit: cover;
     border-radius: 20px;
   }
-
   .banner-overlay {
     background: linear-gradient(180deg, rgba(0, 0, 0, 0) 30%, rgba(0, 0, 0, 0.55) 100%);
     color: #fff;
     padding: 1.25rem;
     border-radius: 20px;
   }
+
+  /* ===== CSS MỚI CHO CÁC NÚT ƯU ĐÃI ===== */
+  /* Wrapper cho carousel ưu đãi */
+  .offer-carousel-wrapper {
+    position: relative;
+    padding: 0 35px; /* Tạo khoảng trống cho nút bấm */
+  }
+
+  .offer-scroll-container {
+    display: flex;
+    overflow-x: auto;
+    gap: 0.75rem;
+    padding: 10px 5px;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none;  /* IE 10+ */
+    scroll-behavior: smooth; /* Thêm hiệu ứng cuộn mượt */
+  }
+
+  .offer-scroll-container::-webkit-scrollbar {
+    display: none; /* Safari and Chrome */
+  }
+
+  .offer-btn {
+    flex: 0 0 auto;
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: #495057;
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 20px;
+    text-decoration: none;
+    transition: all 0.2s ease-in-out;
+    white-space: nowrap;
+  }
+
+  .offer-btn:hover, .offer-btn.active {
+    color: #fff;
+    background-color: #ee4d2d;
+    border-color: #ee4d2d;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  }
+
+  /* Nút trượt */
+  .scroll-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 10;
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+    border: 1px solid #e0e0e0;
+    color: #333;
+    font-size: 1.2rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+  }
+
+  .scroll-btn:hover {
+    background-color: #ee4d2d;
+    color: #fff;
+  }
+
+  .scroll-btn.prev-btn {
+    left: 0;
+  }
+
+  .scroll-btn.next-btn {
+    right: 0;
+  }
+
+  .scroll-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+  /* ===== /CSS MỚI ===== */
+
 </style>
 
 <body>
 
-  <div th:replace="~{user/fragments/user_navbar :: navbar}"></div>
-  <!-- ===== 3 Banner quảng cáo đầu trang ===== -->
-  <section class="container my-4">
+<div th:replace="~{user/fragments/user_navbar :: navbar}"></div>
+<section class="container my-4">
   <div class="row g-4">
 
-    <!-- ==== Nổi bật ==== -->
     <div class="col-md-6" th:if="${featuredBanners}">
       <h5 class="mb-3 fw-bold text-danger">
         <i class="fas fa-fire me-1"></i> Nổi bật
@@ -190,7 +226,6 @@
           </div>
         </div>
 
-        <!-- Nút điều khiển -->
         <button class="carousel-control-prev" type="button" data-bs-target="#featuredCarousel" data-bs-slide="prev">
           <span class="carousel-control-prev-icon"></span>
         </button>
@@ -200,7 +235,6 @@
       </div>
     </div>
 
-    <!-- ==== Ưu đãi ==== -->
     <div class="col-md-6" th:if="${promotionBanners}">
       <h5 class="mb-3 fw-bold text-warning">
         <i class="fas fa-tags me-1"></i> Ưu đãi
@@ -236,271 +270,310 @@
 </section>
 
 
-  <!-- ===== /Banner ===== -->
+<div class="container my-4">
+  <h5 class="fw-bold mb-2"><i class="fas fa-tags text-danger me-2"></i>Ưu đãi hấp dẫn</h5>
+  <div class="offer-carousel-wrapper">
+    <button class="scroll-btn prev-btn" id="offer-prev-btn">&lt;</button>
+    <div class="offer-scroll-container" id="offer-container">
+      <a th:href="@{/(couponCode='Miễn phí ship cho đơn từ 150K')}" class="offer-btn" th:classappend="${#strings.equals(couponCode, 'Miễn phí ship cho đơn từ 150K')} ? 'active'">Miễn phí ship cho đơn từ 150K</a>
+      <a th:href="@{/(couponCode='Giảm 50K cho đơn từ 500K')}" class="offer-btn" th:classappend="${#strings.equals(couponCode, 'Giảm 50K cho đơn từ 500K')} ? 'active'">Giảm 50K cho đơn từ 500K</a>
+      <a th:href="@{/(couponCode='Giảm 20K cho đơn từ 100K')}" class="offer-btn" th:classappend="${#strings.equals(couponCode, 'Giảm 20K cho đơn từ 100K')} ? 'active'">Giảm 20K cho đơn từ 100K</a>
+      <a th:href="@{/(couponCode='Giảm 20%')}" class="offer-btn" th:classappend="${#strings.equals(couponCode, 'Giảm 20%')} ? 'active'">Giảm 20%</a>
+      <a th:href="@{/(couponCode='Giảm 15% cho đơn từ 1 triệu')}" class="offer-btn" th:classappend="${#strings.equals(couponCode, 'Giảm 15% cho đơn từ 1 triệu')} ? 'active'">Giảm 15% cho đơn từ 1 triệu</a>
+      <a th:href="@{/(couponCode='Giảm 100K cho đơn từ 800K')}" class="offer-btn" th:classappend="${#strings.equals(couponCode, 'Giảm 100K cho đơn từ 800K')} ? 'active'">Giảm 100K cho đơn từ 800K</a>
+      <a th:href="@{/(couponCode='Giảm 10% cho đơn từ 200K')}" class="offer-btn" th:classappend="${#strings.equals(couponCode, 'Giảm 10% cho đơn từ 200K')} ? 'active'">Giảm 10% cho đơn từ 200K</a>
+      <a th:href="@{/(couponCode='Freeship 15k')}" class="offer-btn" th:classappend="${#strings.equals(couponCode, 'Freeship 15k')} ? 'active'">Freeship 15k</a>
+    </div>
+    <button class="scroll-btn next-btn" id="offer-next-btn">&gt;</button>
+  </div>
+</div>
+<div class="container py-4">
+  <h3 class="text-center mb-4" style="color: #ee4d2d; font-weight: 700;">
+    <i class="fas fa-utensils me-2" style="color: #ff6633;"></i>
+    Danh mục món ăn
+  </h3>
+  <div class="category-scroll">
+    <div class="category-item" th:each="row: ${categories}" th:data-category-id="${row.id}"
+         th:classappend="${categoryId != null && categoryId == row.id} ? 'active' : ''">
+      <img th:src="@{'/images/category/' + ${row.getPictureUrl()}}" th:alt="${row.name}">
+      <div class="category-name">
+        <a href="#" th:text="${row.name}" class="category-link"></a>
+      </div>
+    </div>
+  </div>
+</div>
 
+<div class="main-header"
+     style="background: linear-gradient(135deg, #f5f5f5 0%, #ffffff 100%); border: 1px solid rgba(238, 77, 45, 0.1); box-shadow: 0 4px 15px rgba(238, 77, 45, 0.1);">
+  <div class="container">
+    <h1 style="text-align: center; color: #ee4d2d;" class="header-title"
+        th:if="${search == null or search.isEmpty()} and ${categoryId == null} and ${menuType == null} and ${couponCode == null}">
+      <i class="fas fa-gift me-2"></i>Danh sách ưu đãi
+    </h1>
+    <h1 class="header-title" style="color: #ee4d2d;" th:if="${search != null and !search.isEmpty()}">
+      <i class="fas fa-search me-2"></i>Kết quả tìm kiếm cho '<span th:text="${search}"
+                                                                    style="color: #ff6633;"></span>'
+    </h1>
+    <h1 class="header-title" style="color: #ee4d2d;" th:if="${categoryId != null}">
+      <i class="fas fa-filter me-2"></i>Món ăn theo danh mục:
+      <span th:each="cat : ${categories}" th:if="${cat.id == categoryId}" th:text="${cat.name}"
+            style="color: #ff6633;"></span>
+    </h1>
+    <h1 class="header-title" style="color: #ee4d2d;" th:if="${couponCode != null and !couponCode.isEmpty()}">
+      <i class="fas fa-tags me-2"></i>Kết quả cho ưu đãi '<span th:text="${couponCode}" style="color: #ff6633;"></span>'
+    </h1>
+    <h1 class="header-title" style="color: #ee4d2d;" th:if="${menuType == 'best-price'}">
+      <i class="fas fa-tags me-2"></i>Món ăn giá tốt - Giảm giá cao nhất
+    </h1>
+    <h1 class="header-title" style="color: #ee4d2d;" th:if="${menuType == 'nearby'}">
+      <i class="fas fa-map-marker-alt me-2"></i>Món ngon gần bạn
+    </h1>
+    <h1 class="header-title" style="color: #ee4d2d;" th:if="${menuType == 'hot-pick'}">
+      <i class="fas fa-fire me-2"></i>Món ngon hot pick - Được yêu thích
+    </h1>
+  </div>
+</div>
 
-  <div class="container py-4">
-    <h3 class="text-center mb-4" style="color: #ee4d2d; font-weight: 700;">
-      <i class="fas fa-utensils me-2" style="color: #ff6633;"></i>
-      Danh mục món ăn
-    </h3>
-    <div class="category-scroll">
-      <div class="category-item" th:each="row: ${categories}" th:data-category-id="${row.id}"
-        th:classappend="${categoryId != null && categoryId == row.id} ? 'active' : ''">
-        <img th:src="@{'/images/category/' + ${row.getPictureUrl()}}" th:alt="${row.name}">
-        <div class="category-name">
-          <a href="#" th:text="${row.name}" class="category-link"></a>
+<main class="container">
+
+  <div class="results-info d-flex flex-wrap justify-content-between align-items-center my-4">
+    <div class="results-count mb-2 mb-md-0">
+      <strong>KHU VỰC</strong>
+      <span th:if="${dishesPage.totalElements == 0}">0 kết quả</span>
+      <span th:unless="${dishesPage.totalElements == 0}" th:text="${dishesPage.totalElements} + ' kết quả'"></span>
+    </div>
+    <div class="sort-options d-flex align-items-center gap-2 flex-wrap">
+      <strong class="d-none d-lg-block me-2">Sắp xếp theo:</strong>
+      <a th:href="@{/(search=${search}, categoryId=${categoryId}, couponCode=${couponCode}, sortBy='nearby')}"
+         class="btn btn-sm" th:classappend="${#strings.equals(sortBy, 'nearby')} ? 'btn-primary' : 'btn-outline-secondary'">Gần nhất</a>
+      <a th:href="@{/(search=${search}, categoryId=${categoryId}, couponCode=${couponCode}, sortBy='best-selling')}"
+         class="btn btn-sm" th:classappend="${#strings.equals(sortBy, 'best-selling')} ? 'btn-primary' : 'btn-outline-secondary'">Bán chạy</a>
+      <a th:href="@{/(search=${search}, categoryId=${categoryId}, couponCode=${couponCode}, sortBy='rating')}"
+         class="btn btn-sm" th:classappend="${#strings.equals(sortBy, 'rating')} ? 'btn-primary' : 'btn-outline-secondary'">Đánh giá</a>
+      <a th:href="@{/(search=${search}, categoryId=${categoryId}, couponCode=${couponCode}, sortBy='price-asc')}"
+         class="btn btn-sm" th:classappend="${#strings.equals(sortBy, 'price-asc')} ? 'btn-primary' : 'btn-outline-secondary'">Giá thấp</a>
+      <a th:href="@{/(search=${search}, categoryId=${categoryId}, couponCode=${couponCode}, sortBy='price-desc')}"
+         class="btn btn-sm" th:classappend="${#strings.equals(sortBy, 'price-desc')} ? 'btn-primary' : 'btn-outline-secondary'">Giá cao</a>
+    </div>
+  </div>
+  <div class="dishes-grid">
+    <th:block th:each="restaurantEntry : ${dishesByRestaurant}">
+      <div class="dish-card" th:each="dish : ${restaurantEntry.value}">
+        <div class="dish-image-container">
+          <img th:src="@{'/images/dish/' + ${dish.pictureUrl}}" class="dish-image" th:alt="${dish.name}">
+          <div class="available-indicator"></div>
+          <div class="favorite-badge" th:data-dish-id="${dish.id}">
+            <i class="fas fa-heart"></i>
+          </div>
+          <div class="discount-badge">Giảm 20%</div>
         </div>
-      </div>
-    </div>
-  </div>
 
-  <div class="main-header"
-    style="background: linear-gradient(135deg, #f5f5f5 0%, #ffffff 100%); border: 1px solid rgba(238, 77, 45, 0.1); box-shadow: 0 4px 15px rgba(238, 77, 45, 0.1);">
-    <div class="container">
-      <h1 style="text-align: center; color: #ee4d2d;" class="header-title"
-        th:if="${search == null or search.isEmpty()} and ${categoryId == null} and ${menuType == null}">
-        <i class="fas fa-gift me-2"></i>Danh sách ưu đãi
-      </h1>
-      <h1 class="header-title" style="color: #ee4d2d;" th:if="${search != null and !search.isEmpty()}">
-        <i class="fas fa-search me-2"></i>Kết quả tìm kiếm cho '<span th:text="${search}"
-          style="color: #ff6633;"></span>'
-      </h1>
-      <h1 class="header-title" style="color: #ee4d2d;" th:if="${categoryId != null}">
-        <i class="fas fa-filter me-2"></i>Món ăn theo danh mục:
-        <span th:each="cat : ${categories}" th:if="${cat.id == categoryId}" th:text="${cat.name}"
-          style="color: #ff6633;"></span>
-      </h1>
-      <h1 class="header-title" style="color: #ee4d2d;" th:if="${menuType == 'best-price'}">
-        <i class="fas fa-tags me-2"></i>Món ăn giá tốt - Giảm giá cao nhất
-      </h1>
-      <h1 class="header-title" style="color: #ee4d2d;" th:if="${menuType == 'nearby'}">
-        <i class="fas fa-map-marker-alt me-2"></i>Món ngon gần bạn
-      </h1>
-      <h1 class="header-title" style="color: #ee4d2d;" th:if="${menuType == 'hot-pick'}">
-        <i class="fas fa-fire me-2"></i>Món ngon hot pick - Được yêu thích
-      </h1>
-    </div>
-  </div>
+        <div class="dish-info">
+          <h3 class="dish-name" th:text="${dish.name}">Cơm Rang Dương Châu</h3>
+          <p class="restaurant-name" th:text="${restaurantEntry.key.name}">Nhà hàng ABC</p>
 
-  <main class="container">
-
-    <div class="results-info">
-      <div class="results-count">
-        <strong>KHU VỰC</strong>
-        <span th:if="${#lists.isEmpty(dishes)}">0 kết quả</span>
-        <span th:unless="${#lists.isEmpty(dishes)}" th:text="${#lists.size(dishes)} + ' kết quả'">1086 kết quả</span>
-      </div>
-      <select class="sort-dropdown">
-        <option>Tất cả</option>
-        <option>Giá thấp đến cao</option>
-        <option>Giá cao đến thấp</option>
-        <option>Đánh giá cao</option>
-        <option>Bán chạy</option>
-      </select>
-    </div>
-
-    <div class="dishes-grid">
-      <th:block th:each="restaurantEntry : ${dishesByRestaurant}">
-        <div class="dish-card" th:each="dish : ${restaurantEntry.value}">
-          <div class="dish-image-container">
-            <img th:src="@{'/images/dish/' + ${dish.pictureUrl}}" class="dish-image" th:alt="${dish.name}">
-            <div class="available-indicator"></div>
-            <div class="favorite-badge" th:data-dish-id="${dish.id}">
-              <i class="fas fa-heart"></i>
-            </div>
-            <div class="discount-badge">Giảm 20%</div>
+          <div class="dish-price">
+            <span th:text="${#numbers.formatDecimal(dish.price, 0, 'COMMA', 0, 'POINT')} + 'đ'">25,000đ</span>
+            <span class="original-price"
+                  th:text="${#numbers.formatDecimal(dish.price * 1.25, 0, 'COMMA', 0, 'POINT')} + 'đ'">31,250đ</span>
           </div>
 
-          <div class="dish-info">
-            <h3 class="dish-name" th:text="${dish.name}">Cơm Rang Dương Châu</h3>
-            <p class="restaurant-name" th:text="${restaurantEntry.key.name}">Nhà hàng ABC</p>
-
-            <div class="dish-price">
-              <span th:text="${#numbers.formatDecimal(dish.price, 0, 'COMMA', 0, 'POINT')} + 'đ'">25,000đ</span>
-              <span class="original-price"
-                th:text="${#numbers.formatDecimal(dish.price * 1.25, 0, 'COMMA', 0, 'POINT')} + 'đ'">31,250đ</span>
-            </div>
-
-            <div class="dish-stats">
-              <div class="rating-section">
-                <div class="rating">
-                  <i class="fas fa-star"></i> 4.5
-                </div>
+          <div class="dish-stats">
+            <div class="rating-section">
+              <div class="rating">
+                <i class="fas fa-star"></i> 4.5
               </div>
-              <div class="sold-count">
-                Đã bán 150+
-              </div>
             </div>
-
-            <div class="add-to-cart-section">
-              <a th:href="@{/dish/{id}(id=${dish.id})}" class="view-btn">
-                <i class="fas fa-eye me-1"></i> Xem
-              </a>
-              <form th:action="@{/cart/add}" method="POST" class="add-to-cart-form" style="display: inline-block;">
-                <input type="hidden" name="dishId" th:value="${dish.id}" />
-                <input type="hidden" name="quantity" value="1" />
-                <button type="button" class="btn add-cart-btn add-to-cart-btn" th:data-dish-id="${dish.id}">
-                  <i class="fas fa-plus"></i> Thêm
-                </button>
-              </form>
+            <div class="sold-count">
+              Đã bán 150+
             </div>
           </div>
+
+          <div class="add-to-cart-section">
+            <a th:href="@{/dish/{id}(id=${dish.id})}" class="view-btn">
+              <i class="fas fa-eye me-1"></i> Xem
+            </a>
+            <form th:action="@{/cart/add}" method="POST" class="add-to-cart-form" style="display: inline-block;">
+              <input type="hidden" name="dishId" th:value="${dish.id}" />
+              <input type="hidden" name="quantity" value="1" />
+              <button type="button" class="btn add-cart-btn add-to-cart-btn" th:data-dish-id="${dish.id}">
+                <i class="fas fa-plus"></i> Thêm
+              </button>
+            </form>
+          </div>
         </div>
-      </th:block>
-    </div>
+      </div>
+    </th:block>
+  </div>
 
-    <div th:if="${#maps.isEmpty(dishesByRestaurant)}" class="empty-state">
-      <i class="fas fa-utensils"></i>
-      <h4>Không tìm thấy món ăn phù hợp</h4>
-      <p>Thử thay đổi bộ lọc hoặc tìm kiếm với từ khóa khác</p>
-      <button class="btn btn-primary">
-        <i class="fas fa-redo me-2"></i>Tìm kiếm lại
-      </button>
-    </div>
-  </main>
+  <div th:if="${#maps.isEmpty(dishesByRestaurant)}" class="empty-state">
+    <i class="fas fa-utensils"></i>
+    <h4>Không tìm thấy món ăn phù hợp</h4>
+    <p>Thử thay đổi bộ lọc hoặc tìm kiếm với từ khóa khác</p>
+    <button class="btn btn-primary">
+      <i class="fas fa-redo me-2"></i>Tìm kiếm lại
+    </button>
+  </div>
+</main>
 
-  <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 1050">
-    <div id="add-to-cart-toast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
-      <div class="toast-header bg-success text-white">
-        <i class="fas fa-shopping-cart me-2"></i>
-        <strong class="me-auto">Thành công</strong>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"></button>
-      </div>
-      <div class="toast-body">
-        Đã thêm món ăn vào giỏ hàng!
-      </div>
+<div class="position-fixed bottom-0 end-0 p-3" style="z-index: 1050">
+  <div id="add-to-cart-toast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+    <div class="toast-header bg-success text-white">
+      <i class="fas fa-shopping-cart me-2"></i>
+      <strong class="me-auto">Thành công</strong>
+      <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"></button>
     </div>
-
-    <div id="favorite-toast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
-      <div class="toast-header bg-danger text-white">
-        <i class="fas fa-heart me-2"></i>
-        <strong class="me-auto">Yêu thích</strong>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"></button>
-      </div>
-      <div class="toast-body">
-        Đã thêm món ăn vào danh sách yêu thích!
-      </div>
+    <div class="toast-body">
+      Đã thêm món ăn vào giỏ hàng!
     </div>
   </div>
 
-  <nav th:if="${dishesPage.totalPages > 1}">
-    <ul class="pagination">
-      <li class="page-item" th:classappend="${dishesPage.first} ? 'disabled'">
-        <a class="page-link"
-          th:href="@{/home(page=${dishesPage.number - 1}, search=${search}, category=${categoryId}, menu=${menuType})}">
-          <i class="fas fa-angle-left"></i>
-        </a>
-      </li>
+  <div id="favorite-toast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+    <div class="toast-header bg-danger text-white">
+      <i class="fas fa-heart me-2"></i>
+      <strong class="me-auto">Yêu thích</strong>
+      <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"></button>
+    </div>
+    <div class="toast-body">
+      Đã thêm món ăn vào danh sách yêu thích!
+    </div>
+  </div>
+</div>
 
-      <li class="page-item" th:each="i : ${#numbers.sequence(0, dishesPage.totalPages - 1)}"
-        th:classappend="${i == dishesPage.number} ? 'active'">
-        <a class="page-link" th:href="@{/home(page=${i}, search=${search}, category=${categoryId}, menu=${menuType})}"
-          th:text="${i + 1}">1</a>
-      </li>
+<nav th:if="${dishesPage.totalPages > 1}" aria-label="Page navigation">
+  <ul class="pagination justify-content-center">
+    <li class="page-item" th:classappend="${dishesPage.first} ? 'disabled'">
+      <a class="page-link" th:href="@{/(page=${dishesPage.number - 1}, search=${search}, categoryId=${categoryId}, menuType=${menuType}, couponCode=${couponCode}, sortBy=${sortBy})}">
+        <span>&laquo;</span>
+      </a>
+    </li>
 
-      <li class="page-item" th:classappend="${dishesPage.last} ? 'disabled'">
-        <a class="page-link"
-          th:href="@{/home(page=${dishesPage.number + 1}, search=${search}, category=${categoryId}, menu=${menuType})}">
-          <i class="fas fa-angle-right"></i>
-        </a>
-      </li>
-    </ul>
-  </nav>
+    <li class="page-item" th:each="i : ${#numbers.sequence(0, dishesPage.totalPages - 1)}" th:classappend="${i == dishesPage.number} ? 'active'">
+      <a class="page-link" th:href="@{/(page=${i}, search=${search}, categoryId=${categoryId}, menuType=${menuType}, couponCode=${couponCode}, sortBy=${sortBy})}" th:text="${i + 1}"></a>
+    </li>
 
-
-  <footer class="mt-5 bg-light pt-4 pb-4 border-top">
-    <div class="container">
-      <div class="row">
-        <div class="col-md-3">
-          <h6>Công ty</h6>
-          <ul class="list-unstyled small">
-            <li>Giới thiệu</li>
-            <li>Trung tâm Trợ giúp</li>
-            <li>Quy chế</li>
-            <li>Điều khoản sử dụng</li>
-            <li>Bảo mật thông tin</li>
-          </ul>
-        </div>
-        <div class="col-md-3">
-          <h6>Ứng dụng FoodDelivery</h6>
-          <div class="d-flex gap-2">
-            <img src="/images/logo/appstore.png" alt="App Store" height="40">
-            <img src="/images/logo/googleplay.png" alt="Google Play" height="40">
-          </div>
-        </div>
-        <div class="col-md-6 text-end small">
-          <p>FoodDelivery © 2025</p>
-          <p>Công ty CP Foody - Địa chỉ: 244 Cống Quỳnh, P. Phạm Ngũ Lão, Q.1, TP.HCM</p>
+    <li class="page-item" th:classappend="${dishesPage.last} ? 'disabled'">
+      <a class="page-link" th:href="@{/(page=${dishesPage.number + 1}, search=${search}, categoryId=${categoryId}, menuType=${menuType}, couponCode=${couponCode}, sortBy=${sortBy})}">
+        <span>&raquo;</span>
+      </a>
+    </li>
+  </ul>
+</nav>
+<footer class="mt-5 bg-light pt-4 pb-4 border-top">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-3">
+        <h6>Công ty</h6>
+        <ul class="list-unstyled small">
+          <li>Giới thiệu</li>
+          <li>Trung tâm Trợ giúp</li>
+          <li>Quy chế</li>
+          <li>Điều khoản sử dụng</li>
+          <li>Bảo mật thông tin</li>
+        </ul>
+      </div>
+      <div class="col-md-3">
+        <h6>Ứng dụng FoodDelivery</h6>
+        <div class="d-flex gap-2">
+          <img src="/images/logo/appstore.png" alt="App Store" height="40">
+          <img src="/images/logo/googleplay.png" alt="Google Play" height="40">
         </div>
       </div>
+      <div class="col-md-6 text-end small">
+        <p>FoodDelivery © 2025</p>
+        <p>Công ty CP Foody - Địa chỉ: 244 Cống Quỳnh, P. Phạm Ngũ Lão, Q.1, TP.HCM</p>
+      </div>
     </div>
-  </footer>
+  </div>
+</footer>
 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-  <script th:src="@{/js/cart/cart.js}"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script th:src="@{/js/cart/cart.js}"></script>
 
-  <script>
-    // Favorite functionality
-    document.querySelectorAll('.favorite-badge').forEach(badge => {
-      badge.addEventListener('click', function (e) {
-        e.preventDefault();
-        e.stopPropagation();
+<script>
+  // Favorite functionality
+  document.querySelectorAll('.favorite-badge').forEach(badge => {
+    badge.addEventListener('click', function (e) {
+      e.preventDefault();
+      e.stopPropagation();
 
-        // Toggle favorite state
-        const heart = this.querySelector('i');
-        if (heart.classList.contains('fas')) {
-          heart.classList.remove('fas');
-          heart.classList.add('far');
-          this.style.background = 'rgba(108, 117, 125, 0.8)';
-        } else {
-          heart.classList.remove('far');
-          heart.classList.add('fas');
-          this.style.background = 'rgba(238, 77, 45, 0.9)';
+      // Toggle favorite state
+      const heart = this.querySelector('i');
+      if (heart.classList.contains('fas')) {
+        heart.classList.remove('fas');
+        heart.classList.add('far');
+        this.style.background = 'rgba(108, 117, 125, 0.8)';
+      } else {
+        heart.classList.remove('far');
+        heart.classList.add('fas');
+        this.style.background = 'rgba(238, 77, 45, 0.9)';
 
-          // Show favorite toast
-          const toast = new bootstrap.Toast(document.getElementById('favorite-toast'));
-          toast.show();
-        }
-      });
+        // Show favorite toast
+        const toast = new bootstrap.Toast(document.getElementById('favorite-toast'));
+        toast.show();
+      }
+    });
+  });
+
+  // Dish card click handler (except for buttons)
+  document.querySelectorAll('.dish-card').forEach(card => {
+    card.addEventListener('click', function (e) {
+      // Don't navigate if clicking on buttons or favorite badge
+      if (e.target.closest('.add-cart-btn, .view-btn, .favorite-badge')) {
+        return;
+      }
+
+      // Get dish ID and navigate to detail page
+      const dishId = this.querySelector('[data-dish-id]')?.getAttribute('data-dish-id');
+      if (dishId) {
+        window.location.href = `/dish/${dishId}`;
+      }
+    });
+  });
+
+  // Category filter functionality
+  document.querySelectorAll('.category-item').forEach(item => {
+    item.addEventListener('click', function (e) {
+      e.preventDefault();
+
+      document.querySelectorAll('.category-item').forEach(cat => cat.classList.remove('active'));
+      this.classList.add('active');
+
+      const categoryId = this.getAttribute('data-category-id');
+      window.location.href = `/?categoryId=${categoryId}`;
+    });
+  });
+
+  // ===== JAVASCRIPT MỚI CHO NÚT TRƯỢT ƯU ĐÃI =====
+  document.addEventListener('DOMContentLoaded', function() {
+    const container = document.getElementById('offer-container');
+    const prevBtn = document.getElementById('offer-prev-btn');
+    const nextBtn = document.getElementById('offer-next-btn');
+
+    if (!container) return;
+
+    const checkScrollButtons = () => {
+      // Nút trái
+      prevBtn.disabled = container.scrollLeft <= 0;
+      // Nút phải (scrollWidth là tổng chiều rộng, clientWidth là chiều rộng nhìn thấy)
+      nextBtn.disabled = container.scrollLeft >= (container.scrollWidth - container.clientWidth - 1);
+    };
+
+    const scrollAmount = 300; // Khoảng cách cuộn mỗi lần nhấn
+
+    nextBtn.addEventListener('click', () => {
+      container.scrollLeft += scrollAmount;
     });
 
-    // Dish card click handler (except for buttons)
-    document.querySelectorAll('.dish-card').forEach(card => {
-      card.addEventListener('click', function (e) {
-        // Don't navigate if clicking on buttons or favorite badge
-        if (e.target.closest('.add-cart-btn, .view-btn, .favorite-badge')) {
-          return;
-        }
-
-        // Get dish ID and navigate to detail page
-        const dishId = this.querySelector('[data-dish-id]')?.getAttribute('data-dish-id');
-        if (dishId) {
-          window.location.href = `/dish/${dishId}`;
-        }
-      });
+    prevBtn.addEventListener('click', () => {
+      container.scrollLeft -= scrollAmount;
     });
+    container.addEventListener('scroll', checkScrollButtons);
+    checkScrollButtons();
+    window.addEventListener('resize', checkScrollButtons);
+  });
 
-    // Category filter functionality
-    document.querySelectorAll('.category-item').forEach(item => {
-      item.addEventListener('click', function (e) {
-        e.preventDefault();
-
-        document.querySelectorAll('.category-item').forEach(cat => cat.classList.remove('active'));
-        this.classList.add('active');
-
-        const categoryId = this.getAttribute('data-category-id');
-        window.location.href = `/home?category=${categoryId}`;
-      });
-    });
-
-    // Sort dropdown functionality
-    document.querySelector('.sort-dropdown').addEventListener('change', function () {
-      console.log('Sort by:', this.value);
-      // Implement sorting logic here
-    });
-
-  </script>
+</script>
 
 </body>
 

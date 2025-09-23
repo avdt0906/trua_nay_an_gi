@@ -16,6 +16,8 @@ import com.codegym.project_module_5.service.impl.user_service_impl.EmailService;
 import com.codegym.project_module_5.service.restaurant_service.IRestaurantService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -220,6 +222,10 @@ public class RestaurantService implements IRestaurantService {
     public Optional<Restaurant> findRestaurantIdByUserId(Long userId) {
         return iRestaurantRepository.findRestaurantIdByUserId(userId);
     }
+
+    @Override
+    public Page<Restaurant> findByCouponCodeAndIsAcceptedTrue(Pageable pageable, String couponCode) {
+        return iRestaurantRepository.findByCouponCodeAndIsAcceptedTrue(pageable, couponCode);
 
     @Override
     public void selectFeaturedDish(Long restaurantId, Long dishId) {
