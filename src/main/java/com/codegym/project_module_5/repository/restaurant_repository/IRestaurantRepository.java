@@ -16,18 +16,11 @@ import java.util.Optional;
 public interface IRestaurantRepository extends JpaRepository<Restaurant, Long> {
     @Query("SELECT r FROM Restaurant r WHERE r.user.username = :username")
     Optional<Restaurant> findByUsername(@Param("username") String username);
-    
     @Query("SELECT c FROM Coupon c WHERE c.restaurant.id = :restaurantId AND c.isAvailable = true")
     List<Coupon> findCouponsByRestaurantId(@Param("restaurantId") Long restaurantId);
-
     List<Restaurant> findByIsApprovedIsNull();
     List<Restaurant> findByPartnerRequestTrueAndIsLongTermPartnerFalse();
-
     Optional<Restaurant> findRestaurantIdByUserId(Long userId);
-
-
     @Query("SELECT DISTINCT c.restaurant FROM Coupon c WHERE c.name = :couponCode AND c.restaurant.isApproved = true")
     Page<Restaurant> findByCouponCodeAndIsAcceptedTrue(Pageable pageable, @Param("couponCode") String couponCode);
-
-
 }

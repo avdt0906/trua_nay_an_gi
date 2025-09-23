@@ -92,7 +92,7 @@
               <td th:text="${order.restaurant.name}"></td>
               <td th:text="${order.shipper != null ? order.shipper.name : 'Chưa gán'}"></td>
               <td th:text="${order.orderStatus.name}"></td>
-              <td th:text="${#numbers.formatDecimal(order.totalPrice,1,'COMMA',2,'POINT')}"></td>
+              <td th:text="|${#numbers.formatDecimal(order.totalPrice,0,'COMMA',0,'POINT')} ₫|"></td>
               <td th:text="${#temporals.format(order.createdAt,'dd/MM/yyyy HH:mm')}"></td>
             </tr>
           </tbody>

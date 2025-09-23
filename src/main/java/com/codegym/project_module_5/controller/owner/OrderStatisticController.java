@@ -63,8 +63,21 @@ public class OrderStatisticController {
         String username = getCurrentUsername();
         Optional<User> user = userService.findByUsername(username);
         Optional<Restaurant> restaurantOptional = restaurantService.findRestaurantIdByUserId(user.get().getId());
-        List<Orders> orders = (List<Orders>) orderService.findAllByRestaurantId(restaurantOptional.get().getId());
+        Iterable<Orders> orders = orderService.findAllByRestaurantId(restaurantOptional.get().getId());
         mv.addObject("ordersList", orders);
+        return mv;
+    }
+
+    @GetMapping("/update/{orderId}")
+    public ModelAndView updateOrderStatus(@PathVariable("orderId") Long orderId) {
+        ModelAndView mv = new ModelAndView("redirect:/restaurants/orders/list");
+        String username = getCurrentUsername();
+        Optional<User> user = userService.findByUsername(username);
+        Optional<Restaurant> restaurantOptional = restaurantService.findRestaurantIdByUserId(user.get().getId());
+        Optional<Orders> ordersOptional = orderService.findById(orderId);
+        if (ordersOptional.get().getRestaurant().getId() == restaurantOptional.get().getId()){
+            orderService.updateOrderStatus(orderId);
+        }
         return mv;
     }
 
@@ -81,6 +94,14 @@ public class OrderStatisticController {
         ModelAndView modelAndView = new ModelAndView("owner/order/order_by_user");
         List<OrderDetail> orderDetailList = orderDetailService.findAllByOrder_User_Id(userId);
         modelAndView.addObject("ordersList", orderDetailList);
+        return modelAndView;
+    }
+
+    @GetMapping("/findAllByCoupon/{coupon_id}")
+    public ModelAndView showOrderStatisticByCoupon(@PathVariable("coupon_id") Long couponId) {
+        ModelAndView modelAndView = new ModelAndView("owner/order/order_by_coupon");
+        List<OrderDetail> couponsList = orderDetailService.findAllByOrder_Coupon_Id(couponId);
+        modelAndView.addObject("couponsList", couponsList);
         return modelAndView;
     }
 }

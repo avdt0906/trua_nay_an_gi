@@ -222,8 +222,17 @@ public class RestaurantService implements IRestaurantService {
     public Optional<Restaurant> findRestaurantIdByUserId(Long userId) {
         return iRestaurantRepository.findRestaurantIdByUserId(userId);
     }
+
     @Override
     public Page<Restaurant> findByCouponCodeAndIsAcceptedTrue(Pageable pageable, String couponCode) {
         return iRestaurantRepository.findByCouponCodeAndIsAcceptedTrue(pageable, couponCode);
+
+    @Override
+    public void selectFeaturedDish(Long restaurantId, Long dishId) {
+       Restaurant restaurant = iRestaurantRepository.findById(restaurantId)
+                .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy nhà hàng"));
+
+        restaurant.setFeaturedDishId(dishId);  
+        iRestaurantRepository.save(restaurant);
     }
 }
