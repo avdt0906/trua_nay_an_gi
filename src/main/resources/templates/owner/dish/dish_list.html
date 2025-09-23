@@ -256,6 +256,40 @@
             justify-content: center;
         }
 
+
+        .custom-pagination .page-item .page-link {
+            border-radius: 50%;
+            margin: 0 5px;
+            color: #007bff;
+            border: 1px solid #dee2e6;
+            width: 40px;
+            height: 40px;
+            text-align: center;
+            line-height: 38px;
+            transition: all 0.3s ease;
+        }
+
+        .custom-pagination .page-item .page-link:hover {
+            background-color: #007bff;
+            color: #fff;
+            border-color: #007bff;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+        }
+
+        .custom-pagination .page-item.active .page-link {
+            background-color: #007bff;
+            border-color: #007bff;
+            color: #fff;
+            font-weight: bold;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+        }
+
+        .custom-pagination .page-item.disabled .page-link {
+            background-color: #f8f9fa;
+            color: #6c757d;
+            border-color: #dee2e6;
+            cursor: not-allowed;
+        }
     </style>
 </head>
 <body>
@@ -335,12 +369,6 @@
                                         </tbody>
                                     </table>
                                 </div>
-                                <a class="btn btn-primary" th:if="${dishes.hasPrevious()}"
-                                   th:href="@{/restaurants/dishes/dish_list(page=${dishes.number - 1})}">Previous</a>
-                                <span th:text="${dishes.number + 1}"></span> | <span th:text="${dishes.totalPages}"></span>
-                                <a class="btn btn-primary" th:if="${dishes.hasNext()}"
-                                   th:href="@{/restaurants/dishes/dish_list(page=${dishes.number + 1})}">Next</a>
-
                                 <div class="text-center py-5" th:if="${dishes == null || dishes.isEmpty()}">
                                     <i class="fas fa-utensil-spoon fa-4x text-muted mb-3"></i>
                                     <h4 class="text-muted">Chưa có món ăn nào</h4>
@@ -355,6 +383,41 @@
                 </div>
             </div>
         </div>
+
+        <nav aria-label="Dish pagination">
+            <ul class="pagination justify-content-center custom-pagination">
+                <!-- Nút Previous -->
+                <li class="page-item" th:classappend="${!dishes.hasPrevious()} ? 'disabled'">
+                    <a class="page-link"
+                       th:if="${dishes.hasPrevious()}"
+                       th:href="@{/restaurants/dishes/dish_list(page=${dishes.number - 1})}">
+                        &laquo;
+                    </a>
+                    <span class="page-link" th:unless="${dishes.hasPrevious()}">&laquo;</span>
+                </li>
+
+                <li class="page-item"
+                    th:each="pageNum : ${#numbers.sequence(0, dishes.totalPages - 1)}"
+                    th:classappend="${pageNum} == ${dishes.number}">
+                    <a class="page-link"
+                       th:href="@{/restaurants/dishes/dish_list(page=${pageNum})}"
+                       th:text="${pageNum + 1}">
+                    </a>
+                </li>
+
+                <!-- Nút Next -->
+                <li class="page-item" th:classappend="${!dishes.hasNext()} ? 'disabled'">
+                    <a class="page-link"
+                       th:if="${dishes.hasNext()}"
+                       th:href="@{/restaurants/dishes/dish_list(page=${dishes.number + 1})}">
+                        &raquo;
+                    </a>
+                    <span class="page-link" th:unless="${dishes.hasNext()}">&raquo;</span>
+                </li>
+            </ul>
+        </nav>
+
+
     </div>
 </div>
 
