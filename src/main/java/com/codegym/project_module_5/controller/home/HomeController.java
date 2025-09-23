@@ -31,7 +31,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Controller
-@RequestMapping
+@RequestMapping("")
 public class HomeController {
     @Autowired
     private IUserService iUserService;
@@ -130,4 +130,10 @@ public class HomeController {
 
         return "/homepage/index";
     }
+
+    @GetMapping ("/homepage")
+    public String home() {
+        return "redirect:/";
+    }
+
 }
