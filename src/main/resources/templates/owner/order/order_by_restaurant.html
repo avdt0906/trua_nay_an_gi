@@ -34,10 +34,12 @@
         .status-filter button:nth-child(1) {
             background-color: #28a745; /* Đã giao */
         }
+
         .status-filter button:nth-child(2) {
             background-color: #ffc107; /* Đang giao */
             color: #212529;
         }
+
         .status-filter button:nth-child(3) {
             background-color: #dc3545; /* Chờ xác nhận */
         }
@@ -69,18 +71,49 @@
             padding: 10px;
             font-size: 0.9rem;
         }
+
         .table tbody td a {
             text-decoration: none;
             color: #007bff;
         }
+
         .table tbody td a:hover {
-                color: #0056b3;
-                text-decoration: underline;
+            color: #0056b3;
+            text-decoration: underline;
         }
 
         .table tbody tr:hover {
             background-color: #f1f3f5;
             transition: background-color 0.2s ease;
+        }
+
+        /* Khi không có voucher */
+        .no-voucher {
+            color: #dc3545;      /* đỏ cảnh báo */
+            font-style: italic;
+            font-weight: 500;
+        }
+
+        /* Nút voucher */
+        .voucher-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #ffc107, #ffb300); /* vàng gradient */
+            color: #fff;
+            font-size: 1rem;
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .voucher-link:hover {
+            background: linear-gradient(135deg, #ffca2c, #e0a800); /* vàng đậm hơn khi hover */
+            transform: scale(1.15) rotate(-5deg); /* phóng to và nghiêng nhẹ cho nổi bật */
+            box-shadow: 0 5px 12px rgba(0, 0, 0, 0.3);
         }
     </style>
 </head>
@@ -110,6 +143,7 @@
                                 <td>Địa chỉ</td>
                                 <td>Ngày đặt</td>
                                 <td>Trạng thái</td>
+                                <td>Voucher</td>
                                 <td>Chuyển trạng thái</td>
                             </tr>
                             </thead>
@@ -121,6 +155,15 @@
                                 <td th:text="${order.getCreatedAt()}"></td>
                                 <td th:text="${order.getOrderStatus().getName()}"></td>
                                 <td>
+    <span class="no-voucher" th:if="${order.getCoupon() == null}">
+        món ăn này không có voucher
+    </span>
+                                    <a class="voucher-link" th:if="${order.getCoupon() != null}"
+                                       th:href="@{'/restaurants/orders/findAllByCoupon/' + ${order.getId()}}">
+                                        <i class="fas fa-ticket-alt"></i>
+                                    </a>
+                                </td>
+
                                     <!-- Nút mở next status modal -->
                                     <button th:if="${order.getOrderStatus().getId() == 1 ||
                                             order.getOrderStatus().getId() == 2 || order.getOrderStatus().getId() == 3}"
