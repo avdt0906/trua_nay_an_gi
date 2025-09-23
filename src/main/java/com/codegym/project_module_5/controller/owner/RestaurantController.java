@@ -107,20 +107,22 @@ public class RestaurantController {
         double totalRevenue = 0.0;
 
         for (Orders order : orders) {
-            System.out.println("Order ID: " + order.getId() + ", Status: " + order.getOrderStatus().getName());
+            String status = order.getOrderStatus().getName();
 
-            double orderAmount = 0;
-            List<OrderDetail> details = (List<OrderDetail>) orderDetailRepository.findAllByOrderId(order.getId());
+            if (status.equals("Đã xác nhận")) {
+                double orderAmount = 0;
+                List<OrderDetail> details = (List<OrderDetail>) orderDetailRepository.findAllByOrderId(order.getId());
 
-            for (OrderDetail detail : details) {
-                double itemTotal = detail.getDish().getPrice() * detail.getQuantity();
-                orderAmount += itemTotal;
+                for (OrderDetail detail : details) {
+                    double itemTotal = detail.getDish().getPrice() * detail.getQuantity();
+                    orderAmount += itemTotal;
+                }
+
+                double netAmount = orderAmount - 15000;
+                double commission = netAmount >= 200_000_000 ? 0.10 : netAmount <= 100_000_000 ? 0.05 : 0.075;
+                double orderRevenue = netAmount * (1 - commission);
+                totalRevenue += orderRevenue;
             }
-
-            double netAmount = orderAmount - 15000;
-            double commission = netAmount >= 200_000_000 ? 0.10 : netAmount <= 100_000_000 ? 0.05 : 0.075;
-            double orderRevenue = netAmount * (1 - commission);
-            totalRevenue += orderRevenue;
 
         }
 
