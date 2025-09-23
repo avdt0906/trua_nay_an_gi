@@ -3,6 +3,7 @@ package com.codegym.project_module_5.controller.owner;
 import com.codegym.project_module_5.model.dto.request.RestaurantRegisterRequest;
 import com.codegym.project_module_5.model.restaurant_model.Restaurant;
 import com.codegym.project_module_5.service.restaurant_service.IRestaurantService;
+import com.codegym.project_module_5.service.restaurant_service.IWalletWithdrawService;
 import com.codegym.project_module_5.repository.order_repository.IOrderRepository;
 import com.codegym.project_module_5.repository.order_repository.IOrderDetailRepository;
 import com.codegym.project_module_5.model.order_model.Orders;
@@ -18,11 +19,15 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
+import java.time.LocalDate;
 import java.util.Optional;
 
 @Controller
@@ -30,6 +35,9 @@ import java.util.Optional;
 public class RestaurantController {
     @Value("${mapbox.api.key}")
     private String mapboxApiKey;
+
+    @Autowired
+    private IWalletWithdrawService walletWithdrawService;
 
     @Autowired
     private IRestaurantService restaurantService;
@@ -53,7 +61,6 @@ public class RestaurantController {
             BindingResult bindingResult,
             Principal principal,
             Model model) {
-        
 
         if (bindingResult.hasErrors()) {
             model.addAttribute("restaurant", request);
@@ -128,4 +135,83 @@ public class RestaurantController {
 
         return totalRevenue;
     }
+
+    @GetMapping("/wallet")
+    public String viewWallet(Model model, Principal principal) {
+
+        String username = principal.getName();
+
+        Restaurant restaurant = restaurantService.findByUsername(username)
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "Không tìm thấy nhà hàng cho user: " + username));
+
+        model.addAttribute("restaurant", restaurant);
+        model.addAttribute("requests",
+                walletWithdrawService.getRequestsByRestaurant(restaurant.getId()));
+
+        return "owner/wallet/walletindex";
+    }
+
+    @PostMapping("/wallet/withdraw")
+    public String createWithdrawRequest(@RequestParam("amount") Double amount,
+            @RequestParam(value = "note", required = false) String note,
+            Principal principal,
+            RedirectAttributes redirect) {
+        Restaurant restaurant = restaurantService
+                .findByUsername(getCurrentUsername())
+                .orElseThrow(() -> new RuntimeException("Restaurant not found"));
+
+        // Tạo yêu cầu rút tiền
+        walletWithdrawService.createWithdrawRequest(restaurant.getId(), amount, note);
+
+        redirect.addFlashAttribute("success", "Đã gửi yêu cầu rút tiền!");
+        return "redirect:/restaurants/wallet";
+    }
+
+    @GetMapping("/contract")
+    public String showContract(Model model) {
+        Restaurant restaurant = restaurantService
+                .findByUsername(getCurrentUsername())
+                .orElseThrow(() -> new RuntimeException("Restaurant not found"));
+
+        model.addAttribute("restaurant", restaurant);
+
+        Double monthlyRevenue = restaurantService.getMonthlyRevenue(restaurant.getId());
+        model.addAttribute("monthlyRevenue", monthlyRevenue);
+        boolean canTerminate = monthlyRevenue >= 100_000_000;
+        model.addAttribute("canTerminate", canTerminate);
+
+        return "owner/restaurant/contract";
+    }
+
+    @GetMapping("/monthlyrevenue")
+    public String viewMonthlyRevenue(Model model) {
+        Restaurant restaurant = restaurantService
+                .findByUsername(getCurrentUsername())
+                .orElseThrow(() -> new RuntimeException("Restaurant not found"));
+
+        Double monthlyRevenue = restaurantService.getMonthlyRevenue(restaurant.getId());
+        model.addAttribute("monthlyRevenue", monthlyRevenue);
+
+       
+        List<Orders> orders = orderRepository.findAllByRestaurantId(restaurant.getId());
+        model.addAttribute("orders", orders);
+
+        return "owner/restaurant/monthlyrevenue"; // Tạo template monthlyRevenue.html
+    }
+
+    @PostMapping("/terminateContract")
+    public String terminateContract(RedirectAttributes redirectAttributes) {
+        Restaurant restaurant = restaurantService
+                .findByUsername(getCurrentUsername())
+                .orElseThrow(() -> new RuntimeException("Restaurant not found"));
+        try {
+            restaurantService.terminateContract(restaurant.getId());
+            redirectAttributes.addFlashAttribute("success", "Thanh lý hợp đồng thành công!");
+        } catch (RuntimeException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+        }
+        return "redirect:/restaurants/dashboard"; // quay lại trang dashboard
+    }
+
 }

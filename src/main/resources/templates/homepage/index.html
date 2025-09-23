@@ -214,7 +214,7 @@
           <div th:each="b,iter : ${featuredBanners}"
                class="carousel-item"
                th:classappend="${iter.index == 0} ? ' active'">
-            <a th:href="@{/home(menu='hot-pick')}">
+            <a th:href="@{/dish/{id}(id=${b.dish.id})}">
               <img th:src="@{'/images/dish/' + ${b.dish.pictureUrl}}"
                    class="d-block w-100 banner-img"
                    th:alt="${b.dish.name}">
@@ -245,7 +245,7 @@
           <div th:each="b,iter : ${promotionBanners}"
                class="carousel-item"
                th:classappend="${iter.index == 0} ? ' active'">
-            <a th:href="@{/home(menu='best-price')}">
+            <a th:href="@{/dish/{id}(id=${b.dish.id})}">
               <img th:src="@{'/images/dish/' + ${b.dish.pictureUrl}}"
                    class="d-block w-100 banner-img"
                    th:alt="${b.dish.name}">

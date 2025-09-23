@@ -4,7 +4,6 @@ import com.codegym.project_module_5.model.evaluate_model.Evaluate;
 import com.codegym.project_module_5.model.restaurant_model.Category;
 import com.codegym.project_module_5.model.restaurant_model.Dish;
 import com.codegym.project_module_5.model.restaurant_model.Restaurant;
-import com.codegym.project_module_5.repository.restaurant_repository.ICategoryRepository;
 import com.codegym.project_module_5.service.impl.evaluate_service_impl.EvaluateService;
 import com.codegym.project_module_5.service.impl.restaurant_service_impl.CategoryService;
 import com.codegym.project_module_5.service.impl.restaurant_service_impl.DishService;
@@ -63,4 +62,6 @@ public class RestaurantClientController {
         model.addAttribute("dishes", dishes);
         return "client/restaurant_client";
     }
+
+
 }

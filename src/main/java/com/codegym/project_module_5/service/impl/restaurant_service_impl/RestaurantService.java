@@ -21,6 +21,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -104,7 +106,6 @@ public class RestaurantService implements IRestaurantService {
             restaurant.setRlongitude(request.getRlongitude());
             restaurant.setIsLongTermPartner(false);
 
-
             Restaurant savedRestaurant = iRestaurantRepository.save(restaurant);
             log.info("Restaurant created successfully with ID: {}", savedRestaurant.getId());
 
@@ -136,7 +137,6 @@ public class RestaurantService implements IRestaurantService {
     public List<Coupon> getCouponsByRestaurantId(Long restaurantId) {
         return iRestaurantRepository.findCouponsByRestaurantId(restaurantId);
     }
-
 
     @Override
     public Restaurant toggleLockStatus(Long restaurantId) {
@@ -193,7 +193,8 @@ public class RestaurantService implements IRestaurantService {
         for (Orders order : orders) {
             System.out.println("Order ID: " + order.getId() + ", Status: " + order.getOrderStatus().getName());
 
-            if ("COMPLETED".equals(order.getOrderStatus().getName()) || "DELIVERED".equals(order.getOrderStatus().getName())) {
+            if ("COMPLETED".equals(order.getOrderStatus().getName())
+                    || "DELIVERED".equals(order.getOrderStatus().getName())) {
                 double orderAmount = 0.0;
                 List<OrderDetail> details = (List<OrderDetail>) orderDetailRepository.findAllByOrderId(order.getId());
                 System.out.println("Order details count: " + details.size());
@@ -201,7 +202,8 @@ public class RestaurantService implements IRestaurantService {
                 for (OrderDetail detail : details) {
                     double itemTotal = detail.getDish().getPrice() * detail.getQuantity();
                     orderAmount += itemTotal;
-                    System.out.println("Dish: " + detail.getDish().getName() + ", Price: " + detail.getDish().getPrice() + ", Qty: " + detail.getQuantity() + ", Total: " + itemTotal);
+                    System.out.println("Dish: " + detail.getDish().getName() + ", Price: " + detail.getDish().getPrice()
+                            + ", Qty: " + detail.getQuantity() + ", Total: " + itemTotal);
                 }
 
                 double netAmount = orderAmount - 15000;
@@ -209,7 +211,8 @@ public class RestaurantService implements IRestaurantService {
                 double orderRevenue = netAmount * (1 - commission);
                 totalRevenue += orderRevenue;
 
-                System.out.println("Order Amount: " + orderAmount + ", Net Amount: " + netAmount + ", Commission: " + commission + ", Order Revenue: " + orderRevenue);
+                System.out.println("Order Amount: " + orderAmount + ", Net Amount: " + netAmount + ", Commission: "
+                        + commission + ", Order Revenue: " + orderRevenue);
             }
         }
 
@@ -227,12 +230,44 @@ public class RestaurantService implements IRestaurantService {
     public Page<Restaurant> findByCouponCodeAndIsAcceptedTrue(Pageable pageable, String couponCode) {
         return iRestaurantRepository.findByCouponCodeAndIsAcceptedTrue(pageable, couponCode);
     }
+
     @Override
     public void selectFeaturedDish(Long restaurantId, Long dishId) {
-       Restaurant restaurant = iRestaurantRepository.findById(restaurantId)
+        Restaurant restaurant = iRestaurantRepository.findById(restaurantId)
                 .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy nhà hàng"));
 
         restaurant.setFeaturedDishId(dishId);
         iRestaurantRepository.save(restaurant);
     }
+
+    @Override
+    public Double getMonthlyRevenue(Long restaurantId) {
+        LocalDateTime startOfMonth = LocalDate.now().withDayOfMonth(1).atStartOfDay();
+        LocalDateTime endOfMonth = LocalDate.now()
+                .withDayOfMonth(LocalDate.now().lengthOfMonth())
+                .atTime(23, 59, 59);
+
+        Double revenue = orderRepository.sumTotalPriceByRestaurantAndCreatedAtBetween(
+                restaurantId, startOfMonth, endOfMonth);
+
+        return revenue != null ? revenue : 0.0;
+    }
+
+    @Override
+    public void terminateContract(Long restaurantId) {
+        Restaurant restaurant = iRestaurantRepository.findById(restaurantId)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy nhà hàng"));
+
+        Double revenue = getMonthlyRevenue(restaurantId);
+
+        if (revenue >= 100_000_000) { // so sánh với 100 triệu
+            restaurant.setContractTerminated(true);
+            restaurant.setWallet(0.0); // rút hết tiền
+            iRestaurantRepository.save(restaurant); // ✅ Lưu lại database
+        } else {
+            throw new RuntimeException("Doanh thu 1 tháng chưa đủ 100 triệu, không thể thanh lý hợp đồng");
+        }
+    }
+    
+
 }

@@ -23,5 +23,7 @@ public interface IRestaurantService extends IGeneralService<Restaurant> {
     Optional<Restaurant> findRestaurantIdByUserId(Long userId);
     Page<Restaurant> findByCouponCodeAndIsAcceptedTrue(Pageable pageable, String couponCode);
     void selectFeaturedDish(Long restaurantId, Long dishId);
+    Double getMonthlyRevenue(Long restaurantId);
+    void terminateContract(Long restaurantId);
 }
 
