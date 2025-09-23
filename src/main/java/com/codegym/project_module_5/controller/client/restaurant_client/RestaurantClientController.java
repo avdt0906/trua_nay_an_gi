@@ -41,7 +41,13 @@ public class RestaurantClientController {
         Optional<Restaurant> restaurant = restaurantService.findById(id);
         Iterable<Category> categories = categoryService.findAll();
         Iterable<Evaluate> evaluates = evaluateService.findAll();
-
+        Dish bannerDish = null;
+    if (restaurant.isPresent() && restaurant.get().getFeaturedDishId() != null) {
+        Long featuredId = restaurant.get().getFeaturedDishId();
+        bannerDish = dishService.findById(featuredId).orElse(null);
+    }
+    model.addAttribute("bannerDish", bannerDish);
+       
         if (!dishes.isEmpty()) {
             double minPrice = dishes.stream().mapToDouble(Dish::getPrice).min().orElse(0);
             double maxPrice = dishes.stream().mapToDouble(Dish::getPrice).max().orElse(0);

@@ -116,7 +116,8 @@
                   <td th:text="${iStat.index + 1}"></td>
                   <td th:text="${dish.name}"></td>
                   <td th:text="${dish.restaurant.name}"></td>
-                  <td th:text="${#numbers.formatDecimal(dish.price,1,'POINT',2,'NONE')} + ' ₫'"></td>
+                  <td th:text="|${#numbers.formatDecimal(dish.price, 0, 'COMMA', 0, 'POINT')} ₫|"></td>
+
                   <td>
                     <img th:if="${dish.pictureUrl}" th:src="@{'/images/dish/' + ${dish.pictureUrl}}"
                       th:alt="${dish.name}" style="width:80px;height:60px;object-fit:cover;">
