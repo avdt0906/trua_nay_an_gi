@@ -1,5 +1,6 @@
 package com.codegym.project_module_5.controller.admin;
 
+import com.codegym.project_module_5.model.order_model.OrderStatus;
 import com.codegym.project_module_5.model.order_model.Orders;
 import com.codegym.project_module_5.model.restaurant_model.Dish;
 import com.codegym.project_module_5.model.restaurant_model.Restaurant;
@@ -7,6 +8,7 @@ import com.codegym.project_module_5.model.user_model.Role;
 import com.codegym.project_module_5.model.user_model.User;
 import com.codegym.project_module_5.repository.order_repository.IOrderStatusRepository;
 import com.codegym.project_module_5.service.Banner.IBannerService;
+import com.codegym.project_module_5.service.impl.order_service_impl.OrderDetailService;
 import com.codegym.project_module_5.service.impl.role_service_impl.RoleService;
 import com.codegym.project_module_5.service.order_service.IOrderService;
 import com.codegym.project_module_5.service.restaurant_service.IDishService;
@@ -20,6 +22,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.data.domain.Sort;
 
@@ -48,6 +51,8 @@ public class AdminController {
     private IOrderStatusRepository orderStatusRepository;
     @Autowired
     private IBannerService bannerService;
+    @Autowired
+    private OrderDetailService orderDetailService;
 
     /**
      * Chuyển hướng từ /admin sang /admin/dashboard.
@@ -271,6 +276,15 @@ public class AdminController {
         model.addAttribute("orderStatuses", orderStatusRepository.findAll());
         model.addAttribute("selectedStatus", statusId);
         return "admin/orders_list";
+    }
+
+    @PostMapping("/orders/updateStatus")
+    public ModelAndView updateOrders(@RequestParam Long orderId, @RequestParam OrderStatus newStatus) {
+        Optional<Orders> ordersOptional = orderService.findById(orderId);
+        Orders order = ordersOptional.get();
+        order.setOrderStatus(newStatus);
+        orderService.save(order);
+        return new ModelAndView("redirect:/admin/orders/list");
     }
 
     @PostMapping("/banner/update/{dishId}")
