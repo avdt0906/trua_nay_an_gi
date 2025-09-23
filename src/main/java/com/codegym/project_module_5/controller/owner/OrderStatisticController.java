@@ -81,6 +81,19 @@ public class OrderStatisticController {
         return mv;
     }
 
+    @GetMapping("/cancel/{orderId}")
+    public ModelAndView cancelOrder(@PathVariable("orderId") Long orderId) {
+        ModelAndView mv = new ModelAndView("redirect:/restaurants/orders/list");
+        String username = getCurrentUsername();
+        Optional<User> user = userService.findByUsername(username);
+        Optional<Restaurant> restaurantOptional = restaurantService.findRestaurantIdByUserId(user.get().getId());
+        Optional<Orders> ordersOptional = orderService.findById(orderId);
+        if (ordersOptional.get().getRestaurant().getId() == restaurantOptional.get().getId()){
+            orderService.cancelOrder(orderId);
+        }
+        return mv;
+    }
+
     private String getCurrentUsername() {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if (principal instanceof UserDetails) {

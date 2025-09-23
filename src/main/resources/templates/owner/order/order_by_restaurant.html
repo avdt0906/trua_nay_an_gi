@@ -127,11 +127,7 @@
         <div th:replace="owner/restaurant/dashboard :: restaurant-navbar"></div>
         <div class="container">
             <h2 class="page-title">Danh sách đơn hàng</h2>
-<!--            <div class="status-filter">-->
-<!--                <button type="button">Đã giao</button>-->
-<!--                <button type="button">Đang giao</button>-->
-<!--                <button type="button">Chờ xác nhận</button>-->
-<!--            </div>-->
+
             <div class="card shadow-sm">
                 <div class="card-body">
                     <div class="table-responsive">
@@ -155,15 +151,15 @@
                                 <td th:text="${order.getCreatedAt()}"></td>
                                 <td th:text="${order.getOrderStatus().getName()}"></td>
                                 <td>
-    <span class="no-voucher" th:if="${order.getCoupon() == null}">
-        món ăn này không có voucher
-    </span>
+                                     <span class="no-voucher" th:if="${order.getCoupon() == null}">
+                                        Món ăn này không có voucher
+                                     </span>
                                     <a class="voucher-link" th:if="${order.getCoupon() != null}"
                                        th:href="@{'/restaurants/orders/findAllByCoupon/' + ${order.getId()}}">
                                         <i class="fas fa-ticket-alt"></i>
                                     </a>
                                 </td>
-
+                                <td>
                                     <!-- Nút mở next status modal -->
                                     <button th:if="${order.getOrderStatus().getId() == 1 ||
                                             order.getOrderStatus().getId() == 2 || order.getOrderStatus().getId() == 3}"
@@ -216,6 +212,35 @@
                                                     </button>
                                                     <a th:href="@{'/restaurants/orders/update/' + ${order.id}}" type="button" class="btn btn-success rounded-pill px-4">
                                                         <i class="fas fa-save me-1"></i>Chuyển trạng thái
+                                                    </a>
+                                                </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="modal fade" th:id="'cancelStatusModal-' + ${order.id}" tabindex="-1" aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered">
+                                        <div class="modal-content border-0 shadow-lg rounded-4">
+                                                <!-- Header -->
+                                                <div class="modal-header bg-warning text-white rounded-top-4">
+                                                    <h5 class="modal-title fw-semibold">
+                                                        <i class="fas fa-sliders-h me-2"></i>Huỷ đơn hàng
+                                                    </h5>
+                                                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                                                </div>
+
+                                                <!-- Body -->
+                                                <div class="modal-body px-4 py-3">
+                                                    <p class="text-muted mb-3">Bạn có muốn huỷ đơn hàng này<span></span>?</p>
+                                                </div>
+
+                                                <!-- Footer -->
+                                                <div class="modal-footer border-0 pt-0 pb-4">
+                                                    <button type="button" class="btn btn-light border rounded-pill px-3"
+                                                            data-bs-dismiss="modal">
+                                                        <i class="fas fa-times me-1"></i>Đóng
+                                                    </button>
+                                                    <a th:href="@{'/restaurants/orders/cancel/' + ${order.id}}" type="button" class="btn btn-danger rounded-pill px-4">
+                                                        <i class="fas fa-save me-1"></i>Huỷ trạng thái
                                                     </a>
                                                 </div>
                                         </div>
