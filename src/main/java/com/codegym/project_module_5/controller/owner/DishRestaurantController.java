@@ -17,8 +17,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.Optional;
+
 
 @Controller
 @RequestMapping("/restaurants/dishes")
@@ -114,5 +116,16 @@ public class DishRestaurantController {
         ModelAndView mv = new ModelAndView("redirect:/restaurants/dishes/dish_list");
         return mv;
     }
+
+    @PostMapping("/select")
+    public String selectDish(@RequestParam Long restaurantId,
+                             @RequestParam Long dishId,
+                             RedirectAttributes redirect) {
+
+        restaurantService.selectFeaturedDish(restaurantId, dishId);
+        redirect.addFlashAttribute("message", "Đã chọn món đặc trưng!");
+        return "redirect:/restaurants/dishes/dish_list";
+    }
+    
 
 }

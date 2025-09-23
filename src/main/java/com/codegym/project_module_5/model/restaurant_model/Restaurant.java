@@ -33,4 +33,6 @@ public class Restaurant {
     private Double rlatitude;
     private Double rlongitude;  
     private Double wallet = 0.0d;
+    @Column(name = "featured_dish_id") 
+    private Long featuredDishId;
 }
