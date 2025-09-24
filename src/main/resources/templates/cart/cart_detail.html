@@ -63,9 +63,12 @@
             <input type="hidden" name="selectedItems" th:value="${cartItem.id}" />
         </div>
         <input type="hidden" name="address" id="selectedAddressValue" th:if="${addressList != null and !addressList.isEmpty()}" th:value="${addressList[0].fullAddress}" />
+
+        <input type="hidden" name="shipperId" id="selected_shipper_id" />
+
         <div class="row g-4">
             <div class="col-lg-8">
-                <div class="card">
+                <div class="card mb-4">
                     <div class="card-header"><h5 class="mb-0">Sản phẩm đã chọn</h5></div>
                     <div class="card-body p-0">
                         <div th:each="cartItem : ${cartItemList}" class="cart-item">
@@ -88,6 +91,31 @@
                                     <strong class="price" th:text="'₫' + ${#numbers.formatDecimal(cartItem.dish.price * cartItem.quantity, 0, 'COMMA', 0, 'POINT')}"></strong>
                                 </div>
                             </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header"><h5 class="mb-0"><i class="fas fa-truck me-2 text-secondary"></i>Phương thức vận chuyển</h5></div>
+                    <div class="card-body">
+                        <div th:if="${shippers != null and not #lists.isEmpty(shippers)}">
+                            <div th:each="shipper, iterStat : ${shippers}" class="form-check mb-2">
+                                <input class="form-check-input shipper-radio" type="radio" name="shipperRadio"
+                                       th:id="'shipper' + ${shipper.id}"
+                                       th:value="${shipper.id}"
+                                       th:data-price="${shipper.price}"
+                                       th:checked="${iterStat.index == 0}">
+                                <label class="form-check-label d-flex justify-content-between w-100" th:for="'shipper' + ${shipper.id}">
+                                    <span>
+                                        <i class="fas fa-shipping-fast me-2"></i>
+                                        <span th:text="${shipper.name}"></span>
+                                    </span>
+                                    <span class="fw-bold price" th:text="'₫' + ${#numbers.formatDecimal(shipper.price, 0, 'COMMA', 0, 'POINT')}"></span>
+                                </label>
+                            </div>
+                        </div>
+                        <div th:if="${shippers == null or #lists.isEmpty(shippers)}">
+                            <p class="text-muted mb-0">Không có đơn vị vận chuyển nào khả dụng.</p>
                         </div>
                     </div>
                 </div>
@@ -129,17 +157,17 @@
                             <textarea id="order-note" name="note" class="form-control" rows="2" placeholder="Ví dụ: Ít cay..." th:text="${orderNote}"></textarea>
                         </div>
                         <div class="shoppee-divider"></div>
-                        <div class="d-flex justify-content-between mb-2"><span>Tạm tính</span><span th:text="'₫' + ${#numbers.formatDecimal(subtotal, 0, 'COMMA', 0, 'POINT')}"></span></div>
-                        <div class="d-flex justify-content-between mb-2"><span>Giảm giá</span><span class="text-success" th:text="'- ₫' + ${#numbers.formatDecimal(discount, 0, 'COMMA', 0, 'POINT')}"></span></div>
-                        <div class="d-flex justify-content-between mb-2"><span>Phí dịch vụ</span><span th:text="'₫' + ${#numbers.formatDecimal(serviceFee, 0, 'COMMA', 0, 'POINT')}"></span></div>
-                        <div class="d-flex justify-content-between mb-2"><span>Phí vận chuyển</span><span th:text="'₫' + ${#numbers.formatDecimal(shippingFee, 0, 'COMMA', 0, 'POINT')}"></span></div>
+                        <div class="d-flex justify-content-between mb-2"><span>Tạm tính</span><span id="subtotal-amount" th:data-value="${subtotal}" th:text="'₫' + ${#numbers.formatDecimal(subtotal, 0, 'COMMA', 0, 'POINT')}"></span></div>
+                        <div class="d-flex justify-content-between mb-2"><span>Giảm giá</span><span class="text-success" id="discount-amount" th:data-value="${discount}" th:text="'- ₫' + ${#numbers.formatDecimal(discount, 0, 'COMMA', 0, 'POINT')}"></span></div>
+                        <div class="d-flex justify-content-between mb-2"><span>Phí dịch vụ</span><span id="service-fee-amount" th:data-value="${serviceFee}" th:text="'₫' + ${#numbers.formatDecimal(serviceFee, 0, 'COMMA', 0, 'POINT')}"></span></div>
+                        <div class="d-flex justify-content-between mb-2"><span>Phí vận chuyển</span><span id="shipping-fee-amount" th:data-value="${shippingFee}" th:text="'₫' + ${#numbers.formatDecimal(shippingFee, 0, 'COMMA', 0, 'POINT')}"></span></div>
                         <div class="shoppee-divider"></div>
                         <div class="d-flex justify-content-between mb-3">
                             <span class="fw-bold">Tổng cộng</span>
-                            <span class="total-price fw-bold" th:text="'₫' + ${#numbers.formatDecimal(grandTotal, 0, 'COMMA', 0, 'POINT')}"></span>
+                            <span class="total-price fw-bold" id="grand-total-amount" th:text="'₫' + ${#numbers.formatDecimal(grandTotal, 0, 'COMMA', 0, 'POINT')}"></span>
                         </div>
                         <div class="d-grid">
-                            <button type="submit" class="btn btn-shoppee btn-lg" th:disabled="${addressList == null or addressList.isEmpty()}"><i class="fas fa-credit-card me-2"></i>Đặt hàng</button>
+                            <button type="submit" class="btn btn-shoppee btn-lg" th:disabled="${addressList == null or addressList.isEmpty() or shippers == null or shippers.isEmpty()}"><i class="fas fa-credit-card me-2"></i>Đặt hàng</button>
                         </div>
                     </div>
                 </div>
@@ -150,66 +178,49 @@
 
 <div class="modal fade shoppee-modal" id="addressModal" tabindex="-1"
      aria-labelledby="addressModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="addressModalLabel">Địa chỉ của tôi</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-
-      <div class="modal-body">
-        <!-- Nếu có địa chỉ mặc định -->
-        <div th:if="${addressList != null and !addressList.isEmpty()}">
-          <div class="list-group list-group-flush">
-            <label th:each="addr : ${addressList}"
-                   class="list-group-item list-group-item-action"
-                   th:for="${'addr-' + addr.id}">
-              <div class="d-flex w-100 justify-content-between">
-                <div>
-                  <input class="form-check-input me-3"
-                         type="radio"
-                         name="addressIdModal"
-                         th:id="${'addr-' + addr.id}"
-                         th:value="${addr.id}"
-                         checked="checked"
-                         th:data-name="${addr.name}"
-                         th:data-phone="${addr.phone}"
-                         th:data-fulladdress="${addr.fullAddress}">
-                  <span class="fw-bold"
-                        th:text="${addr.name} + ' | ' + ${addr.phone}"></span>
-                  <span class="badge bg-success ms-2" 
-                  th:if="${addr.defaultAddress}">Mặc định</span>
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addressModalLabel">Địa chỉ của tôi</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div th:if="${addressList != null and !addressList.isEmpty()}">
+                    <div class="list-group list-group-flush">
+                        <label th:each="addr : ${addressList}" class="list-group-item list-group-item-action" th:for="${'addr-' + addr.id}">
+                            <div class="d-flex w-100 justify-content-between">
+                                <div>
+                                    <input class="form-check-input me-3" type="radio" name="addressIdModal" th:id="${'addr-' + addr.id}" th:value="${addr.id}"
+                                           th:checked="${addressList[0].id == addr.id}"
+                                           th:data-name="${addr.name}"
+                                           th:data-phone="${addr.phone}"
+                                           th:data-fulladdress="${addr.fullAddress}">
+                                    <span class="fw-bold" th:text="${addr.name} + ' | ' + ${addr.phone}"></span>
+                                    <span class="badge bg-success ms-2" th:if="${addr.defaultAddress}">Mặc định</span>
+                                </div>
+                            </div>
+                            <p class="mb-1 ms-4 ps-3" th:text="${addr.fullAddress}"></p>
+                        </label>
+                    </div>
                 </div>
-                <!-- Không cho sửa: bỏ link Sửa -->
-              </div>
-              <p class="mb-1 ms-4 ps-3" th:text="${addr.fullAddress}"></p>
-            </label>
-          </div>
+                <div th:if="${addressList == null or addressList.isEmpty()}" class="text-center text-muted p-4">
+                    <p>Bạn chưa có địa chỉ mặc định.</p>
+                </div>
+            </div>
+            <div class="modal-footer justify-content-between">
+                <a th:href="@{/user/addresses/add}" class="btn btn-shoppee-outline"><i class="fas fa-plus me-1"></i>Thêm địa chỉ mới</a>
+                <button type="button" id="useSelectedAddressBtn" class="btn btn-shoppee" data-bs-dismiss="modal">Xác nhận</button>
+            </div>
         </div>
-
-        <!-- Nếu không có địa chỉ mặc định -->
-        <div th:if="${addressList == null or addressList.isEmpty()}"
-             class="text-center text-muted p-4">
-          <p>Bạn chưa có địa chỉ mặc định.</p>
-        </div>
-      </div>
-
-      <div class="modal-footer justify-content-between">
-        <a th:href="@{/user/addresses/add}" class="btn btn-shoppee-outline">
-          <i class="fas fa-plus me-1"></i>Thêm địa chỉ mới
-        </a>
-        <button type="button" id="useSelectedAddressBtn"
-                class="btn btn-shoppee" data-bs-dismiss="modal">Xác nhận</button>
-      </div>
     </div>
-  </div>
 </div>
-
 
 <div th:replace="homepage/index :: home_footer"></div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
 <script>
     document.addEventListener('DOMContentLoaded', function () {
+        // --- Address Modal Logic ---
         const useSelectedAddressBtn = document.getElementById('useSelectedAddressBtn');
         if (useSelectedAddressBtn) {
             useSelectedAddressBtn.addEventListener('click', function () {
@@ -219,17 +230,60 @@
                     const name = selectedRadio.getAttribute('data-name');
                     const phone = selectedRadio.getAttribute('data-phone');
 
-                    // Cập nhật hidden input trong form chính
                     document.getElementById('selectedAddressValue').value = fullAddress;
-
-                    // Cập nhật phần hiển thị địa chỉ trên trang chính
                     document.getElementById('selected-address-name').textContent = name;
                     document.getElementById('selected-address-phone').textContent = phone;
                     document.getElementById('selected-address-text').textContent = fullAddress;
                 }
             });
         }
+
+        // --- Shipper and Fee Calculation Logic ---
+        const shipperRadios = document.querySelectorAll('.shipper-radio');
+        const selectedShipperInput = document.getElementById('selected_shipper_id');
+
+        const subtotalEl = document.getElementById('subtotal-amount');
+        const discountEl = document.getElementById('discount-amount');
+        const serviceFeeEl = document.getElementById('service-fee-amount');
+        const shippingFeeEl = document.getElementById('shipping-fee-amount');
+        const grandTotalEl = document.getElementById('grand-total-amount');
+
+        // Hàm định dạng tiền tệ
+        function formatCurrency(value) {
+            return '₫' + new Intl.NumberFormat('vi-VN').format(value);
+        }
+
+        // Hàm cập nhật tổng tiền
+        function updateTotals() {
+            const subtotal = parseFloat(subtotalEl.getAttribute('data-value')) || 0;
+            const discount = parseFloat(discountEl.getAttribute('data-value')) || 0;
+            const serviceFee = parseFloat(serviceFeeEl.getAttribute('data-value')) || 0;
+
+            const selectedShipper = document.querySelector('.shipper-radio:checked');
+            let shippingPrice = 0;
+
+            if (selectedShipper) {
+                shippingPrice = parseFloat(selectedShipper.getAttribute('data-price'));
+                selectedShipperInput.value = selectedShipper.value; // Cập nhật hidden input
+            }
+
+            // Cập nhật hiển thị phí ship
+            shippingFeeEl.textContent = formatCurrency(shippingPrice);
+
+            // Tính toán và cập nhật tổng tiền
+            const grandTotal = Math.max(0, subtotal - discount) + serviceFee + shippingPrice;
+            grandTotalEl.textContent = formatCurrency(grandTotal);
+        }
+
+        // Gán sự kiện 'change' cho tất cả radio button của shipper
+        shipperRadios.forEach(radio => {
+            radio.addEventListener('change', updateTotals);
+        });
+
+        // Chạy lần đầu khi tải trang để đảm bảo giá trị đúng
+        updateTotals();
     });
 </script>
+
 </body>
 </html>
