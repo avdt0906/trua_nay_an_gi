@@ -1,5 +1,6 @@
 package com.codegym.project_module_5.controller.owner;
 
+import com.codegym.project_module_5.model.dto.sales.OrderStatisticDto;
 import com.codegym.project_module_5.model.order_model.OrderDetail;
 import com.codegym.project_module_5.model.order_model.Orders;
 import com.codegym.project_module_5.model.restaurant_model.Dish;
@@ -115,6 +116,14 @@ public class OrderStatisticController {
         ModelAndView modelAndView = new ModelAndView("owner/order/order_by_coupon");
         List<OrderDetail> couponsList = orderDetailService.findAllByOrder_Coupon_Id(couponId);
         modelAndView.addObject("couponsList", couponsList);
+        return modelAndView;
+    }
+
+    @GetMapping("/sales")
+    public ModelAndView showOrderStatisticByMonth() {
+        ModelAndView modelAndView = new ModelAndView("owner/order/revenue_report");
+        List<OrderStatisticDto> ordersList = orderService.getOrdersByMonth();
+        modelAndView.addObject("sales", ordersList);
         return modelAndView;
     }
 }
