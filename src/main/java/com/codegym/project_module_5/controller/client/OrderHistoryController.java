@@ -103,4 +103,34 @@ public class OrderHistoryController {
         // SỬA 5: Chuyển hướng về trang chi tiết để người dùng thấy trạng thái đã thay đổi
         return "redirect:/orders/history/detail/" + id;
     }
+
+    @PostMapping("/update_status/{id}")
+    public String updateStatusOrder(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return "redirect:/account/login";
+        }
+
+        User currentUser = userService.findByUsername(authentication.getName()).orElse(null);
+
+        if (currentUser == null) {
+            redirectAttributes.addFlashAttribute("error", "Không thể xác thực người dùng.");
+            return "redirect:/orders/history";
+        }
+
+        if (orderService.findById(id).get().getOrderStatus().getId() != 4) {
+            redirectAttributes.addFlashAttribute("error", "Lỗi! Không thể nhận đơn hàng.");
+        } else {
+            try {
+                orderService.updateOrderStatus(id);
+                redirectAttributes.addFlashAttribute("success", "Đã nhận đơn thành công.");
+            } catch (SecurityException e) {
+                redirectAttributes.addFlashAttribute("error", e.getMessage());
+            } catch (Exception e) {
+                redirectAttributes.addFlashAttribute("error", "Lỗi! Không thể nhận đơn hàng.");
+            }
+        }
+        // SỬA 5: Chuyển hướng về trang chi tiết để người dùng thấy trạng thái đã thay đổi
+        return "redirect:/orders/history/detail/" + id;
+    }
 }
