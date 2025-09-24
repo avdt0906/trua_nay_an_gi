@@ -128,6 +128,12 @@
               </li>
             </ul>
           </div>
+          <!-- Chỉ hiển thị nút chuyển trạng thái đã nhận đơn nếu trạng thái đơn hàng là đang giao -->
+          <div class="card-footer" th:if="${order.orderStatus.id == 4}">
+            <form th:action="@{/orders/history/update_status/{id}(id=${order.id})}" method="post" class="d-grid">
+              <button type="submit" class="btn btn-success">Đã nhận đơn</button>
+            </form>
+          </div>
           <!-- Chỉ hiển thị nút hủy nếu trạng thái đơn hàng không phải là "Đã hủy" (ID=6) và các trạng thái đã hoàn thành/đang giao -->
           <div class="card-footer" th:if="${order.orderStatus.id != 5 and order.orderStatus.id != 6 and order.orderStatus.id != 4}">
             <form th:action="@{/orders/history/cancel/{id}(id=${order.id})}" method="post" class="d-grid">
