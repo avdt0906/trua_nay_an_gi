@@ -35,4 +35,5 @@ public class Restaurant {
     private Double wallet = 0.0d;
     @Column(name = "featured_dish_id") 
     private Long featuredDishId;
+    private Boolean contractTerminated = false;
 }

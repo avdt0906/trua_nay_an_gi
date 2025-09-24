@@ -430,49 +430,7 @@
                                 </div>
                             </div>
 
-                            <div class="card-body p-0">
-                                <div class="table-responsive" th:if="${dishes != null && !dishes.isEmpty()}">
-                                    <table class="table table-hover">
-                                        <thead>
-                                        <tr>
-                                            <th>Hình ảnh</th>
-                                            <th>Tên món ăn</th>
-                                            <th>Danh mục</th>
-                                            <th>Giá</th>
-                                            <th>Trạng thái</th>
-                                            <th class="text-end">Hành động</th>
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-                                        <tr th:each="dish : ${dishes}">
-                                            <td>
-                                                <img th:src="${'/images/dish/' + dish.getPictureUrl()}" alt="Dish Image" class="table-dish-img">
-                                            </td>
-                                            <td class="fw-bold" th:text="${dish.name}"></td>
-                                            <td>
-                                                <span class="badge text-bg-info" th:text="${dish.category.name}"></span>
-                                            </td>
-                                            <td class="text-danger fw-bold" th:text="${#numbers.formatDecimal(dish.price, 0, 'COMMA', 0, 'POINT')} + ' đ'"></td>
-                                            <td>
-                                                <span class="badge text-bg-success" th:if="${dish.isAvailable}">Có sẵn</span>
-                                                <span class="badge text-bg-secondary" th:unless="${dish.isAvailable}">Hết hàng</span>
-                                            </td>
-                                            <td class="text-end">
-                                                <a th:href="@{'/restaurants/orders/dish/' + ${dish.getId()}}" class="btn btn-sm btn-outline-info rounded-circle btn-action" title="Chỉnh sửa">
-                                                    <i class="fa-regular fa-eye"></i>
-                                                </a>
-                                                <a th:href="@{'/restaurants/dishes/edit_dish_form/' + ${dish.id}}" class="btn btn-sm btn-outline-info rounded-circle btn-action" title="Chỉnh sửa">
-                                                    <i class="fas fa-edit"></i>
-                                                </a>
-                                                <a th:href="@{'/restaurants/dishes/delete_dish/' + ${dish.id}}" class="btn btn-sm btn-outline-danger rounded-circle btn-action" title="Xóa">
-                                                    <i class="fas fa-trash"></i>
-                                                </a>
-                                                
-                                            </td>
-                                        </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
+                           
                                 <div class="text-center py-5" th:if="${dishes == null || dishes.isEmpty()}">
                                     <i class="fas fa-utensil-spoon fa-4x text-muted mb-3"></i>
                                     <h4 class="text-muted">Chưa có món ăn nào</h4>

@@ -125,6 +125,11 @@
                 Quản lý Vận chuyển
             </a>
         </li>
+        <li class="nav-item">
+            <a class="nav-link" th:classappend="${activePage == 'requests'} ? 'active'" th:href="@{/admin/requests/pending}">
+                <i class="fas fa-wallet"></i>
+                Yêu cầu rút tiền
+            </a>
     </ul>
 
     <!-- Footer -->

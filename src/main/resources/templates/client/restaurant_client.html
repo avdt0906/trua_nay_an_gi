@@ -177,10 +177,12 @@
     </div>
 
     <!-- Cột phải: món nổi bật -->
-    <div th:if="${bannerDish != null}" class="featured-dish-box">
+    <a th:if="${bannerDish != null}"
+       th:href="@{/dish/{id}(id=${bannerDish.id})}" 
+       class="featured-dish-box d-block text-decoration-none">
         <div class="featured-title">Món dành riêng cho bạn</div>
         <div class="featured-name" th:text="${bannerDish.name}">Tên món</div>
-    </div>
+    </a>
 </div>
 
 
