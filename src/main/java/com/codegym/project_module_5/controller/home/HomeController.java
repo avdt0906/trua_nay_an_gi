@@ -31,7 +31,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Controller
-@RequestMapping("")
+@RequestMapping({"/", "/home",""})
 public class HomeController {
     @Autowired
     private IUserService iUserService;

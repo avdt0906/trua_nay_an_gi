@@ -63,24 +63,6 @@
             padding: 1.5rem;
         }
 
-        .order-item {
-            display: flex;
-            align-items: center;
-            margin-bottom: 1rem;
-        }
-
-        .order-item img {
-            width: 80px;
-            height: 80px;
-            object-fit: cover;
-            border-radius: 4px;
-            margin-right: 1rem;
-        }
-
-        .order-item-details {
-            flex-grow: 1;
-        }
-
         .order-footer {
             background-color: #FCFCFC;
             padding: 1rem 1.5rem;
@@ -131,7 +113,7 @@
             <div class="order-footer">
                 <div class="d-flex justify-content-end align-items-center">
                     <span class="me-3">Thành tiền:</span>
-                    <span class="order-total" th:text="'₫' + ${#numbers.formatDecimal(order.totalPrice, 0, 'COMMA', 0, 'POINT')}"></span>
+                    <span class="order-total" th:text="${order.shipper != null ? '₫' + #numbers.formatDecimal(order.totalPrice + order.shipper.price, 0, 'COMMA', 0, 'POINT') : '₫' + #numbers.formatDecimal(order.totalPrice, 0, 'COMMA', 0, 'POINT')}"></span>
                 </div>
                 <div class="mt-2">
                     <a th:href="@{/orders/history/detail/{id}(id=${order.id})}" class="btn btn-outline-danger btn-sm">Xem chi tiết</a>
