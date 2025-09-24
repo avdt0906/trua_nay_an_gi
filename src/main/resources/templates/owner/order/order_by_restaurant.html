@@ -8,6 +8,7 @@
     <th:block th:replace="owner/restaurant/dashboard :: restaurant-content"></th:block>
 
     <style>
+
         .page-title {
             font-size: 1.8rem;
             font-weight: 600;
@@ -115,6 +116,18 @@
             transform: scale(1.15) rotate(-5deg); /* phóng to và nghiêng nhẹ cho nổi bật */
             box-shadow: 0 5px 12px rgba(0, 0, 0, 0.3);
         }
+        .btn-custom {
+            border-radius: 8px;
+            padding: 10px 20px;
+            font-weight: 500;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: transform 0.2s ease;
+        }
+
+        .btn-custom:hover {
+            transform: scale(1.05);
+        }
+
     </style>
 </head>
 <body>
@@ -127,6 +140,11 @@
         <div th:replace="owner/restaurant/dashboard :: restaurant-navbar"></div>
         <div class="container">
             <h2 class="page-title">Danh sách đơn hàng</h2>
+            <div class="mb-4">
+                <a th:href="@{/restaurants/orders/sales}" class="btn btn-primary btn-custom">
+                    Xem doanh thu
+                </a>
+            </div>
 
             <div class="card shadow-sm">
                 <div class="card-body">

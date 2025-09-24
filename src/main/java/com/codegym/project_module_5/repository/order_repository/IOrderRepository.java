@@ -1,5 +1,6 @@
 package com.codegym.project_module_5.repository.order_repository;
 
+import com.codegym.project_module_5.model.dto.sales.OrderStatisticDto;
 import com.codegym.project_module_5.model.order_model.OrderStatus;
 import com.codegym.project_module_5.model.order_model.OrderDetail;
 import com.codegym.project_module_5.model.order_model.Orders;
@@ -33,4 +34,16 @@ public interface IOrderRepository extends JpaRepository<Orders, Long> {
             @Param("end") LocalDateTime end
     );
 
+
+    @Query(value = """
+    select year(created_at)   as year,
+           month(created_at)  as month,
+           quarter(created_at) as quarter,
+           sum(total_price)   as totalSales,
+           count(id)          as totalOrders
+    from orders
+    group by year(created_at), month(created_at), quarter(created_at)
+    order by year(created_at), month(created_at), quarter(created_at)
+    """, nativeQuery = true)
+    List<OrderStatisticDto> getOrdersByMonth();
 }

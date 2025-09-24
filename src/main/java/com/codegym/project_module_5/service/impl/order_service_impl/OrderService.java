@@ -1,5 +1,6 @@
 package com.codegym.project_module_5.service.impl.order_service_impl;
 
+import com.codegym.project_module_5.model.dto.sales.OrderStatisticDto;
 import com.codegym.project_module_5.model.order_model.OrderStatus;
 import com.codegym.project_module_5.model.order_model.Orders;
 import com.codegym.project_module_5.model.user_model.User;
@@ -124,6 +125,11 @@ public class OrderService implements IOrderService {
         return orderRepository.findAll(pageable);
     }
 
-   
+    @Override
+    public List<OrderStatisticDto> getOrdersByMonth() {
+        return orderRepository.getOrdersByMonth();
+    }
+
+
 }
 
