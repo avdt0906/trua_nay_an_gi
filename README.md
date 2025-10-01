@@ -18,7 +18,7 @@ Server-side rendered food ordering web application built with Spring Boot and Th
 - CRUD for **Users**, **Restaurants**, **Menus**, **Orders**, etc.
 - Order lifecycle and delivery assignment / order tracking.
 - Google Maps integration to show restaurant locations.
-- Database scripts for initial data (see `du_lieu_hinh_anh.sql`). :contentReference[oaicite:2]{index=2}
+- Database scripts for initial data (see `du_lieu_hinh_anh.sql`).
 
 ---
 
