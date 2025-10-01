@@ -46,4 +46,3 @@ Server-side rendered food ordering web application built with Spring Boot and Th
 1. **Clone repository**
 ```bash
 git clone https://github.com/avdt0906/trua_nay_an_gi.git
-cd trua_nay_an_gi
