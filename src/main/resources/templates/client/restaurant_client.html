@@ -20,9 +20,88 @@
         .nav-link:hover { color: var(--shopee-orange) !important; }
         .breadcrumb { background: none; margin: 1rem 0; padding: 0; }
         .breadcrumb a { color: var(--shopee-orange); text-decoration: none; }
-        .store-header { margin-bottom: 1.5rem; }
+
+    .store-header {
+    display: flex;                 /* cho phép chia 2 cột */
+    justify-content: space-between; /* đẩy 2 cột sang 2 bên */
+    align-items: center;
+    padding: 2rem 3rem;
+    height: 260px;                  /* banner cao hơn, dễ bố trí */
+    border-radius: 12px;
+    position: relative;
+    color: white;
+}
+
+/* Thông tin nhà hàng bên trái */
+.store-info-box {
+    max-width: 55%;
+}
+
+/* Ô hiển thị món nổi bật bên phải */
+/* Khối món nổi bật */
+.featured-dish-box {
+    background: rgba(255,255,255,0.85); /* nền trắng mờ */
+    color: #222;
+    border-radius: 16px;
+    padding: 1.2rem 1.5rem;
+    text-align: center;
+    max-width: 280px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+}
+
+.featured-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--shopee-orange);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 0.5rem;
+}
+
+.featured-image {
+    width: 160px;
+    height: 160px;
+    object-fit: cover;
+    border-radius: 12px;
+    margin: 0.5rem auto;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+.featured-name {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #000;
+    margin-top: 0.5rem;
+}
+
+.store-info-box {
+    background: #fff;          /* nền trắng */
+    color: #000;               /* chữ đen */
+    border-radius: 12px;
+    padding: 1rem 1.5rem;
+    display: flex;
+    align-items: center;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    max-width: 55%;
+}
+
+.store-info-box .store-title {
+    color: #222;
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin-bottom: .5rem;
+}
+
+.store-info-box .store-info {
+    color: #444;
+    font-size: 0.9rem;
+}
+
+
+
+
         .store-title { font-size: 1.5rem; font-weight: bold; }
-        .store-info { color: var(--gray-text); font-size: 0.9rem; }
+        .store-info { color: #fff; font-size: 0.9rem; } /* chữ trắng trên nền */
         .menu-section { border: 1px solid #eee; border-radius: 6px; overflow: hidden; }
         .menu-header { background: #f5f5f5; padding: 0.75rem; font-weight: bold; color: var(--shopee-orange); font-size: 0.9rem; }
         .category-item { padding: 0.75rem 1rem; border-bottom: 1px solid #eee; cursor: pointer; }
@@ -36,6 +115,11 @@
         .add-btn:hover { background: #d84315; }
         .qr-section { background: var(--shopee-orange); border-radius: 8px; padding: 1rem; text-align: center; color: white; }
         .qr-section img { width: 150px; height: 150px; background: white; padding: 8px; border-radius: 8px; margin-bottom: 0.5rem; }
+        .text-shopee { color: var(--shopee-orange); }
+        .review-item { font-size: 0.9rem; }
+        .review-item i { width: 18px; }
+        .card { border-radius: 12px; }
+        .card-header { font-size: 1rem; border-bottom: 1px solid #eee; }
     </style>
 </head>
 <body>
@@ -57,40 +141,54 @@
 <div class="container mt-3">
     <!-- Breadcrumb -->
     <nav aria-label="breadcrumb">
-        <ol class="breadcrumb">
+        <ol class="breadcrumb" th:object="${evaluate}">
             <li class="breadcrumb-item"><a th:href="@{/home}">Home</a></li>
             <li class="breadcrumb-item"><a href="#">Hà Nội</a></li>
             <li class="breadcrumb-item active" th:text="${restaurant.name}">Tên nhà hàng</li>
         </ol>
     </nav>
 
-    <!-- Store Header -->
-    <div class="store-header d-flex align-items-center">
-        <img th:src="@{'/images/logo/' + ${restaurant.logoUrl}}"
-             alt="Ảnh nhà hàng"
-             class="me-3"
-             style="width:120px; height:120px; object-fit:cover; border-radius:8px;">
+<div class="store-header"
+     th:style="${bannerDish != null} ?
+        'background: url(' + @{/images/dish/{img}(img=${bannerDish.pictureUrl})} + ') center/cover no-repeat'
+        : 'background: url(/images/banner/restaurant-banner.jpg) center/cover no-repeat'">
 
+    <!-- Cột trái: THÔNG TIN NHÀ HÀNG với nền trắng -->
+    <div class="store-info-box">
+        <img th:src="@{'/images/logo/' + ${restaurant.logoUrl}}"
+             alt="Logo"
+             style="width:120px; height:120px; object-fit:cover; border-radius:8px;"
+             class="me-3">
         <div>
             <h1 class="store-title" th:text="${restaurant.name}">Tên nhà hàng</h1>
             <div class="store-info">
-                <i class="fas fa-map-marker-alt me-2 text-danger"></i>
+                <i class="fas fa-map-marker-alt me-1 text-dark"></i>
                 <span th:text="${restaurant.address}">Địa chỉ</span>
             </div>
             <div class="store-info">
-                <i class="fas fa-clock me-2 text-success"></i>
+                <i class="fas fa-clock me-1 text-dark"></i>
                 <span th:text="${restaurant.isOpen}">Giờ mở cửa</span>
             </div>
             <div class="store-info">
-                <i class="fas fa-money-bill me-2 text-warning"></i>
+                <i class="fas fa-money-bill me-1 text-dark"></i>
                 <span th:text="${priceRange}">Khoảng giá</span>
             </div>
         </div>
     </div>
 
+    <!-- Cột phải: món nổi bật -->
+    <a th:if="${bannerDish != null}"
+       th:href="@{/dish/{id}(id=${bannerDish.id})}" 
+       class="featured-dish-box d-block text-decoration-none">
+        <div class="featured-title">Món dành riêng cho bạn</div>
+        <div class="featured-name" th:text="${bannerDish.name}">Tên món</div>
+    </a>
+</div>
 
+
+
+    <!-- Phần còn lại giữ nguyên -->
     <div class="row">
-        <!-- Sidebar -->
         <div class="col-md-3">
             <div class="menu-section">
                 <div class="menu-header">THỰC ĐƠN</div>
@@ -99,12 +197,10 @@
             </div>
         </div>
 
-        <!-- Dish list -->
         <div class="col-md-6">
             <div th:if="${dishes == null or dishes.isEmpty()}">
                 <p class="text-center text-muted">Chưa có món ăn nào.</p>
             </div>
-
             <div th:each="dish : ${dishes}" class="dish-item" th:data-category="${dish.category.name}">
                 <img th:src="@{'/images/dish/' + ${dish.pictureUrl}}" th:alt="${dish.name}">
                 <div class="dish-info">
@@ -122,22 +218,47 @@
             </div>
         </div>
 
-        <!-- QR Code -->
         <div class="col-md-3">
-            <div class="qr-section">
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=ShopeeFood" alt="QR code">
-                <p>Quét mã để đặt món<br>trên app Shopee</p>
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-white fw-bold text-shopee">Đánh giá khách hàng</div>
+                <div class="card-body p-3" style="max-height: 350px; overflow-y: auto;">
+                    <div th:if="${evaluate == null or evaluate.isEmpty()}">
+                        <p class="text-muted text-center">Chưa có đánh giá nào.</p>
+                    </div>
+                    <div th:each="row : ${evaluate}" class="review-item border-bottom pb-2 mb-3">
+                        <p class="mb-1 fw-semibold">
+                            <i class="fas fa-user-circle text-secondary me-1"></i>Khách hàng
+                        </p>
+                        <p class="mb-1 small">
+                            <i class="fas fa-comment-dots text-primary me-1"></i>
+                            <span th:text="${row.getComment()}">Bình luận...</span>
+                        </p>
+                        <p class="mb-1 small text-warning">
+                            <span th:each="star : ${#numbers.sequence(1, row.getStar())}">
+                                <i class="fas fa-star"></i>
+                            </span>
+                            <span th:each="star : ${#numbers.sequence(row.getStar()+1, 5)}">
+                                <i class="far fa-star"></i>
+                            </span>
+                        </p>
+                        <p class="mb-1 small">
+                            <i class="fas fa-star text-warning"></i>
+                            <span class="text-muted">Đặc trưng: </span>
+                            <span th:text="${row.getOutstanding_features()}">Đặc trưng</span>
+                        </p>
+                        <p class="mb-0 small">
+                            <i class="fas fa-check-circle text-success"></i>
+                            <span class="text-muted">Chất lượng: </span>
+                            <span th:text="${row.getProduct_quality()}">Chất lượng</span>
+                        </p>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Footer -->
-<footer class="bg-dark text-white text-center py-4 mt-5">
-    <div class="container">
-        <p class="mb-0">&copy; 2024 FoodDelivery. Tất cả quyền được bảo lưu.</p>
-    </div>
-</footer>
+<div th:replace="homepage/index :: home_footer"></div>
 
 <script>
     function addToCart(button) {

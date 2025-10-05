@@ -1,186 +1,141 @@
 <!DOCTYPE html>
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Đăng ký Nhà hàng</title>
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css" rel="stylesheet">
+    <link href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.7.2/mapbox-gl-geocoder.css"
+        rel="stylesheet">
+
     <style>
         body {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
+
         .register-card {
-            background: white;
+            background: #fff;
             border-radius: 15px;
             box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
             padding: 2rem;
-            margin-top: 2rem;
-            margin-bottom: 2rem;
+            margin: 2rem 0;
         }
+
         .form-control:focus {
             border-color: #667eea;
             box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
         }
-        .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border: none;
-            padding: 12px 30px;
-            font-weight: 600;
+
+        .map-section {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
         }
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+
+        .map-left {
+            flex: 1 1 250px;
+            display: flex;
+            flex-direction: column;
         }
+
+        #map {
+            flex: 2 1 350px;
+            height: 300px;
+            border-radius: 10px;
+        }
+
         .error-message {
             color: #dc3545;
             font-size: 0.875rem;
-            margin-top: 0.25rem;
-        }
-        .success-message {
-            color: #198754;
-            background-color: #d1e7dd;
-            border: 1px solid #badbcc;
-            border-radius: 0.375rem;
-            padding: 0.75rem 1rem;
-            margin-bottom: 1rem;
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <div class="row justify-content-center">
-            <div class="col-md-8 col-lg-6">
+            <div class="col-lg-10">
                 <div class="register-card">
-                    <!-- Header -->
                     <div class="text-center mb-4">
                         <i class="fas fa-utensils fa-3x text-primary mb-3"></i>
-                        <h2 class="fw-bold text-dark">Đăng ký Nhà hàng</h2>
+                        <h2 class="fw-bold">Đăng ký Nhà hàng</h2>
                         <p class="text-muted">Tạo tài khoản nhà hàng của bạn</p>
                     </div>
 
-
-                    <!-- Register Form -->
-                    <form th:action="@{/restaurants/signup}" method="post" th:object="${restaurant}">
-                        
-                        <!-- Hiển thị error message tổng quát -->
-                        <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
-                            <i class="fas fa-exclamation-triangle me-2"></i>
-                            <span th:text="${errorMessage}"></span>
-                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                        </div>
-                        
-                        <!-- Tên nhà hàng -->
+                    <form th:action="@{/restaurants/signup}" th:object="${restaurant}" method="post">
+                        <!-- Thông tin cơ bản -->
                         <div class="mb-3">
-                            <label for="name" class="form-label fw-semibold">
-                                <i class="fas fa-store me-2"></i>Tên nhà hàng
-                            </label>
-                            <input type="text" 
-                                   class="form-control" 
-                                   id="name" 
-                                   th:field="*{name}" 
-                                   placeholder="Nhập tên nhà hàng"
-                                   required>
-                            <div th:if="${#fields.hasErrors('name')}" class="error-message" th:errors="*{name}"></div>
+                            <label for="name" class="form-label fw-semibold">Tên nhà hàng</label>
+                            <input id="name" class="form-control" th:field="*{name}" required>
+                            <div class="error-message" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></div>
                         </div>
 
-                        <!-- Email -->
                         <div class="mb-3">
-                            <label for="email" class="form-label fw-semibold">
-                                <i class="fas fa-envelope me-2"></i>Email
-                            </label>
-                            <input type="email" 
-                                   class="form-control" 
-                                   id="email" 
-                                   th:field="*{email}"
-                                   placeholder="example@restaurant.com"
-                                   required>
-                            <div th:if="${#fields.hasErrors('email')}" class="error-message" th:errors="*{email}"></div>
+                            <label for="email" class="form-label fw-semibold">Email</label>
+                            <input id="email" type="email" class="form-control" th:field="*{email}" required>
+                            <div class="error-message" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
                         </div>
 
-                        <!-- Mật khẩu -->
                         <div class="mb-3">
-                            <label for="password" class="form-label fw-semibold">
-                                <i class="fas fa-lock me-2"></i>Mật khẩu
-                            </label>
-                            <input type="password" 
-                                   class="form-control" 
-                                   id="password" 
-                                   th:field="*{password}" 
-                                   placeholder="Nhập mật khẩu"
-                                   required>
-                            <div th:if="${#fields.hasErrors('password')}" class="error-message" th:errors="*{password}"></div>
+                            <label for="password" class="form-label fw-semibold">Mật khẩu</label>
+                            <input id="password" type="password" class="form-control" th:field="*{password}" required>
+                            <div class="error-message" th:if="${#fields.hasErrors('password')}" th:errors="*{password}">
+                            </div>
                         </div>
 
-                        <!-- Xác nhận mật khẩu -->
                         <div class="mb-3">
-                            <label for="confirmPassword" class="form-label fw-semibold">
-                                <i class="fas fa-lock me-2"></i>Xác nhận mật khẩu
-                            </label>
-                            <input type="password" 
-                                   class="form-control" 
-                                   id="confirmPassword" 
-                                   th:field="*{confirmPassword}" 
-                                   placeholder="Nhập lại mật khẩu"
-                                   required>
-                            <div th:if="${#fields.hasErrors('confirmPassword')}" class="error-message" th:errors="*{confirmPassword}"></div>
+                            <label for="confirmPassword" class="form-label fw-semibold">Xác nhận mật khẩu</label>
+                            <input id="confirmPassword" type="password" class="form-control"
+                                th:field="*{confirmPassword}" required>
+                            <div class="error-message" th:if="${#fields.hasErrors('confirmPassword')}"
+                                th:errors="*{confirmPassword}"></div>
                         </div>
 
-                        <!-- Địa chỉ -->
+                        <!-- Địa chỉ + Map -->
+                        <div class="map-section mb-3">
+                            <div class="map-left">
+                                <label for="address" class="form-label fw-semibold">Địa chỉ</label>
+                                <input id="address" class="form-control mb-3" th:field="*{address}"
+                                    placeholder="Chọn hoặc tìm trên bản đồ" required>
+                                <div class="error-message" th:if="${#fields.hasErrors('address')}"
+                                    th:errors="*{address}"></div>
+                                <div id="geocoder" class="mb-2"></div>
+
+                                <!-- Hidden fields for coordinates -->
+                                <input type="hidden" id="latitude" th:field="*{rlatitude}">
+                                <input type="hidden" id="longitude" th:field="*{rlongitude}">
+                            </div>
+
+                            <div id="map"></div>
+                        </div>
+
                         <div class="mb-3">
-                            <label for="address" class="form-label fw-semibold">
-                                <i class="fas fa-map-marker-alt me-2"></i>Địa chỉ
-                            </label>
-                            <input type="text" 
-                                   class="form-control" 
-                                   id="address" 
-                                   th:field="*{address}" 
-                                   placeholder="Nhập địa chỉ nhà hàng">
-                            <div th:if="${#fields.hasErrors('address')}" class="error-message" th:errors="*{address}"></div>
+                            <label for="phone" class="form-label fw-semibold">Số điện thoại</label>
+                            <input id="phone" class="form-control" th:field="*{phone}">
+                            <div class="error-message" th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}"></div>
                         </div>
 
-                        <!-- Số điện thoại -->
-                        <div class="mb-3">
-                            <label for="phone" class="form-label fw-semibold">
-                                <i class="fas fa-phone me-2"></i>Số điện thoại
-                            </label>
-                            <input type="tel" 
-                                   class="form-control" 
-                                   id="phone" 
-                                   th:field="*{phone}" 
-                                   placeholder="Nhập số điện thoại">
-                            <div th:if="${#fields.hasErrors('phone')}" class="error-message" th:errors="*{phone}"></div>
-                        </div>
-
-                        <!-- Mô tả -->
                         <div class="mb-4">
-                            <label for="description" class="form-label fw-semibold">
-                                <i class="fas fa-info-circle me-2"></i>Mô tả
-                            </label>
-                            <textarea class="form-control" 
-                                      id="description" 
-                                      th:field="*{description}" 
-                                      rows="3" 
-                                      placeholder="Mô tả về nhà hàng của bạn"></textarea>
-                            <div th:if="${#fields.hasErrors('description')}" class="error-message" th:errors="*{description}"></div>
+                            <label for="description" class="form-label fw-semibold">Mô tả</label>
+                            <textarea id="description" class="form-control" rows="3"
+                                th:field="*{description}"></textarea>
+                            <div class="error-message" th:if="${#fields.hasErrors('description')}"
+                                th:errors="*{description}"></div>
                         </div>
 
-                        <!-- Submit Button -->
                         <div class="d-grid">
-                            <button type="submit" class="btn btn-primary btn-lg">
-                                <i class="fas fa-check me-2"></i>Đăng ký Nhà hàng
-                            </button>
+                            <button type="submit" class="btn btn-primary btn-lg">Đăng ký Nhà hàng</button>
                         </div>
                     </form>
 
-                    <!-- Footer -->
-                    <div class="text-center mt-4">
-                        <p class="text-muted mb-0">
-                            <i class="fas fa-info-circle me-1"></i>
-                            Sau khi đăng ký, nhà hàng của bạn sẽ được admin xem xét và phê duyệt.
-                        </p>
+                    <div class="text-center mt-3 text-muted">
+                        <small>Sau khi đăng ký, admin sẽ xem xét và phê duyệt.</small>
                     </div>
                 </div>
             </div>
@@ -188,17 +143,69 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        document.getElementById('confirmPassword').addEventListener('input', function() {
-            const password = document.getElementById('password').value;
-            const confirmPassword = this.value;
-            
-            if (password !== confirmPassword) {
-                this.setCustomValidity('Mật khẩu xác nhận không khớp!');
-            } else {
-                this.setCustomValidity('');
-            }
+    <script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
+    <script
+        src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.7.2/mapbox-gl-geocoder.min.js"></script>
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        mapboxgl.accessToken = '[[${mapboxApiKey}]]';
+
+        const map = new mapboxgl.Map({
+            container: 'map',
+            style: 'mapbox://styles/mapbox/streets-v11',
+            center: [105.854444, 21.029449], // Hà Nội
+            zoom: 12
         });
+
+        const marker = new mapboxgl.Marker({ draggable: true }).setLngLat([105.854444, 21.029449]).addTo(map);
+
+        const geocoder = new MapboxGeocoder({
+            accessToken: mapboxgl.accessToken,
+            mapboxgl: mapboxgl,
+            placeholder: 'Tìm kiếm địa chỉ...',
+            marker: false
+        });
+        document.getElementById('geocoder').appendChild(geocoder.onAdd(map));
+
+        function updateHidden(lng, lat) {
+            document.getElementById('longitude').value = lng;
+            document.getElementById('latitude').value = lat;
+        }
+
+        function updateAddress(lng, lat) {
+            fetch(`https://api.mapbox.com/geocoding/v5/mapbox.places/${lng},${lat}.json?access_token=${mapboxgl.accessToken}`)
+                .then(res => res.json())
+                .then(data => {
+                    if (data.features.length > 0) {
+                        document.getElementById('address').value = data.features[0].place_name;
+                    }
+                });
+            updateHidden(lng, lat);
+        }
+
+        // Click trên bản đồ
+        map.on('click', e => {
+            const { lng, lat } = e.lngLat;
+            marker.setLngLat([lng, lat]);
+            updateAddress(lng, lat);
+        });
+
+        // Kéo marker
+        marker.on('dragend', () => {
+            const lngLat = marker.getLngLat();
+            updateAddress(lngLat.lng, lngLat.lat);
+        });
+
+        // Chọn từ geocoder
+        geocoder.on('result', e => {
+            const [lng, lat] = e.result.center;
+            marker.setLngLat([lng, lat]);
+            map.flyTo({ center: [lng, lat], zoom: 15 });
+            document.getElementById('address').value = e.result.place_name;
+            updateHidden(lng, lat);
+        });
+        /*]]>*/
     </script>
 </body>
+
 </html>

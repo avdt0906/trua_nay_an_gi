@@ -21,6 +21,17 @@ public class WalletWithdraw {
     @JoinColumn(name = "restaurant_id")
     private Restaurant restaurant;
     private Double withdrawAmount;
-    private LocalDateTime withdrawTime;
-    private Boolean isApproved = false;
+    private LocalDateTime withdrawTime = LocalDateTime.now();
+    @Enumerated(EnumType.STRING)
+    @Column(length = 20, nullable = false)
+    private Status status = Status.PENDING;
+    private String note;
+    private String adminNote;
+    private LocalDateTime processedAt;
+
+    public enum Status {
+        PENDING,
+        APPROVED,
+        REJECTED
+    }
 }

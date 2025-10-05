@@ -54,7 +54,7 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
         }
 
         if (redirectUrl == null || redirectUrl.isEmpty()) {
-            redirectUrl = "/home";
+            redirectUrl = "/homepage";
             Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
             for (GrantedAuthority grantedAuthority : authorities) {
                 if (grantedAuthority.getAuthority().equals("ADMIN")) {

@@ -14,9 +14,9 @@ public class UserAddress {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String name; // Tên người nhận
+    private String name;
 
-    private String phone; // Số điện thoại
+    private String phone;
 
     private String fullAddress;
 

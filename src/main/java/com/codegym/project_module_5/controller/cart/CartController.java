@@ -1,18 +1,20 @@
 package com.codegym.project_module_5.controller.cart;
 
 import com.codegym.project_module_5.model.cart_model.CartItem;
-import com.codegym.project_module_5.model.restaurant_model.Dish;
-import com.codegym.project_module_5.model.user_model.User;
-import com.codegym.project_module_5.model.user_model.UserAddress;
-import com.codegym.project_module_5.service.cart_service.ICartService;
-import com.codegym.project_module_5.service.restaurant_service.IDishService;
-import com.codegym.project_module_5.service.restaurant_service.IRestaurantService;
-import com.codegym.project_module_5.service.order_service.IOrderService;
-import com.codegym.project_module_5.service.order_service.IOrderDetailService;
-import com.codegym.project_module_5.model.order_model.Orders;
 import com.codegym.project_module_5.model.order_model.OrderDetail;
 import com.codegym.project_module_5.model.order_model.OrderStatus;
+import com.codegym.project_module_5.model.order_model.Orders;
+import com.codegym.project_module_5.model.restaurant_model.Dish;
+import com.codegym.project_module_5.model.shipper_model.Shipper; // Thêm import
+import com.codegym.project_module_5.model.user_model.User;
+import com.codegym.project_module_5.model.user_model.UserAddress;
 import com.codegym.project_module_5.repository.order_repository.IOrderStatusRepository;
+import com.codegym.project_module_5.service.cart_service.ICartService;
+import com.codegym.project_module_5.service.order_service.IOrderDetailService;
+import com.codegym.project_module_5.service.order_service.IOrderService;
+import com.codegym.project_module_5.service.restaurant_service.IDishService;
+import com.codegym.project_module_5.service.restaurant_service.IRestaurantService;
+import com.codegym.project_module_5.service.shipper_service.IShipperService; // Thêm import
 import com.codegym.project_module_5.service.user_service.IUserService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +33,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 @Controller
 @RequestMapping("/cart")
@@ -56,6 +59,11 @@ public class CartController {
 
     @Autowired
     private IOrderStatusRepository orderStatusRepository;
+
+    @Autowired
+    private IShipperService shipperService; // <<< DÒNG MỚI
+
+    // ... (Các phương thức viewCart, removeCartItem, addToCart, checkout GET giữ nguyên)
 
     @GetMapping
     public String viewCart(Model model, HttpSession session) {
@@ -117,17 +125,20 @@ public class CartController {
     }
 
     @PostMapping("/add")
-    public ResponseEntity<String> addToCart(@RequestParam("dishId") Long dishId,
-                                            @RequestParam(value = "quantity", defaultValue = "1") int quantity,
-                                            HttpSession session) {
+    @ResponseBody
+    public ResponseEntity<?> addToCart(@RequestParam("dishId") Long dishId,
+                                       @RequestParam(value = "quantity", defaultValue = "1") int quantity,
+                                       HttpSession session) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         boolean isAuthenticated = authentication != null && authentication.isAuthenticated() && !(authentication instanceof AnonymousAuthenticationToken);
 
         Optional<Dish> dishOptional = dishService.findById(dishId);
         if (dishOptional.isEmpty()) {
-            return ResponseEntity.badRequest().body("Sản phẩm không tồn tại!");
+            return ResponseEntity.badRequest().body(Map.of("message", "Sản phẩm không tồn tại!"));
         }
         Dish dish = dishOptional.get();
+
+        int totalCartItems = 0;
 
         if (isAuthenticated) {
             String username = authentication.getName();
@@ -135,8 +146,9 @@ public class CartController {
                     .orElseThrow(() -> new RuntimeException("User not found"));
             try {
                 cartService.addToCart(currentUser, dish, quantity);
+                totalCartItems = cartService.getCartItems(currentUser).size();
             } catch (IllegalArgumentException ex) {
-                return ResponseEntity.badRequest().body(ex.getMessage());
+                return ResponseEntity.badRequest().body(Map.of("message", ex.getMessage()));
             }
         } else {
             Map<Long, Integer> cart = (Map<Long, Integer>) session.getAttribute("cart");
@@ -150,15 +162,20 @@ public class CartController {
                     Long existingRestaurantId = anyDishOpt.get().getRestaurant().getId();
                     Long newRestaurantId = dish.getRestaurant().getId();
                     if (!existingRestaurantId.equals(newRestaurantId)) {
-                        return ResponseEntity.badRequest().body("Chỉ được đặt món từ một nhà hàng trong mỗi đơn");
+                        return ResponseEntity.badRequest().body(Map.of("message", "Chỉ được đặt món từ một nhà hàng trong mỗi đơn"));
                     }
                 }
             }
             cart.put(dishId, cart.getOrDefault(dishId, 0) + quantity);
             session.setAttribute("cart", cart);
+            totalCartItems = cart.size();
         }
 
-        return ResponseEntity.ok("Thêm vào giỏ hàng thành công!");
+        Map<String, Object> response = new HashMap<>();
+        response.put("message", "Thêm vào giỏ hàng thành công!");
+        response.put("cartItemCount", totalCartItems);
+
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/checkout")
@@ -183,19 +200,14 @@ public class CartController {
         }
     }
 
+
     @GetMapping("/detail")
     public String showCartDetail(Model model, HttpSession session, @RequestParam(value = "selectedItems", required = false) List<Long> selectedItemIds) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated() || (authentication instanceof AnonymousAuthenticationToken)) {
             return "redirect:/account/login";
         }
-
-        // === SỬA LỖI: Thêm biến isAuthenticated vào model ===
-        // Thêm dòng này để navbar có thể render chính xác
         model.addAttribute("isAuthenticated", true);
-
-        // === SỬA LỖI NHỎ: Thay selectedDishIds thành selectedItemIds ===
-        // Biến được truyền vào là selectedItemIds, nên cần kiểm tra đúng biến đó.
         if (selectedItemIds == null || selectedItemIds.isEmpty()) {
             return "redirect:/cart";
         }
@@ -204,6 +216,7 @@ public class CartController {
         User currentUser = userService.findByUsername(username).orElse(null);
 
         if (currentUser != null) {
+            // ... (Phần code lấy cart items và tính totalPrice giữ nguyên)
             List<CartItem> allCartItems = cartService.getCartItems(currentUser);
 
             List<CartItem> selectedCartItems = allCartItems.stream()
@@ -242,6 +255,7 @@ public class CartController {
             }
 
             double subtotal = totalPrice;
+            // ... (Phần code xử lý coupon giữ nguyên)
             String appliedCoupon = (String) session.getAttribute("appliedCoupon");
             double discount = 0;
             String couponMessage = null;
@@ -274,8 +288,33 @@ public class CartController {
                 }
             }
 
+
             double serviceFee = Math.round(subtotal * 0.05);
-            double shippingFee = 15000;
+
+            // === PHẦN SỬA ĐỔI ===
+            // Chuyển Iterable thành List trước khi sử dụng stream
+            List<Shipper> shippers = StreamSupport.stream(shipperService.findAll().spliterator(), false)
+                    .filter(Shipper::getIsAvailable)
+                    .collect(Collectors.toList());
+            model.addAttribute("shippers", shippers);
+
+            double shippingFee = 0;
+            if (!shippers.isEmpty()) {
+                Long selectedShipperId = (Long) session.getAttribute("selectedShipperId");
+                if (selectedShipperId != null) {
+                    Optional<Shipper> selectedShipper = shippers.stream().filter(s -> s.getId().equals(selectedShipperId)).findFirst();
+                    if (selectedShipper.isPresent()) {
+                        shippingFee = selectedShipper.get().getPrice();
+                    } else {
+                        shippingFee = shippers.get(0).getPrice();
+                        session.setAttribute("selectedShipperId", shippers.get(0).getId());
+                    }
+                } else {
+                    shippingFee = shippers.get(0).getPrice();
+                    session.setAttribute("selectedShipperId", shippers.get(0).getId());
+                }
+            }
+
             double grandTotal = Math.max(0, subtotal - discount) + serviceFee + shippingFee;
 
             model.addAttribute("appliedCoupon", appliedCoupon);
@@ -291,9 +330,11 @@ public class CartController {
     }
 
 
+
     @PostMapping("/checkout")
     public String submitCheckout(@RequestParam(name = "paymentMethod", required = false) String paymentMethod,
                                  @RequestParam(name = "note", required = false) String note,
+                                 @RequestParam(name = "shipperId", required = false) Long shipperId, // Thêm shipperId
                                  HttpSession session) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         boolean isAuthenticated = authentication != null && authentication.isAuthenticated()
@@ -315,11 +356,20 @@ public class CartController {
             session.removeAttribute("orderNote");
         }
 
+        // Lưu shipperId vào session
+        if (shipperId != null) {
+            session.setAttribute("selectedShipperId", shipperId);
+        }
+
         return "redirect:/cart/detail";
     }
 
     @PostMapping("/place-order")
-    public String placeOrder(@RequestParam(name = "selectedItems", required = false) List<Long> selectedItemIds, HttpSession session) {
+    public String placeOrder(@RequestParam(name = "selectedItems", required = false) List<Long> selectedItemIds,
+                             @RequestParam("address") String address,
+                             @RequestParam("shipperId") Long shipperId, // <<< DÒNG MỚI
+                             HttpSession session,
+                             RedirectAttributes redirectAttributes) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         boolean isAuthenticated = authentication != null && authentication.isAuthenticated()
                 && !(authentication instanceof AnonymousAuthenticationToken);
@@ -346,23 +396,43 @@ public class CartController {
             return "redirect:/cart";
         }
 
+        // === PHẦN THAY ĐỔI ===
+        Optional<Shipper> shipperOpt = shipperService.findById(shipperId);
+        if (shipperOpt.isEmpty()) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Đơn vị vận chuyển không hợp lệ.");
+            // Chuyển hướng trở lại trang chi tiết giỏ hàng với các mặt hàng đã chọn
+            String params = selectedItemIds.stream().map(id -> "selectedItems=" + id).collect(Collectors.joining("&"));
+            return "redirect:/cart/detail?" + params;
+        }
+        Shipper shipper = shipperOpt.get();
+        // === KẾT THÚC THAY ĐỔI ===
+
         Long restaurantId = itemsToOrder.get(0).getDish().getRestaurant().getId();
         var restaurantOpt = restaurantService.findById(restaurantId);
         if (restaurantOpt.isEmpty()) {
-            return "redirect:/cart/detail";
+            String params = selectedItemIds.stream().map(id -> "selectedItems=" + id).collect(Collectors.joining("&"));
+            return "redirect:/cart/detail?" + params;
         }
 
-        OrderStatus status = orderStatusRepository.findByName("PENDING")
+        OrderStatus status = orderStatusRepository.findByName("Chờ xác nhận")
                 .orElseGet(() -> {
                     OrderStatus s = new OrderStatus();
-                    s.setName("PENDING");
+                    s.setName("Chờ xác nhận");
                     return orderStatusRepository.save(s);
                 });
+
+        double totalPrice = 0;
+        for (CartItem item : itemsToOrder) {
+            totalPrice += item.getDish().getPrice() * item.getQuantity();
+        }
 
         Orders order = new Orders();
         order.setUser(currentUser);
         order.setRestaurant(restaurantOpt.get());
         order.setOrderStatus(status);
+        order.setTotalPrice(totalPrice); // Lưu ý: totalPrice này là tổng tiền hàng, chưa bao gồm phí ship và các phí khác
+        order.setAddress(address);
+        order.setShipper(shipper); // <<< DÒNG MỚI
         Object note = session.getAttribute("orderNote");
         if (note != null) order.setCustomerNote(note.toString());
         orderService.save(order);
@@ -372,6 +442,7 @@ public class CartController {
             od.setOrder(order);
             od.setDish(ci.getDish());
             od.setQuantity((long) ci.getQuantity());
+            od.setPrice(ci.getDish().getPrice());
             orderDetailService.save(od);
         }
 
@@ -382,8 +453,32 @@ public class CartController {
         session.removeAttribute("paymentMethod");
         session.removeAttribute("orderNote");
         session.removeAttribute("appliedCoupon");
+        session.removeAttribute("selectedShipperId"); // Xóa shipper đã chọn khỏi session
 
-        return "redirect:/cart";
+        redirectAttributes.addFlashAttribute("successMessage", "Cảm ơn bạn đã tin tưởng và đặt hàng.");
+        return "redirect:/cart/order-success?orderId=" + order.getId();
+    }
+
+    // ... (Các phương thức còn lại giữ nguyên)
+
+    @GetMapping("/order-success")
+    public String showOrderSuccess(@RequestParam("orderId") Long orderId, Model model) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        boolean isAuthenticated = authentication != null && authentication.isAuthenticated() && !(authentication instanceof AnonymousAuthenticationToken);
+        model.addAttribute("isAuthenticated", isAuthenticated);
+        if (isAuthenticated) {
+            String username = authentication.getName();
+            User currentUser = userService.findByUsername(username).orElse(null);
+            model.addAttribute("currentUser", currentUser);
+        }
+
+        Optional<Orders> orderOptional = orderService.findById(orderId);
+        if (orderOptional.isPresent()) {
+            model.addAttribute("order", orderOptional.get());
+        } else {
+            return "redirect:/";
+        }
+        return "cart/order-success";
     }
 
     @PostMapping("/apply-coupon")
@@ -452,5 +547,3 @@ public class CartController {
         }
     }
 }
-
-

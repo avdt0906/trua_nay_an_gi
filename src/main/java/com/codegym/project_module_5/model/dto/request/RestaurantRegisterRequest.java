@@ -32,4 +32,6 @@ public class RestaurantRegisterRequest {
     
     @NotBlank(message = "Mô tả không được để trống")
     private String description;
+    private Double rlatitude;
+    private Double rlongitude;
 }

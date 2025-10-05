@@ -1,62 +1,116 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
-
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
+    <title>Đăng nhập - FoodDelivery</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" th:href="@{/css/login.css}">
 </head>
-
 <body>
 
-<div class="bg-image-wrapper">
-    <div class="auth-card login-card">
-        <div class="auth-header">
-            <h2>Login to Your Account</h2>
-        </div>
-        <div class="auth-body">
-            <form th:action="@{/account/login}" method="post">
-                <div th:if="${param.error}" class="alert alert-danger alert-dismissible fade show" role="alert">
-                    Sai username hoặc password!
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                </div>
+<!-- Include navbar -->
+<div th:replace="~{user/fragments/user_navbar :: navbar}"></div>
 
-                <div th:if="${param.logout}" class="alert alert-info alert-dismissible fade show" role="alert">
-                    Bạn đã đăng xuất thành công.
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+<!-- Main content with centered login form -->
+<main class="min-vh-100 py-5" style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);">
+    <div class="container d-flex justify-content-center align-items-center" style="min-height: 70vh;">
+        <div class="auth-card login-card">
+            <div class="auth-header">
+                <div class="d-flex align-items-center justify-content-center mb-3">
+                    <i class="fas fa-utensils me-2" style="font-size: 2rem; color: #EE4D2D;"></i>
+                    <span style="font-size: 1.5rem; font-weight: 700; color: #EE4D2D;">FoodDelivery</span>
                 </div>
-
-                <div class="mb-3">
-                    <label for="username" class="form-label">Username</label>
-                    <input type="text" class="form-control" id="username" name="username" required>
-                </div>
-                <div class="mb-4">
-                    <label for="password" class="form-label">Password</label>
-                    <input type="password" class="form-control" id="password" name="password" required>
-                </div>
-                <div class="d-flex justify-content-between align-items-center mb-4">
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" value="" id="rememberMe" name="remember-me">
-                        <label class="form-check-label" for="rememberMe">Remember me</label>
+                <h2>Chào mừng trở lại!</h2>
+                <p class="mb-0 opacity-90">Đăng nhập để đặt món ngon ngay</p>
+            </div>
+            <div class="auth-body">
+                <form th:action="@{/account/login}" method="post">
+                    <div th:if="${param.error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <i class="fas fa-exclamation-circle me-2"></i>
+                        Sai tên đăng nhập hoặc mật khẩu!
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                     </div>
-                    <a th:href="@{/account/forgot_password}" class="text-decoration-none small">Forgot password?</a>
-                </div>
-                <div class="d-grid">
-                    <button type="submit" class="btn btn-primary btn-lg">Login</button>
-                </div>
-            </form>
-        </div>
-        <div class="text-center auth-footer-link">
-            <p class="mb-0">Don't have an account? <a th:href="@{/register}" class="fw-bold text-decoration-none">Register here</a></p>
+
+                    <div th:if="${param.logout}" class="alert alert-info alert-dismissible fade show" role="alert">
+                        <i class="fas fa-check-circle me-2"></i>
+                        Bạn đã đăng xuất thành công.
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="username" class="form-label">
+                            <i class="fas fa-user me-2"></i>Tên đăng nhập
+                        </label>
+                        <input type="text" class="form-control" id="username" name="username" 
+                               placeholder="Nhập tên đăng nhập của bạn" required>
+                    </div>
+                    <div class="mb-4">
+                        <label for="password" class="form-label">
+                            <i class="fas fa-lock me-2"></i>Mật khẩu
+                        </label>
+                        <input type="password" class="form-control" id="password" name="password" 
+                               placeholder="Nhập mật khẩu của bạn" required>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="" id="rememberMe" name="remember-me">
+                            <label class="form-check-label" for="rememberMe">Ghi nhớ đăng nhập</label>
+                        </div>
+                        <a th:href="@{/account/forgot_password}" class="text-decoration-none small">Quên mật khẩu?</a>
+                    </div>
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="fas fa-sign-in-alt me-2"></i>Đăng nhập
+                        </button>
+                    </div>
+                </form>
+            </div>
+            <div class="text-center auth-footer-link">
+                <p class="mb-0">Chưa có tài khoản? 
+                    <a th:href="@{/register}" class="fw-bold text-decoration-none">
+                        <i class="fas fa-user-plus me-1"></i>Đăng ký ngay
+                    </a>
+                </p>
+            </div>
         </div>
     </div>
-</div>
+</main>
+
+<!-- Footer -->
+<footer class="mt-5 bg-light pt-4 pb-4 border-top">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-3">
+                <h6>Công ty</h6>
+                <ul class="list-unstyled small">
+                    <li>Giới thiệu</li>
+                    <li>Trung tâm Trợ giúp</li>
+                    <li>Quy chế</li>
+                    <li>Điều khoản sử dụng</li>
+                    <li>Bảo mật thông tin</li>
+                </ul>
+            </div>
+            <div class="col-md-3">
+                <h6>Ứng dụng FoodDelivery</h6>
+                <div class="d-flex gap-2">
+                    <img src="/images/logo/appstore.png" alt="App Store" height="40">
+                    <img src="/images/logo/googleplay.png" alt="Google Play" height="40">
+                </div>
+            </div>
+            <div class="col-md-6 text-end small">
+                <p>FoodDelivery © 2025</p>
+                <p>Công ty CP Foody - Địa chỉ: 244 Cống Quỳnh, P. Phạm Ngũ Lão, Q.1, TP.HCM</p>
+            </div>
+        </div>
+    </div>
+</footer>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script th:src="@{/js/auth.js}"></script>
 </body>
 </html>

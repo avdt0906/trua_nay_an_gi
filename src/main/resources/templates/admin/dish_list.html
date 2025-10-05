@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Quản lý Món ăn</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <!-- Sidebar Styles -->
+  <th:block th:replace="admin/fragments/navbar :: sidebar-styles"></th:block>
+
+  <style>
+    body {
+      background-color: #f8f9fa;
+      font-family: 'Roboto', sans-serif;
+    }
+
+    .content-wrapper {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    main {
+      flex: 1;
+      padding: 2rem;
+    }
+
+    .table-container {
+      background-color: #fff;
+      padding: 1.5rem;
+      border-radius: 0.75rem;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, .05);
+    }
+
+    .table thead {
+      background-color: var(--primary-color);
+      color: #fff;
+    }
+
+    .table-hover tbody tr:hover {
+      background-color: rgba(59, 130, 246, 0.05);
+    }
+
+    .btn-action {
+      margin: 0 2px;
+      width: 38px;
+    }
+
+    .search-bar {
+      max-width: 350px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="content-wrapper">
+    <!-- Sidebar -->
+    <div th:replace="admin/fragments/navbar :: sidebar(${activePage})"></div>
+
+    <!-- Main Content -->
+    <main>
+      <div class="table-container">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+          <h1 class="h4 mb-0">Danh sách Món ăn</h1>
+          <form class="d-flex search-bar" th:action="@{/admin/dish/list}" method="get">
+            <input type="text" name="keyword" class="form-control me-2" placeholder="Tìm món theo tên hoặc mô tả"
+              th:value="${keyword}">
+            <button class="btn btn-primary" type="submit"><i class="fas fa-search"></i></button>
+          </form>
+        </div>
+        <!-- Flash message -->
+        <div th:if="${message}" class="alert alert-success alert-dismissible fade show" role="alert">
+          <i class="fas fa-check-circle me-1"></i>
+          <span th:text="${message}"></span>
+          <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+
+
+        <!-- Flash Messages -->
+        <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
+          <span th:text="${successMessage}"></span>
+          <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
+          <span th:text="${errorMessage}"></span>
+          <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+
+        <!-- Empty State -->
+        <div th:if="${dishes.isEmpty()}">
+          <div class="alert alert-info" role="alert">
+            Không có món ăn nào.
+          </div>
+        </div>
+
+        <!-- Data Table -->
+        <div th:if="${!dishes.isEmpty()}">
+          <div class="table-responsive">
+            <table class="table table-hover align-middle">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Tên món</th>
+                  <th>Nhà hàng</th>
+                  <th>Giá</th>
+                  <th>Ảnh</th>
+                  <th>Danh mục</th>
+                  <th>Trạng thái</th>
+                  <th class="text-center">Hành động</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr th:each="dish, iStat : ${dishes}">
+                  <td th:text="${iStat.index + 1}"></td>
+                  <td th:text="${dish.name}"></td>
+                  <td th:text="${dish.restaurant.name}"></td>
+                  <td th:text="|${#numbers.formatDecimal(dish.price, 0, 'COMMA', 0, 'POINT')} ₫|"></td>
+
+                  <td>
+                    <img th:if="${dish.pictureUrl}" th:src="@{'/images/dish/' + ${dish.pictureUrl}}"
+                      th:alt="${dish.name}" style="width:80px;height:60px;object-fit:cover;">
+                  </td>
+                  <td th:text="${dish.category != null ? dish.category.name : '-'}"></td>
+                  <td>
+                    <span th:text="${dish.isAvailable ? 'Đang bán' : 'Ngừng'}"
+                      th:classappend="${dish.isAvailable ? 'badge bg-success' : 'badge bg-secondary'}">
+                    </span>
+                  </td>
+                  <td class="text-center">
+                    <!-- Xóa -->
+                    <form th:action="@{|/admin/dish/${dish.id}/delete|}" method="post" class="d-inline"
+                      onsubmit="return confirm('Xóa món này?');">
+                      <button type="submit" class="btn btn-sm btn-danger btn-action" title="Xóa">
+                        <i class="fas fa-trash"></i>
+                      </button>
+                    </form>
+                    <!-- Đóng/Mở bán -->
+                    <form th:action="@{|/admin/dish/${dish.id}/toggle-available|}" method="post" class="d-inline">
+                      <button type="submit"
+                        th:classappend="${dish.isAvailable ? 'btn-warning' : 'btn-success'} + ' btn btn-sm btn-action'"
+                        th:title="${dish.isAvailable ? 'Đóng bán' : 'Mở bán'}">
+                        <i class="fas" th:classappend="${dish.isAvailable ? 'fa-lock' : 'fa-lock-open'}"></i>
+                      </button>
+                    </form>
+                    <!-- Nút mở modal -->
+                    <button type="button" class="btn btn-sm btn-primary shadow-sm rounded-pill px-3"
+                      data-bs-toggle="modal" th:data-bs-target="'#bannerModal-' + ${dish.id}">
+                      <i class="fas fa-star me-1"></i> Banner
+                    </button>
+
+                    <!-- Modal -->
+                    <div class="modal fade" th:id="'bannerModal-' + ${dish.id}" tabindex="-1" aria-hidden="true">
+                      <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content border-0 shadow-lg rounded-4">
+                          <form th:action="@{|/admin/banner/update/${dish.id}|}" method="post">
+                            <!-- Header -->
+                            <div class="modal-header bg-primary text-white rounded-top-4">
+                              <h5 class="modal-title fw-semibold">
+                                <i class="fas fa-sliders-h me-2"></i>Chọn trạng thái Banner
+                              </h5>
+                              <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                            </div>
+
+                            <!-- Body -->
+                            <div class="modal-body px-4 py-3">
+                              <p class="text-muted mb-3">Bạn có thể bật/tắt nhiều trạng thái cùng lúc.</p>
+
+                              <div class="form-check mb-2 ps-1">
+                                <input class="form-check-input rounded-circle border-primary" type="checkbox"
+                                  name="featured" th:checked="${dish.banner != null and dish.banner.featured}">
+                                <label class="form-check-label ms-1 fw-medium">🌟 Nổi bật</label>
+                              </div>
+
+                              <div class="form-check ps-1">
+                                <input class="form-check-input rounded-circle border-success" type="checkbox"
+                                  name="promotion" th:checked="${dish.banner != null and dish.banner.promotion}">
+                                <label class="form-check-label ms-1 fw-medium">💸 Khuyến mãi</label>
+                              </div>
+                            </div>
+
+                            <!-- Footer -->
+                            <div class="modal-footer border-0 pt-0 pb-4">
+                              <button type="button" class="btn btn-light border rounded-pill px-3"
+                                data-bs-dismiss="modal">
+                                <i class="fas fa-times me-1"></i>Đóng
+                              </button>
+                              <button type="submit" class="btn btn-primary rounded-pill px-4">
+                                <i class="fas fa-save me-1"></i>Lưu
+                              </button>
+                            </div>
+                          </form>
+                        </div>
+                      </div>
+                    </div>
+
+
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Pagination -->
+          <nav th:if="${totalPages > 1}" aria-label="Page navigation">
+            <ul class="pagination justify-content-center mt-3">
+              <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
+                <a class="page-link" th:href="@{|/admin/dish/list?page=${currentPage - 1}&keyword=${keyword}|}">«</a>
+              </li>
+              <li class="page-item" th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+                th:classappend="${i == currentPage} ? 'active'">
+                <a class="page-link" th:text="${i + 1}"
+                  th:href="@{|/admin/dish/list?page=${i}&keyword=${keyword}|}"></a>
+              </li>
+              <li class="page-item" th:classappend="${currentPage + 1 >= totalPages} ? 'disabled'">
+                <a class="page-link" th:href="@{|/admin/dish/list?page=${currentPage + 1}&keyword=${keyword}|}">»</a>
+              </li>
+            </ul>
+          </nav>
+        </div>
+      </div>
+    </main>
+  </div>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const alertBox = document.querySelector('.alert-success');
+      if (alertBox) {
+        setTimeout(() => alertBox.classList.remove('show'), 3000);
+      }
+    });
+  </script>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

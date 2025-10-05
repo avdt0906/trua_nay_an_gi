@@ -1,20 +1,30 @@
 package com.codegym.project_module_5.controller.admin;
 
+import com.codegym.project_module_5.model.order_model.OrderStatus;
+import com.codegym.project_module_5.model.order_model.Orders;
 import com.codegym.project_module_5.model.restaurant_model.Dish;
 import com.codegym.project_module_5.model.restaurant_model.Restaurant;
-import com.codegym.project_module_5.model.shipper_model.Shipper;
+import com.codegym.project_module_5.model.user_model.Role;
 import com.codegym.project_module_5.model.user_model.User;
+import com.codegym.project_module_5.repository.order_repository.IOrderStatusRepository;
+import com.codegym.project_module_5.service.Banner.IBannerService;
+import com.codegym.project_module_5.service.impl.order_service_impl.OrderDetailService;
+import com.codegym.project_module_5.service.impl.role_service_impl.RoleService;
 import com.codegym.project_module_5.service.order_service.IOrderService;
 import com.codegym.project_module_5.service.restaurant_service.IDishService;
 import com.codegym.project_module_5.service.restaurant_service.IRestaurantService;
-import com.codegym.project_module_5.service.shipper_service.IShipperService;
 import com.codegym.project_module_5.service.user_service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.data.domain.Sort;
 
 import java.util.HashMap;
 import java.util.List;
@@ -35,6 +45,15 @@ public class AdminController {
     private IRestaurantService restaurantService;
     @Autowired
     private IDishService dishService;
+    @Autowired
+    private RoleService roleService;
+    @Autowired
+    private IOrderStatusRepository orderStatusRepository;
+    @Autowired
+    private IBannerService bannerService;
+    @Autowired
+    private OrderDetailService orderDetailService;
+
     /**
      * Chuyển hướng từ /admin sang /admin/dashboard.
      * 
@@ -159,6 +178,124 @@ public class AdminController {
             restaurantService.save(restaurant);
         }
         return "redirect:/admin/restaurants/pending";
+    }
+
+    @GetMapping("/restaurants/partner-requests")
+    public String getPartnerRequests(Model model) {
+        List<Restaurant> partnerRequests = restaurantService.getPartnerRequests();
+        model.addAttribute("partnerRequests", partnerRequests);
+        return "admin/partner_pending_list";
+    }
+
+    @PostMapping("/restaurants/approvals/partner/approve/{id}")
+    public String approvePartnerRequest(@PathVariable Long id) {
+        restaurantService.approvePartner(id);
+        return "redirect:/admin/restaurants/partner-requests";
+    }
+
+    @PostMapping("/restaurant/approvals/partner/reject/{id}")
+    public String rejectPartnerRequest(@PathVariable Long id) {
+        restaurantService.rejectPartner(id);
+        return "redirect:/admin/restaurants/partner-requests";
+    }
+
+    @GetMapping("/users/list")
+    public String listUsers(@RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "size", defaultValue = "10") int size,
+            Model model) {
+        Page<User> usersPage = userService.findAllUsers(page, size);
+
+        model.addAttribute("users", usersPage.getContent());
+        model.addAttribute("currentPage", usersPage.getNumber());
+        model.addAttribute("totalPages", usersPage.getTotalPages());
+        model.addAttribute("totalItems", usersPage.getTotalElements());
+        model.addAttribute("activePage", "list");
+
+        return "admin/user_list";
+    }
+
+    @PostMapping("/users/delete/{id}")
+    public String deleteUser(@PathVariable Long id) {
+        userService.deleteById(id);
+        return "redirect:/admin/users/list";
+    }
+
+    // Hiển thị form
+    @GetMapping("/users/edit/{id}")
+    public String showEditForm(@PathVariable Long id, Model model) {
+        User user = userService.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+        List<Role> allRoles = roleService.findAll();
+        model.addAttribute("user", user);
+        model.addAttribute("allRoles", allRoles);
+        return "admin/user_edit";
+    }
+
+    // Xử lý cập nhật
+    @PostMapping("/users/update/{id}")
+    public String updateUser(@PathVariable Long id,
+            @ModelAttribute("user") User formUser) {
+        // Lưu ý: Bạn có thể cần nạp user cũ, merge role, hoặc encode password
+        userService.updateUser(id, formUser);
+        return "redirect:/admin/users/list";
+    }
+
+    @GetMapping("/dish/list")
+    public String listDishes(@RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "") String keyword,
+            Model model) {
+
+        int pageSize = 10;
+        Page<Dish> dishPage;
+
+        if (!keyword.isBlank()) {
+            dishPage = dishService.search(keyword, PageRequest.of(page, pageSize));
+        } else {
+            dishPage = dishService.findAll(PageRequest.of(page, pageSize));
+        }
+
+        model.addAttribute("dishes", dishPage.getContent());
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", dishPage.getTotalPages());
+        model.addAttribute("keyword", keyword); // giờ luôn là chuỗi, không null
+
+        return "admin/dish_list";
+    }
+
+    @GetMapping("/orders/list")
+    public String listOrders(
+            @RequestParam(required = false) Long statusId,
+            @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable,
+            Model model) {
+
+        Page<Orders> page = (statusId != null)
+                ? orderService.findAllByOrderStatus_Id(statusId, pageable)
+                : orderService.findAll(pageable);
+
+        model.addAttribute("ordersPage", page);
+        model.addAttribute("orderStatuses", orderStatusRepository.findAll());
+        model.addAttribute("selectedStatus", statusId);
+        return "admin/orders_list";
+    }
+
+    @PostMapping("/orders/updateStatus")
+    public ModelAndView updateOrders(@RequestParam Long orderId, @RequestParam OrderStatus newStatus) {
+        Optional<Orders> ordersOptional = orderService.findById(orderId);
+        Orders order = ordersOptional.get();
+        order.setOrderStatus(newStatus);
+        orderService.save(order);
+        return new ModelAndView("redirect:/admin/orders/list");
+    }
+
+    @PostMapping("/banner/update/{dishId}")
+    public String updateBanner(@PathVariable Long dishId,
+                               @RequestParam(required = false, defaultValue = "false") boolean featured,
+                               @RequestParam(required = false, defaultValue = "false") boolean promotion,
+                               RedirectAttributes redirect) {
+
+        bannerService.updateBannerForDish(dishId, featured, promotion);
+        redirect.addFlashAttribute("message", "Cập nhật banner thành công!");
+        return "redirect:/admin/dish/list";
     }
 
 }

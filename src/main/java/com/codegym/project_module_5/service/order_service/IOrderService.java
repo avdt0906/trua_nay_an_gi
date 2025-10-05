@@ -1,10 +1,24 @@
 package com.codegym.project_module_5.service.order_service;
 
+import com.codegym.project_module_5.model.dto.sales.OrderStatisticDto;
 import com.codegym.project_module_5.model.order_model.Orders;
+import com.codegym.project_module_5.model.user_model.User;
 import com.codegym.project_module_5.service.general_service.IGeneralService;
+
+import java.util.List;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 public interface IOrderService extends IGeneralService<Orders> {
     long count();
     Iterable<Orders> findAllByRestaurantId(Long restaurantId);
     boolean cancelOrder(Long orderId);
+    List<Orders> findOrdersByUser(User user);
+    void updateOrderStatus(Long orderId);
+    void cancelOrder(Long orderId, User user);
+    Page<Orders> findAllByOrderStatus_Id(Long statusId, Pageable pageable);
+    Page<Orders> findAll(Pageable pageable);
+
+    List<OrderStatisticDto> getOrdersByMonth();
 }

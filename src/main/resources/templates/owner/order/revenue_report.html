@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Báo cáo doanh thu</title>
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <th:block th:replace="owner/restaurant/dashboard :: restaurant-content"></th:block>
+    <style>
+        body {
+            background: linear-gradient(135deg, #e0f7fa, #e3f2fd);
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+        }
+
+        .table-container {
+            margin: 40px auto;
+            max-width: 1100px;
+            background: #fff;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-weight: 700;
+            color: #2c3e50;
+        }
+
+        thead tr {
+            background: linear-gradient(90deg, #0d6efd, #6f42c1);
+            color: #fff;
+            text-align: center;
+        }
+
+        tbody tr {
+            transition: all 0.3s ease;
+        }
+
+        tbody tr:nth-child(even) {
+            background-color: #f9f9ff;
+        }
+
+        tbody tr:hover {
+            background-color: #e9f3ff;
+            transform: scale(1.01);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+            cursor: pointer;
+        }
+
+        td, th {
+            vertical-align: middle !important;
+            text-align: center;
+            padding: 12px;
+        }
+
+        .filter-box {
+            display: flex;
+            justify-content: end;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        /* Tô màu riêng cho cột "Tổng tiền" */
+        td.total-sales {
+            font-weight: 600;
+            color: #198754;
+        }
+
+        td.total-sales.low {
+            color: #dc3545;
+        }
+    </style>
+</head>
+<body>
+<div class="wrapper">
+
+    <div th:replace="owner/restaurant/dashboard :: restaurant-sidebar"></div>
+
+    <div class="main-panel">
+        <div th:replace="owner/restaurant/dashboard :: restaurant-navbar"></div>
+        <div class="container table-container">
+            <h2>Báo cáo Doanh thu</h2>
+
+            <!-- Bộ lọc -->
+            <div class="filter-box">
+                <select id="filterYear" class="form-select w-auto">
+                    <option value="">-- Chọn năm --</option>
+                    <option value="2023">2023</option>
+                    <option value="2024">2024</option>
+                    <option value="2025">2025</option>
+                </select>
+                <button id="resetBtn" class="btn btn-outline-primary">Reset</button>
+            </div>
+
+            <div class="table-responsive">
+                <table id="salesTable" class="table table-bordered align-middle">
+                    <thead>
+                    <tr>
+                        <th>Tháng</th>
+                        <th>Quý</th>
+                        <th>Tổng tiền</th>
+                        <th>Tổng sản phẩm</th>
+                        <th>Năm</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="row : ${sales}">
+                        <td th:text="${row.getMonth()}"></td>
+                        <td th:text="${row.getQuarter()}"></td>
+                        <td th:text="${row.getTotalSales()}" class="total-sales"></td>
+                        <td th:text="${row.getTotalOrders()}"></td>
+                        <td th:text="${row.getYear()}"></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap 5 JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- JavaScript cho bộ lọc + màu động -->
+<script>
+    const filterYear = document.getElementById("filterYear");
+    const resetBtn = document.getElementById("resetBtn");
+    const table = document.getElementById("salesTable");
+
+    // Lọc theo năm
+    filterYear.addEventListener("change", () => {
+        const year = filterYear.value;
+        for (let row of table.tBodies[0].rows) {
+            const cellYear = row.cells[4].textContent.trim();
+            row.style.display = !year || cellYear === year ? "" : "none";
+        }
+    });
+
+    // Reset bộ lọc
+    resetBtn.addEventListener("click", () => {
+        filterYear.value = "";
+        for (let row of table.tBodies[0].rows) {
+            row.style.display = "";
+        }
+    });
+
+    // Đổi màu theo giá trị "Tổng tiền"
+    for (let row of table.tBodies[0].rows) {
+        const cell = row.cells[2];
+        const value = parseFloat(cell.textContent.replace(/[^\d.-]/g, ""));
+        if (!isNaN(value)) {
+            if (value < 1000000) {
+                cell.classList.add("low"); // đỏ nếu nhỏ hơn 1 triệu
+            } else {
+                cell.classList.remove("low"); // xanh nếu lớn
+            }
+        }
+    }
+</script>
+</body>
+</html>

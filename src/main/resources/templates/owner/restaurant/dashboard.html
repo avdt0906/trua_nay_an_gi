@@ -4,11 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bảng điều khiển Nhà hàng</title>
-    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,900|Roboto+Slab:400,700|Material+Icons" />
+    <link rel="stylesheet" type="text/css"
+          href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,900|Roboto+Slab:400,700|Material+Icons"/>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<th:block th:fragment="restaurant-content">
     <style>
-        /* --- BIẾN MÀU SẮC VÀ THUỘC TÍNH CHUNG --- */
+
         :root {
             --primary-color: #6a11cb;
             --secondary-color: #2575fc;
@@ -46,111 +49,232 @@
         /* --- Sidebar --- */
         .sidebar {
             width: var(--sidebar-width);
-            position: fixed; top: 0; left: 0; height: 100vh; z-index: 1030;
-            background: var(--sidebar-bg); color: var(--sidebar-text);
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            z-index: 1030;
+            background: var(--sidebar-bg);
+            color: var(--sidebar-text);
             transition: width var(--transition-speed) ease;
             overflow-x: hidden;
         }
+
         .sidebar .sidebar-header {
-            padding: 20px; text-align: center;
+            padding: 20px;
+            text-align: center;
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
+
         .sidebar .sidebar-header h3 {
-            color: #fff; font-weight: 500; margin: 0; font-size: 1.2rem;
-            white-space: nowrap; transition: opacity var(--transition-speed) ease;
+            color: #fff;
+            font-weight: 500;
+            margin: 0;
+            font-size: 1.2rem;
+            white-space: nowrap;
+            transition: opacity var(--transition-speed) ease;
         }
-        .sidebar-nav { padding: 20px 0; }
-        .sidebar-nav .nav-item { list-style: none; }
+
+        .sidebar-nav {
+            padding: 20px 0;
+        }
+
+        .sidebar-nav .nav-item {
+            list-style: none;
+        }
+
         .sidebar-nav .nav-link {
-            color: var(--sidebar-text); display: flex; align-items: center;
-            padding: 12px 25px; margin: 4px 15px; border-radius: var(--border-radius);
-            text-decoration: none; transition: all 0.2s ease; white-space: nowrap;
+            color: var(--sidebar-text);
+            display: flex;
+            align-items: center;
+            padding: 12px 25px;
+            margin: 4px 15px;
+            border-radius: var(--border-radius);
+            text-decoration: none;
+            transition: all 0.2s ease;
+            white-space: nowrap;
         }
+
         .sidebar-nav .nav-link i {
-            font-size: 20px; margin-right: 20px; min-width: 30px;
-            text-align: center; transition: margin var(--transition-speed) ease;
+            font-size: 20px;
+            margin-right: 20px;
+            min-width: 30px;
+            text-align: center;
+            transition: margin var(--transition-speed) ease;
         }
+
         .sidebar-nav .nav-link:hover {
-            background: rgba(255, 255, 255, 0.08); color: var(--sidebar-text-hover);
+            background: rgba(255, 255, 255, 0.08);
+            color: var(--sidebar-text-hover);
         }
+
         .sidebar-nav .nav-link.active {
-            background: var(--sidebar-active-bg); color: #fff;
+            background: var(--sidebar-active-bg);
+            color: #fff;
             box-shadow: 0 4px 15px -2px rgba(0, 0, 0, 0.2), 0 7px 10px -5px rgba(138, 43, 226, 0.4);
         }
 
         /* --- Main Panel --- */
         .main-panel {
-            flex-grow: 1; margin-left: var(--sidebar-width); padding: 20px;
+            flex-grow: 1;
+            margin-left: var(--sidebar-width);
+            padding: 20px;
             transition: margin-left var(--transition-speed) ease;
             width: calc(100% - var(--sidebar-width));
         }
 
         /* --- Cơ chế đóng/mở Sidebar --- */
-        .wrapper.sidebar-collapsed .sidebar { width: var(--sidebar-width-collapsed); }
+        .wrapper.sidebar-collapsed .sidebar {
+            width: var(--sidebar-width-collapsed);
+        }
+
         .wrapper.sidebar-collapsed .main-panel {
             margin-left: var(--sidebar-width-collapsed);
             width: calc(100% - var(--sidebar-width-collapsed));
         }
+
         .wrapper.sidebar-collapsed .sidebar .sidebar-header h3,
-        .wrapper.sidebar-collapsed .sidebar .nav-link span { opacity: 0; visibility: hidden; width: 0; }
-        .wrapper.sidebar-collapsed .sidebar .nav-link i { margin-right: 0; }
-        .wrapper.sidebar-collapsed .sidebar .nav-link { justify-content: center; }
+        .wrapper.sidebar-collapsed .sidebar .nav-link span {
+            opacity: 0;
+            visibility: hidden;
+            width: 0;
+        }
+
+        .wrapper.sidebar-collapsed .sidebar .nav-link i {
+            margin-right: 0;
+        }
+
+        .wrapper.sidebar-collapsed .sidebar .nav-link {
+            justify-content: center;
+        }
 
         /* --- Top Navbar --- */
         .navbar-main {
-            background-color: var(--surface-color); box-shadow: var(--box-shadow);
-            border-radius: var(--border-radius); padding: 0.75rem 1.5rem;
+            background-color: var(--surface-color);
+            box-shadow: var(--box-shadow);
+            border-radius: var(--border-radius);
+            padding: 0.75rem 1.5rem;
         }
-        .navbar-main .nav-link { color: var(--text-muted-color); }
+
+        .navbar-main .nav-link {
+            color: var(--text-muted-color);
+        }
+
         .navbar-main .dropdown-menu {
-            border-radius: var(--border-radius); border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            border: 1px solid var(--border-color);
             box-shadow: var(--box-shadow);
         }
+
         .navbar-main .sidebar-toggle-icon {
-            font-size: 1.5rem; color: var(--primary-color);
+            font-size: 1.5rem;
+            color: var(--primary-color);
             transition: all 0.3s ease-in-out;
         }
-        .navbar-main #sidebarToggle:hover .sidebar-toggle-icon { color: var(--secondary-color); }
-        .wrapper.sidebar-collapsed .sidebar-toggle-icon { transform: rotate(180deg); }
+
+        .navbar-main #sidebarToggle:hover .sidebar-toggle-icon {
+            color: var(--secondary-color);
+        }
+
+        .wrapper.sidebar-collapsed .sidebar-toggle-icon {
+            transform: rotate(180deg);
+        }
 
         /* --- Card Styles --- */
         .card {
-            border: none; margin-bottom: 30px; border-radius: var(--border-radius);
-            background: var(--surface-color); width: 100%;
+            border: none;
+            margin-bottom: 30px;
+            border-radius: var(--border-radius);
+            background: var(--surface-color);
+            width: 100%;
             box-shadow: var(--box-shadow);
-            display: flex; flex-direction: column;
+            display: flex;
+            flex-direction: column;
         }
+
         .card .card-header {
             padding: 1.25rem 1.5rem;
-            border-bottom: 1px solid var(--border-color); background: transparent;
+            border-bottom: 1px solid var(--border-color);
+            background: transparent;
             border-top: 4px solid var(--primary-color);
             border-radius: var(--border-radius) var(--border-radius) 0 0;
         }
+
         .card .card-title {
-            margin: 0; color: var(--text-color); font-weight: 500;
+            margin: 0;
+            color: var(--text-color);
+            font-weight: 500;
         }
+
         .card .card-category {
-            color: var(--text-muted-color); margin-top: 0.25rem; font-size: 0.9em;
+            color: var(--text-muted-color);
+            margin-top: 0.25rem;
+            font-size: 0.9em;
         }
-        .card .card-body { padding: 1.5rem; flex-grow: 1;}
+
+        .card .card-body {
+            padding: 1.5rem;
+            flex-grow: 1;
+        }
+
         .card .card-footer {
-            padding: 1rem 1.5rem; background-color: transparent;
+            padding: 1rem 1.5rem;
+            background-color: transparent;
             border-top: 1px solid var(--border-color);
         }
 
         /* --- Stat Card Styles (Thẻ thống kê) --- */
         .card-stat .card-body {
-            display: flex; justify-content: space-between; align-items: center;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
+
+        /* --- Stat Card Styles (Thẻ thống kê) --- */
+        .card-stat .card-body {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* --- Stat Card Styles (Thẻ thống kê) --- */
+        .card-stat .card-body {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
         .card-stat .stat-icon {
-            font-size: 2rem; width: 60px; height: 60px;
-            display: inline-flex; align-items: center; justify-content: center;
+            font-size: 2rem;
+            width: 60px;
+            height: 60px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
             border-radius: 50%;
         }
-        .card-stat.border-success .stat-icon { background-color: rgba(var(--bs-success-rgb), 0.1); color: var(--success-color); }
-        .card-stat.border-warning .stat-icon { background-color: rgba(var(--bs-warning-rgb), 0.1); color: var(--warning-color); }
-        .card-stat.border-danger .stat-icon { background-color: rgba(var(--bs-danger-rgb), 0.1); color: var(--danger-color); }
-        .card-stat.border-info .stat-icon { background-color: rgba(var(--bs-info-rgb), 0.1); color: var(--info-color); }
+
+        /* Nếu bạn dùng Bootstrap 5 thì giữ nguyên như dưới */
+        .card-stat.border-success .stat-icon {
+            background-color: rgba(var(--bs-success-rgb), 0.1);
+            color: var(--success-color);
+        }
+
+        .card-stat.border-warning .stat-icon {
+            background-color: rgba(var(--bs-warning-rgb), 0.1);
+            color: var(--warning-color);
+        }
+
+        .card-stat.border-danger .stat-icon {
+            background-color: rgba(var(--bs-danger-rgb), 0.1);
+            color: var(--danger-color);
+        }
+
+        .card-stat.border-info .stat-icon {
+            background-color: rgba(var(--bs-info-rgb), 0.1);
+            color: var(--info-color);
+        }
+
 
         /* --- Chart Card Styles (Thẻ biểu đồ) --- */
         .card-chart .card-body {
@@ -158,85 +282,118 @@
             color: white;
             padding: 1rem;
         }
+
         .card-chart .card-footer {
             border-top: 1px solid var(--border-color);
         }
 
-        .bg-success-gradient { background: linear-gradient(60deg, #66bb6a, #43a047); }
-        .bg-warning-gradient { background: linear-gradient(60deg, #ffa726, #fb8c00); }
-        .bg-danger-gradient { background: linear-gradient(60deg, #ef5350, #e53935); }
+        .bg-success-gradient {
+            background: linear-gradient(60deg, #66bb6a, #43a047);
+        }
+
+        .bg-warning-gradient {
+            background: linear-gradient(60deg, #ffa726, #fb8c00);
+        }
+
+        .bg-danger-gradient {
+            background: linear-gradient(60deg, #ef5350, #e53935);
+        }
 
         /* Button Styles */
         .btn-primary {
-            background-color: var(--primary-color); border-color: var(--primary-color);
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
         }
+
         .btn-primary:hover {
-            background-color: #580ca6; border-color: #580ca6;
+            background-color: #580ca6;
+            border-color: #580ca6;
         }
 
     </style>
-</head>
+</th:block>
 <body>
 
 <div class="wrapper">
-    <nav class="sidebar">
-        <div class="sidebar-header">
-            <h3>QUẢN LÝ NHÀ HÀNG</h3>
-        </div>
-        <ul class="nav sidebar-nav flex-column">
-            <li class="nav-item">
-                <a class="nav-link active" th:href="@{/restaurants/dashboard}">
-                    <i class="fas fa-tachometer-alt"></i> <span>Bảng điều khiển</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#">
-                    <i class="fas fa-user"></i> <span>Hồ sơ người dùng</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" th:href="@{/restaurants/dishes/dish_list}">
-                    <i class="fas fa-utensils"></i> <span>Danh sách món ăn</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#">
-                    <i class="fas fa-clipboard-list"></i> <span>Đơn hàng</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#">
-                    <i class="fas fa-bell"></i> <span>Thông báo</span>
-                </a>
-            </li>
-        </ul>
-    </nav>
+    <div th:fragment="restaurant-sidebar" th:object="${restaurant}" class="sidebar">
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <h3>QUẢN LÝ NHÀ HÀNG</h3>
+            </div>
+            <ul class="nav sidebar-nav flex-column">
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/restaurants/dashboard}">
+                        <i class="fas fa-tachometer-alt"></i> <span>Bảng điều khiển</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">
+                        <i class="fas fa-user"></i> <span>Hồ sơ người dùng</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/restaurants/dishes/dish_list}">
+                        <i class="fas fa-utensils"></i> <span>Danh sách món ăn</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+
+                    <a class="nav-link" th:href="@{/restaurants/orders/list}">
+                        <i class="fas fa-clipboard-list"></i> <span>Đơn hàng</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/restaurants/coupons/coupon_list}">
+                        <i class="fas fa-ticket"></i> <span>Coupon</span>
+                    </a>
+                </li>
+                 <li class="nav-item">
+                    <a class="nav-link" th:href="@{/restaurants/wallet}">
+                        <i class="fas fa-money-bill-wave"></i> <span>Ví</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">
+                        <i class="fas fa-bell"></i> <span>Thông báo</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </div>
 
     <div class="main-panel">
-        <nav class="navbar navbar-expand-lg navbar-main mb-4">
-            <div class="container-fluid">
-                <button class="btn btn-link p-0 me-3" type="button" id="sidebarToggle">
-                    <i class="fas fa-indent sidebar-toggle-icon"></i>
-                </button>
-                <h4 class="fw-light m-0">Bảng điều khiển</h4>
-                <div class="collapse navbar-collapse justify-content-end">
-                    <ul class="navbar-nav align-items-center">
-                        <li class="nav-item"><a class="nav-link" href="#"><i class="fas fa-search"></i></a></li>
-                        <li class="nav-item"><a class="nav-link" href="#"><i class="fas fa-bell"></i></a></li>
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownProfile" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="fas fa-user"></i>
-                            </a>
-                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownProfile">
-                                <li><a class="dropdown-item" href="#"><i class="fas fa-user-circle"></i> Hồ sơ</a></li>
-                                <li><hr class="dropdown-divider"></li>
-                                <li><a class="dropdown-item" th:href="@{/logout}"><i class="fas fa-sign-out-alt"></i> Đăng xuất</a></li>
-                            </ul>
-                        </li>
-                    </ul>
+        <div th:fragment="restaurant-navbar">
+            <nav class="navbar navbar-expand-lg navbar-main mb-4">
+                <div class="container-fluid">
+                    <button class="btn btn-link p-0 me-3" type="button" id="sidebarToggle">
+                        <i class="fas fa-indent sidebar-toggle-icon"></i>
+                    </button>
+                    <h4 class="fw-light m-0">Bảng điều khiển</h4>
+                    <div class="collapse navbar-collapse justify-content-end">
+                        <ul class="navbar-nav align-items-center">
+                            <li class="nav-item"><a class="nav-link" href="#"><i class="fas fa-search"></i></a></li>
+                            <li class="nav-item"><a class="nav-link" href="#"><i class="fas fa-bell"></i></a></li>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownProfile" role="button"
+                                   data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="fas fa-user"></i>
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownProfile">
+                                    <li><a class="dropdown-item" href="#"><i class="fas fa-user-circle"></i> Hồ sơ</a>
+                                    </li>
+                                    <li>
+                                        <hr class="dropdown-divider">
+                                    </li>
+                                    <li><a class="dropdown-item" th:href="@{/logout}"><i
+                                            class="fas fa-sign-out-alt"></i>
+                                        Đăng xuất</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
-            </div>
-        </nav>
+            </nav>
+        </div>
 
         <div class="content pt-2">
             <div class="container-fluid">
@@ -247,7 +404,8 @@
                                 <div class="card-body">
                                     <div>
                                         <p class="card-category text-muted mb-1">Trạng thái</p>
-                                        <h4 class="card-title mb-0" th:text="${restaurant.isApproved ? 'Đã phê duyệt' : 'Chờ duyệt'}"></h4>
+                                        <h4 class="card-title mb-0"
+                                            th:text="${restaurant.isApproved ? 'Đã phê duyệt' : 'Chờ duyệt'}"></h4>
                                     </div>
                                     <div class="stat-icon">
                                         <i class="fas fa-store"></i>
@@ -259,8 +417,10 @@
                             <div class="card card-stat border-start border-warning border-4">
                                 <div class="card-body">
                                     <div>
-                                        <p class="card-category text-muted mb-1">Doanh thu (Tháng)</p>
-                                        <h4 class="card-title mb-0">34,245,000đ</h4>
+                                        <p class="card-category text-muted mb-1">Tổng doanh thu</p>
+                                        <h4 class="card-title mb-0"
+                                            th:text="${#numbers.formatDecimal(totalRevenue, 0, 'COMMA', 0, 'POINT')} + 'đ'">
+                                            0đ</h4>
                                     </div>
                                     <div class="stat-icon">
                                         <i class="fas fa-dollar-sign"></i>
@@ -273,7 +433,8 @@
                                 <div class="card-body">
                                     <div>
                                         <p class="card-category text-muted mb-1">Trạng thái cửa</p>
-                                        <h4 class="card-title mb-0" th:text="${restaurant.isOpen ? 'Đang mở' : 'Đã đóng'}"></h4>
+                                        <h4 class="card-title mb-0"
+                                            th:text="${restaurant.isOpen ? 'Đang mở' : 'Đã đóng'}"></h4>
                                     </div>
                                     <div class="stat-icon">
                                         <i class="fas fa-door-open"></i>
@@ -305,7 +466,8 @@
                                 <div class="card-footer">
                                     <h5 class="card-title mb-1">Doanh số hàng ngày</h5>
                                     <p class="card-category text-muted mb-0">
-                                        <span class="text-success"><i class="fa fa-long-arrow-up"></i> 55%</span> tăng trưởng trong hôm nay.
+                                        <span class="text-success"><i class="fa fa-long-arrow-up"></i> 55%</span> tăng
+                                        trưởng trong hôm nay.
                                     </p>
                                 </div>
                             </div>
@@ -368,7 +530,8 @@
                                             <p class="mb-2 ps-4" th:text="${restaurant.phone}"></p>
                                         </div>
                                         <div>
-                                            <strong><i class="fas fa-map-marker-alt me-2 text-primary"></i>Địa chỉ:</strong>
+                                            <strong><i class="fas fa-map-marker-alt me-2 text-primary"></i>Địa
+                                                chỉ:</strong>
                                             <p class="mb-0 ps-4" th:text="${restaurant.address}"></p>
                                         </div>
                                     </div>
@@ -392,6 +555,12 @@
                                         </a>
                                         <a th:href="@{/owner/restaurant/edit}" class="btn btn-outline-secondary">
                                             <i class="fas fa-edit me-2"></i>Cập nhật thông tin
+                                        </a>
+                                        <a th:href="@{/partner/dashboard}" class="btn btn-outline-secondary">
+                                            <i class="fas fa-edit me-2"></i>Cập nhật thông tin
+                                        </a>
+                                        <a th:href="@{/partner/dashboard}" class="btn btn-outline-secondary">
+                                            <i class="fas fa-edit me-2"></i>Thanh lý hợp dồng
                                         </a>
                                     </div>
                                 </div>
@@ -422,7 +591,7 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-    document.addEventListener("DOMContentLoaded", function() {
+    document.addEventListener("DOMContentLoaded", function () {
         // Sidebar Toggle Script
         const sidebarToggle = document.getElementById('sidebarToggle');
         const wrapper = document.querySelector('.wrapper');
@@ -473,15 +642,15 @@
 
             const chartOptions = {
                 maintainAspectRatio: false,
-                plugins: { legend: { display: false } },
+                plugins: {legend: {display: false}},
                 scales: {
                     y: {
-                        ticks: { color: 'rgba(255, 255, 255, .7)', beginAtZero: true },
-                        grid: { color: 'rgba(255, 255, 255, .1)' }
+                        ticks: {color: 'rgba(255, 255, 255, .7)', beginAtZero: true},
+                        grid: {color: 'rgba(255, 255, 255, .1)'}
                     },
                     x: {
-                        ticks: { color: 'rgba(255, 255, 255, .7)' },
-                        grid: { display: false }
+                        ticks: {color: 'rgba(255, 255, 255, .7)'},
+                        grid: {display: false}
                     }
                 }
             };
@@ -508,15 +677,31 @@
                 plugins: {
                     legend: {
                         position: 'top',
-                        labels: { color: '#333' }
+                        labels: {color: '#333'}
                     }
                 }
             };
 
-            if (document.getElementById('dailySalesChart')) new Chart(document.getElementById('dailySalesChart'), { type: 'line', data: salesData, options: chartOptions });
-            if (document.getElementById('emailSubscriptionsChart')) new Chart(document.getElementById('emailSubscriptionsChart'), { type: 'bar', data: subscriptionsData, options: chartOptions });
-            if (document.getElementById('completedTasksChart')) new Chart(document.getElementById('completedTasksChart'), { type: 'line', data: tasksData, options: chartOptions });
-            if (document.getElementById('categoryPopularityChart')) new Chart(document.getElementById('categoryPopularityChart'), { type: 'doughnut', data: categoryData, options: doughnutOptions });
+            if (document.getElementById('dailySalesChart')) new Chart(document.getElementById('dailySalesChart'), {
+                type: 'line',
+                data: salesData,
+                options: chartOptions
+            });
+            if (document.getElementById('emailSubscriptionsChart')) new Chart(document.getElementById('emailSubscriptionsChart'), {
+                type: 'bar',
+                data: subscriptionsData,
+                options: chartOptions
+            });
+            if (document.getElementById('completedTasksChart')) new Chart(document.getElementById('completedTasksChart'), {
+                type: 'line',
+                data: tasksData,
+                options: chartOptions
+            });
+            if (document.getElementById('categoryPopularityChart')) new Chart(document.getElementById('categoryPopularityChart'), {
+                type: 'doughnut',
+                data: categoryData,
+                options: doughnutOptions
+            });
         }
     });
 </script>

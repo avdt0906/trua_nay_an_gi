@@ -5,7 +5,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Thanh Toán Giỏ Hàng - Food Delivery</title>
-    <!-- Bootstrap + FontAwesome -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 
@@ -29,21 +28,21 @@
         .price { color: var(--shoppee-primary); font-weight: bold; }
         .total-price { font-size: 1.5rem; color: var(--shoppee-primary); font-weight: bold; }
         .btn-shoppee { background-color: var(--shoppee-primary); color: white; border: none; border-radius: 3px; padding: 10px 20px; font-weight: 500; }
+        .btn-shoppee:hover { background-color: #d73210; color: white; }
         .btn-shoppee-outline { border: 1px solid var(--shoppee-primary); color: var(--shoppee-primary); background: white; border-radius: 3px; padding: 10px 20px; font-weight: 500; }
         .form-check-input:checked { background-color: var(--shoppee-primary); border-color: var(--shoppee-primary); }
-        .shoppee-divider { border-top: 1px dashed var(--shoppee-border); margin: 15px 0; }
-        .address-card { border: 1px solid var(--shoppee-border); border-radius: 3px; padding: 15px; margin-bottom: 15px; background: white; }
+        .shoppee-divider { border-top: 1px dashed #e0e0e0; margin: 15px 0; }
+        .address-card { border: 1px solid #e0e0e0; border-radius: 3px; padding: 15px; margin-bottom: 10px; background: white; cursor: pointer; }
         .address-card.selected { border-color: var(--shoppee-primary); background-color: rgba(238, 77, 45, 0.05); }
-        .shoppee-modal .modal-header { border-bottom: 1px solid var(--shoppee-border); }
-        .shoppee-modal .modal-footer { border-top: 1px solid var(--shoppee-border); }
+        .shoppee-modal .modal-header, .shoppee-modal .modal-footer { border-color: var(--shoppee-border); }
     </style>
 </head>
 
 <body>
-<div th:replace="~{user/fragments/_navbar :: navbar}"></div>
+<div th:replace="~{user/fragments/user_navbar :: navbar}"></div>
 
 <div class="container shoppee-container py-4">
-    <nav aria-label="breadcrumb" class="shoppee-breadcrumb">
+    <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a th:href="@{/home}">Trang chủ</a></li>
             <li class="breadcrumb-item"><a th:href="@{/cart}">Giỏ hàng</a></li>
@@ -57,17 +56,25 @@
         Không có sản phẩm nào để thanh toán.
     </div>
 
+    <div th:if="${errorMessage}" class="alert alert-danger" role="alert" th:text="${errorMessage}"></div>
+
     <form id="order-form" th:action="@{/cart/place-order}" method="post" th:unless="${cartItemList == null or cartItemList.isEmpty()}">
+        <div th:each="cartItem : ${cartItemList}">
+            <input type="hidden" name="selectedItems" th:value="${cartItem.id}" />
+        </div>
+        <input type="hidden" name="address" id="selectedAddressValue" th:if="${addressList != null and !addressList.isEmpty()}" th:value="${addressList[0].fullAddress}" />
+
+        <input type="hidden" name="shipperId" id="selected_shipper_id" />
+
         <div class="row g-4">
             <div class="col-lg-8">
-                <div class="card">
+                <div class="card mb-4">
                     <div class="card-header"><h5 class="mb-0">Sản phẩm đã chọn</h5></div>
                     <div class="card-body p-0">
                         <div th:each="cartItem : ${cartItemList}" class="cart-item">
-                            <input type="hidden" name="selectedItems" th:value="${cartItem.id}" />
                             <div class="row align-items-center">
                                 <div class="col-2 text-center">
-                                    <img th:src="@{'/images/dish/eat_food/' + ${cartItem.dish.pictureUrl}}" class="img-fluid rounded" style="width:80px; height:80px; object-fit:cover;">
+                                    <img th:src="@{'/images/dish/' + ${cartItem.dish.pictureUrl}}" class="img-fluid rounded" style="width:80px; height:80px; object-fit:cover;" alt="Ảnh món ăn">
                                 </div>
                                 <div class="col-4">
                                     <h6 class="fw-bold mb-1" th:text="${cartItem.dish.name}"></h6>
@@ -87,22 +94,46 @@
                         </div>
                     </div>
                 </div>
+
+                <div class="card">
+                    <div class="card-header"><h5 class="mb-0"><i class="fas fa-truck me-2 text-secondary"></i>Phương thức vận chuyển</h5></div>
+                    <div class="card-body">
+                        <div th:if="${shippers != null and not #lists.isEmpty(shippers)}">
+                            <div th:each="shipper, iterStat : ${shippers}" class="form-check mb-2">
+                                <input class="form-check-input shipper-radio" type="radio" name="shipperRadio"
+                                       th:id="'shipper' + ${shipper.id}"
+                                       th:value="${shipper.id}"
+                                       th:data-price="${shipper.price}"
+                                       th:checked="${iterStat.index == 0}">
+                                <label class="form-check-label d-flex justify-content-between w-100" th:for="'shipper' + ${shipper.id}">
+                                    <span>
+                                        <i class="fas fa-shipping-fast me-2"></i>
+                                        <span th:text="${shipper.name}"></span>
+                                    </span>
+                                    <span class="fw-bold price" th:text="'₫' + ${#numbers.formatDecimal(shipper.price, 0, 'COMMA', 0, 'POINT')}"></span>
+                                </label>
+                            </div>
+                        </div>
+                        <div th:if="${shippers == null or #lists.isEmpty(shippers)}">
+                            <p class="text-muted mb-0">Không có đơn vị vận chuyển nào khả dụng.</p>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <div class="col-lg-4">
-                <!-- Phần địa chỉ -->
                 <div class="card mb-3">
                     <div class="card-header"><h5 class="mb-0"><i class="fas fa-map-marker-alt me-2 text-danger"></i>Địa chỉ nhận hàng</h5></div>
                     <div class="card-body">
-                        <div th:if="${addressList != null and !addressList.isEmpty()}">
+                        <div id="address-display" th:if="${addressList != null and !addressList.isEmpty()}">
                             <div class="address-card selected">
                                 <p class="mb-1">
-                                    <strong th:text="${addressList.get(0).name}"></strong> |
-                                    <span th:text="${addressList.get(0).phone}"></span>
+                                    <strong id="selected-address-name" th:text="${addressList[0].name}"></strong> |
+                                    <span id="selected-address-phone" th:text="${addressList[0].phone}"></span>
                                 </p>
                                 <p class="mb-0">
                                     <i class="fas fa-map-marker-alt text-danger me-1"></i>
-                                    <span id="selected-address-text" th:text="${addressList.get(0).fullAddress}"></span>
+                                    <span id="selected-address-text" th:text="${addressList[0].fullAddress}"></span>
                                 </p>
                             </div>
                             <button type="button" class="btn btn-shoppee-outline w-100" data-bs-toggle="modal" data-bs-target="#addressModal">
@@ -111,14 +142,13 @@
                         </div>
                         <div th:if="${addressList == null or addressList.isEmpty()}">
                             <p class="text-muted mb-2">Chưa có địa chỉ</p>
-                            <button type="button" class="btn btn-shoppee-outline w-100" data-bs-toggle="modal" data-bs-target="#addressModal">
-                                <i class="fas fa-plus me-1"></i>Thêm địa chỉ
-                            </button>
+                            <a th:href="@{/user/addresses/add}" class="btn btn-shoppee-outline w-100">
+                                <i class="fas fa-plus me-1"></i>Thêm địa chỉ mới
+                            </a>
                         </div>
                     </div>
                 </div>
 
-                <!-- Phần tổng kết -->
                 <div class="card mb-3">
                     <div class="card-header"><h5 class="mb-0"><i class="fas fa-receipt me-2 text-secondary"></i>Thông tin đơn hàng</h5></div>
                     <div class="card-body">
@@ -127,17 +157,17 @@
                             <textarea id="order-note" name="note" class="form-control" rows="2" placeholder="Ví dụ: Ít cay..." th:text="${orderNote}"></textarea>
                         </div>
                         <div class="shoppee-divider"></div>
-                        <div class="d-flex justify-content-between mb-2"><span>Tạm tính</span><span th:text="'₫' + ${#numbers.formatDecimal(subtotal, 0, 'COMMA', 0, 'POINT')}"></span></div>
-                        <div class="d-flex justify-content-between mb-2"><span>Giảm giá</span><span class="text-success" th:text="'- ₫' + ${#numbers.formatDecimal(discount, 0, 'COMMA', 0, 'POINT')}"></span></div>
-                        <div class="d-flex justify-content-between mb-2"><span>Phí dịch vụ</span><span th:text="'₫' + ${#numbers.formatDecimal(serviceFee, 0, 'COMMA', 0, 'POINT')}"></span></div>
-                        <div class="d-flex justify-content-between mb-2"><span>Phí vận chuyển</span><span th:text="'₫' + ${#numbers.formatDecimal(shippingFee, 0, 'COMMA', 0, 'POINT')}"></span></div>
+                        <div class="d-flex justify-content-between mb-2"><span>Tạm tính</span><span id="subtotal-amount" th:data-value="${subtotal}" th:text="'₫' + ${#numbers.formatDecimal(subtotal, 0, 'COMMA', 0, 'POINT')}"></span></div>
+                        <div class="d-flex justify-content-between mb-2"><span>Giảm giá</span><span class="text-success" id="discount-amount" th:data-value="${discount}" th:text="'- ₫' + ${#numbers.formatDecimal(discount, 0, 'COMMA', 0, 'POINT')}"></span></div>
+                        <div class="d-flex justify-content-between mb-2"><span>Phí dịch vụ</span><span id="service-fee-amount" th:data-value="${serviceFee}" th:text="'₫' + ${#numbers.formatDecimal(serviceFee, 0, 'COMMA', 0, 'POINT')}"></span></div>
+                        <div class="d-flex justify-content-between mb-2"><span>Phí vận chuyển</span><span id="shipping-fee-amount" th:data-value="${shippingFee}" th:text="'₫' + ${#numbers.formatDecimal(shippingFee, 0, 'COMMA', 0, 'POINT')}"></span></div>
                         <div class="shoppee-divider"></div>
                         <div class="d-flex justify-content-between mb-3">
                             <span class="fw-bold">Tổng cộng</span>
-                            <span class="total-price fw-bold" th:text="'₫' + ${#numbers.formatDecimal(grandTotal, 0, 'COMMA', 0, 'POINT')}"></span>
+                            <span class="total-price fw-bold" id="grand-total-amount" th:text="'₫' + ${#numbers.formatDecimal(grandTotal, 0, 'COMMA', 0, 'POINT')}"></span>
                         </div>
                         <div class="d-grid">
-                            <button type="submit" class="btn btn-shoppee btn-lg"><i class="fas fa-credit-card me-2"></i>Đặt hàng</button>
+                            <button type="submit" class="btn btn-shoppee btn-lg" th:disabled="${addressList == null or addressList.isEmpty() or shippers == null or shippers.isEmpty()}"><i class="fas fa-credit-card me-2"></i>Đặt hàng</button>
                         </div>
                     </div>
                 </div>
@@ -146,77 +176,114 @@
     </form>
 </div>
 
-<!-- Modal chọn/sửa/Thêm địa chỉ -->
-<div class="modal fade shoppee-modal" id="addressModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
+<div class="modal fade shoppee-modal" id="addressModal" tabindex="-1"
+     aria-labelledby="addressModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Địa chỉ giao hàng</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                <h5 class="modal-title" id="addressModalLabel">Địa chỉ của tôi</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <div class="row g-4">
-                    <!-- Danh sách địa chỉ -->
-                    <div class="col-lg-7">
-                        <h6 class="mb-3">Chọn địa chỉ có sẵn</h6>
-                        <div th:if="${addressList != null and !addressList.isEmpty()}">
-                            <div class="list-group">
-                                <div class="list-group-item p-0 mb-2 border-0" th:each="addr : ${addressList}">
-                                    <div class="address-card">
-                                        <div class="d-flex justify-content-between align-items-start">
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="radio"
-                                                       name="selectedAddressRadio" th:id="${'addr-' + addr.id}"
-                                                       th:value="${addr.fullAddress}">
-                                                <label class="form-check-label" th:for="${'addr-' + addr.id}">
-                                                    <strong th:text="${addr.fullAddress}">Địa chỉ</strong>
-                                                </label>
-                                            </div>
-                                            <form th:action="@{/addresses/delete/{id}(id=${addr.id})}" method="get">
-                                                <button type="submit"
-                                                        class="btn btn-outline-danger btn-sm">Xóa</button>
-                                            </form>
-                                        </div>
-                                        <form class="mt-2" th:action="@{/addresses/update/{id}(id=${addr.id})}"
-                                              method="post">
-                                            <div class="input-group input-group-sm">
-                                                <input type="text" class="form-control" name="address"
-                                                       th:value="${addr.fullAddress}">
-                                                <button class="btn btn-shoppee" type="submit">Lưu</button>
-                                            </div>
-                                        </form>
-                                    </div>
+                <div th:if="${addressList != null and !addressList.isEmpty()}">
+                    <div class="list-group list-group-flush">
+                        <label th:each="addr : ${addressList}" class="list-group-item list-group-item-action" th:for="${'addr-' + addr.id}">
+                            <div class="d-flex w-100 justify-content-between">
+                                <div>
+                                    <input class="form-check-input me-3" type="radio" name="addressIdModal" th:id="${'addr-' + addr.id}" th:value="${addr.id}"
+                                           th:checked="${addressList[0].id == addr.id}"
+                                           th:data-name="${addr.name}"
+                                           th:data-phone="${addr.phone}"
+                                           th:data-fulladdress="${addr.fullAddress}">
+                                    <span class="fw-bold" th:text="${addr.name} + ' | ' + ${addr.phone}"></span>
+                                    <span class="badge bg-success ms-2" th:if="${addr.defaultAddress}">Mặc định</span>
                                 </div>
                             </div>
-                            <button type="button" id="useSelectedAddressBtn" class="btn btn-shoppee w-100 mt-3">Xác
-                                nhận địa chỉ đã chọn</button>
-                        </div>
-                        <div th:if="${addressList == null or addressList.isEmpty()}" class="text-muted">Chưa có địa
-                            chỉ nào.</div>
+                            <p class="mb-1 ms-4 ps-3" th:text="${addr.fullAddress}"></p>
+                        </label>
                     </div>
-
-                    <!-- Thêm địa chỉ mới -->
-                    <div class="col-lg-5">
-                        <h6 class="mb-3">Thêm địa chỉ mới</h6>
-                        <form th:action="@{/addresses/add}" th:object="${newAddress}" method="post">
-                            <div class="mb-3">
-                                <label class="form-label">Địa chỉ mới</label>
-                                <input type="text" class="form-control" th:field="*{fullAddress}"
-                                       placeholder="Nhập địa chỉ mới" required>
-                            </div>
-                            <div class="d-grid">
-                                <button type="submit" class="btn btn-shoppee">Thêm địa chỉ</button>
-                            </div>
-                        </form>
-                    </div>
-                </div> <!-- row -->
+                </div>
+                <div th:if="${addressList == null or addressList.isEmpty()}" class="text-center text-muted p-4">
+                    <p>Bạn chưa có địa chỉ mặc định.</p>
+                </div>
+            </div>
+            <div class="modal-footer justify-content-between">
+                <a th:href="@{/user/addresses/add}" class="btn btn-shoppee-outline"><i class="fas fa-plus me-1"></i>Thêm địa chỉ mới</a>
+                <button type="button" id="useSelectedAddressBtn" class="btn btn-shoppee" data-bs-dismiss="modal">Xác nhận</button>
             </div>
         </div>
     </div>
 </div>
 
+<div th:replace="homepage/index :: home_footer"></div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-<script th:src="@{/js/cart/cart-detail-page.js}"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // --- Address Modal Logic ---
+        const useSelectedAddressBtn = document.getElementById('useSelectedAddressBtn');
+        if (useSelectedAddressBtn) {
+            useSelectedAddressBtn.addEventListener('click', function () {
+                const selectedRadio = document.querySelector('input[name="addressIdModal"]:checked');
+                if (selectedRadio) {
+                    const fullAddress = selectedRadio.getAttribute('data-fulladdress');
+                    const name = selectedRadio.getAttribute('data-name');
+                    const phone = selectedRadio.getAttribute('data-phone');
+
+                    document.getElementById('selectedAddressValue').value = fullAddress;
+                    document.getElementById('selected-address-name').textContent = name;
+                    document.getElementById('selected-address-phone').textContent = phone;
+                    document.getElementById('selected-address-text').textContent = fullAddress;
+                }
+            });
+        }
+
+        // --- Shipper and Fee Calculation Logic ---
+        const shipperRadios = document.querySelectorAll('.shipper-radio');
+        const selectedShipperInput = document.getElementById('selected_shipper_id');
+
+        const subtotalEl = document.getElementById('subtotal-amount');
+        const discountEl = document.getElementById('discount-amount');
+        const serviceFeeEl = document.getElementById('service-fee-amount');
+        const shippingFeeEl = document.getElementById('shipping-fee-amount');
+        const grandTotalEl = document.getElementById('grand-total-amount');
+
+        // Hàm định dạng tiền tệ
+        function formatCurrency(value) {
+            return '₫' + new Intl.NumberFormat('vi-VN').format(value);
+        }
+
+        // Hàm cập nhật tổng tiền
+        function updateTotals() {
+            const subtotal = parseFloat(subtotalEl.getAttribute('data-value')) || 0;
+            const discount = parseFloat(discountEl.getAttribute('data-value')) || 0;
+            const serviceFee = parseFloat(serviceFeeEl.getAttribute('data-value')) || 0;
+
+            const selectedShipper = document.querySelector('.shipper-radio:checked');
+            let shippingPrice = 0;
+
+            if (selectedShipper) {
+                shippingPrice = parseFloat(selectedShipper.getAttribute('data-price'));
+                selectedShipperInput.value = selectedShipper.value; // Cập nhật hidden input
+            }
+
+            // Cập nhật hiển thị phí ship
+            shippingFeeEl.textContent = formatCurrency(shippingPrice);
+
+            // Tính toán và cập nhật tổng tiền
+            const grandTotal = Math.max(0, subtotal - discount) + serviceFee + shippingPrice;
+            grandTotalEl.textContent = formatCurrency(grandTotal);
+        }
+
+        // Gán sự kiện 'change' cho tất cả radio button của shipper
+        shipperRadios.forEach(radio => {
+            radio.addEventListener('change', updateTotals);
+        });
+
+        // Chạy lần đầu khi tải trang để đảm bảo giá trị đúng
+        updateTotals();
+    });
+</script>
+
 </body>
 </html>
-

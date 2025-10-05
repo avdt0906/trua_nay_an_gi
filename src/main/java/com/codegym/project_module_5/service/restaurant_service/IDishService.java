@@ -12,9 +12,9 @@ import java.util.List;
 public interface IDishService extends IGeneralService<Dish> {
     Page<Dish> findAll(Pageable pageable);
 
-    Iterable<Dish> findAllByRestaurantId(Long restaurantId);
+    Page<Dish> findAllByRestaurantId(Long restaurantId, Pageable pageable);
 
-    Iterable<Dish> findAllByRestaurantIdAndNameContainingIgnoreCase(Long restaurantId, String name);
+    Page<Dish> findAllByRestaurantIdAndNameContainingIgnoreCase(Long restaurantId, String name, Pageable pageable);
 
     Iterable<Dish> findAllAvailableDishes();
 
@@ -27,8 +27,7 @@ public interface IDishService extends IGeneralService<Dish> {
     List<Dish> findByRestaurantId(Long restaurantId);
 
     List<Dish> findTop8ByOrderByDiscountDesc();
-    
-    List<Dish> findByCategoryIdAndRestaurantApproved(Long categoryId);
+
     Page<Dish> findByCategoryIdAndRestaurantApproved(Long categoryId, Pageable pageable);
     
     List<Dish> findBestPriceDishes(Pageable pageable);
@@ -36,4 +35,5 @@ public interface IDishService extends IGeneralService<Dish> {
     List<Dish> findHotPickDishes(Pageable pageable);
     
     List<Dish> findNearbyDishes(Pageable pageable);
+    Page<Dish> search(String keyword, Pageable pageable);
 }

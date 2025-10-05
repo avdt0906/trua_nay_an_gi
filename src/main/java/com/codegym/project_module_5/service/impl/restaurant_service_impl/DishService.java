@@ -42,13 +42,13 @@ public class DishService implements IDishService {
     }
 
     @Override
-    public Iterable<Dish> findAllByRestaurantId(Long restaurantId) {
-        return dishRepository.findAllByRestaurantId(restaurantId);
+    public Page<Dish> findAllByRestaurantId(Long restaurantId, Pageable pageable) {
+        return dishRepository.findAllByRestaurantId(restaurantId, pageable);
     }
 
     @Override
-    public Iterable<Dish> findAllByRestaurantIdAndNameContainingIgnoreCase(Long restaurantId, String name) {
-        return dishRepository.findAllByRestaurantIdAndNameContainingIgnoreCase(restaurantId, name);
+    public Page<Dish> findAllByRestaurantIdAndNameContainingIgnoreCase(Long restaurantId, String name, Pageable pageable) {
+        return dishRepository.findAllByRestaurantIdAndNameContainingIgnoreCase(restaurantId, name, pageable);
     }
 
     @Override
@@ -79,11 +79,7 @@ public class DishService implements IDishService {
     public List<Dish> findByRestaurantId(Long restaurantId) {
         return dishRepository.findByRestaurant_Id(restaurantId);
     }
-    
-    @Override
-    public List<Dish> findByCategoryIdAndRestaurantApproved(Long categoryId) {
-        return dishRepository.findByCategoryIdAndRestaurantApproved(categoryId);
-    }
+
     
     @Override
     public Page<Dish> findByCategoryIdAndRestaurantApproved(Long categoryId, Pageable pageable) {
@@ -103,5 +99,9 @@ public class DishService implements IDishService {
     @Override
     public List<Dish> findNearbyDishes(Pageable pageable) {
         return dishRepository.findNearbyDishes(pageable);
+    }
+
+    public Page<Dish> search(String keyword, Pageable pageable) {
+        return dishRepository.search(keyword, pageable);
     }
 }

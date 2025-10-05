@@ -26,8 +26,14 @@ public class Restaurant {
     private String logoUrl;
     private String description;
     private Boolean isLongTermPartner = false;
+    private Boolean partnerRequest;
     private Boolean isOpen = true;
     private Boolean isLocked = false;
     private Boolean isApproved;
+    private Double rlatitude;
+    private Double rlongitude;  
     private Double wallet = 0.0d;
+    @Column(name = "featured_dish_id") 
+    private Long featuredDishId;
+    private Boolean contractTerminated = false;
 }
