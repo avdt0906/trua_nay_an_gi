@@ -9,6 +9,7 @@ Server-side rendered food ordering web application built with Spring Boot and Th
 
 ## Demo / Screenshots
 <div align="center">
+  <p>1. User Screenshots</p>
   <table>
     <tr>
       <td align="center">
@@ -20,29 +21,56 @@ Server-side rendered food ordering web application built with Spring Boot and Th
         <sub>Login</sub>
       </td>
       <td align="center">
-        <img src="uploads/screenshots/login.png" alt="Cart" width="300"><br>
+        <img src="uploads/screenshots/cart.png" alt="Cart" width="300"><br>
         <sub>Cart</sub>
-      </td>
-    </tr>
-    <tr>
-      <td align="center">
-        <img src="screenshots/create_order.png" alt="Create Order" width="300"><br>
-        <sub>Create order</sub>
-      </td>
-      <td align="center">
-        <img src="screenshots/order_tracking.png" alt="Order Tracking" width="300"><br>
-        <sub>Order tracking</sub>
-      </td>
-      <td align="center">
-        <img src="screenshots/admin_dashboard.png" alt="Admin Dashboard" width="300"><br>
-        <sub>Admin dashboard</sub>
       </td>
     </tr>
   </table>
 </div>
 
+<div align="center">
+  <p>2. Restaurant Owner Screenshots</p>
+  <table>
+    <tr>
+      <td align="center">
+        <img src="uploads/screenshots/homepage.png" alt="Homepage" width="300"><br>
+        <sub>Homepage</sub>
+      </td>
+      <td align="center">
+        <img src="uploads/screenshots/login.png" alt="Login" width="300"><br>
+        <sub>Login</sub>
+      </td>
+      <td align="center">
+        <img src="uploads/screenshots/cart.png" alt="Cart" width="300"><br>
+        <sub>Cart</sub>
+      </td>
+    </tr>
+  </table>
+</div>
 
-
+<div align="center">
+  <p>3. Admin Screenshots</p>
+  <table>
+    <tr>
+      <td align="center">
+        <img src="uploads/screenshots/admin_dashboard.png" alt="Admin Dashboard" width="300"><br>
+        <sub>Admin Dashboard</sub>
+      </td>
+      <td align="center">
+        <img src="uploads/screenshots/admin_account_list.png" alt="Account List" width="300"><br>
+        <sub>Account List</sub>
+      </td>
+      <td align="center">
+        <img src="uploads/screenshots/admin_dish_list.png" alt="Dish List" width="300"><br>
+        <sub>Dish List</sub>
+      </td>
+      <td align="center">
+        <img src="uploads/screenshots/admin_order_list.png" alt="Order List" width="300"><br>
+        <sub>Order List</sub>
+      </td>
+    </tr>
+  </table>
+</div>
 ---
 
 ## Features
