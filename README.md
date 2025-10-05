@@ -3,12 +3,13 @@
 **Short description**  
 Server-side rendered food ordering web application built with Spring Boot and Thymeleaf. Features user authentication, role-based access, CRUD management for restaurants/menus/orders/users, Google Maps integration for restaurant locations, and order tracking.
 
-> Repository: https://github.com/avdt0906/trua_nay_an_gi.
+> Repository: https://github.com/avdt0906/trua_nay_an_gi
 
 ---
 
 ## Demo / Screenshots
-*(Add screenshots in `docs/` or the repo root and reference them here)*
+![Homepage](Đường/dẫn/đến/tệp/ảnh.jpg)
+
 
 ---
 
