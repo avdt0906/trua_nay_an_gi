@@ -9,7 +9,7 @@ Server-side rendered food ordering web application built with Spring Boot and Th
 
 ## Demo / Screenshots
 <div align="center">
-  <p>1. User Screenshots</p>
+  <p><strong>1. User Screenshots</strong></p>
   <table>
     <tr>
       <td align="center">
@@ -50,7 +50,7 @@ Server-side rendered food ordering web application built with Spring Boot and Th
 </div>
 
 <div align="center">
-  <p>2. Restaurant Owner Screenshots</p>
+  <p><strong>2. Restaurant Owner Screenshots</strong></p>
   <table>
     <tr>
       <td align="center">
@@ -70,7 +70,7 @@ Server-side rendered food ordering web application built with Spring Boot and Th
 </div>
 
 <div align="center">
-  <p>3. Admin Screenshots</p>
+  <p><strong>3. Admin Screenshots</strong></p>
   <table>
     <tr>
       <td align="center">
@@ -80,6 +80,16 @@ Server-side rendered food ordering web application built with Spring Boot and Th
       <td align="center">
         <img src="uploads/screenshots/admin_account_list.png" alt="Account List" width="300"><br>
         <sub>Account List</sub>
+      </td>
+      <td align="center">
+        <img src="uploads/screenshots/admin_shipper_list.png" alt="Shipper List" width="300"><br>
+        <sub>Shipper List</sub>
+      </td>
+    </tr>
+    <tr>
+      <td align="center">
+        <img src="uploads/screenshots/admin_restaurant_list.png" alt="Restaurant List" width="300"><br>
+        <sub>Restaurant List</sub>
       </td>
       <td align="center">
         <img src="uploads/screenshots/admin_dish_list.png" alt="Dish List" width="300"><br>
