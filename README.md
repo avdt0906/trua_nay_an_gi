@@ -106,7 +106,6 @@ Server-side rendered food ordering web application built with Spring Boot and Th
     </tr>
   </table>
 </div>
----
 
 ## Features
 - Server-side rendered UI using **Thymeleaf**.
@@ -124,7 +123,7 @@ Server-side rendered food ordering web application built with Spring Boot and Th
 - Spring Security  
 - JPA / Hibernate  
 - MySQL  
-- Gradle (build system). See `build.gradle`. :contentReference[oaicite:3]{index=3}
+- Gradle (build system). See `build.gradle`.
 
 ---
 
@@ -132,13 +131,12 @@ Server-side rendered food ordering web application built with Spring Boot and Th
 - Java 11 or higher (JDK installed)
 - MySQL (or compatible database)
 - Git
-- (Optional) IDE: IntelliJ IDEA / Eclipse
-- (Optional) Google Maps API key (if you want maps in local run)
+- IDE: IntelliJ IDEA / Eclipse
 
 ---
 
 ## Quick start — Run locally
 
-1. **Clone repository**
+**Clone repository**
 ```bash
 git clone https://github.com/avdt0906/trua_nay_an_gi.git
