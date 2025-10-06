@@ -54,16 +54,20 @@ Server-side rendered food ordering web application built with Spring Boot and Th
   <table>
     <tr>
       <td align="center">
-        <img src="uploads/screenshots/homepage.png" alt="Homepage" width="300"><br>
-        <sub>Homepage</sub>
+        <img src="uploads/screenshots/restaurant_owner_dashboard.png" alt="Dashboard" width="300"><br>
+        <sub>Dashboard</sub>
       </td>
       <td align="center">
-        <img src="uploads/screenshots/login.png" alt="Login" width="300"><br>
-        <sub>Login</sub>
+        <img src="uploads/screenshots/dish_list.png" alt="Dish List" width="300"><br>
+        <sub>Dish List</sub>
       </td>
       <td align="center">
-        <img src="uploads/screenshots/cart.png" alt="Cart" width="300"><br>
-        <sub>Cart</sub>
+        <img src="uploads/screenshots/coupon_list.png" alt="Coupon List" width="300"><br>
+        <sub>Coupon List</sub>
+      </td>
+      <td align="center">
+        <img src="uploads/screenshots/order_list.png" alt="Order List" width="300"><br>
+        <sub>Order List</sub>
       </td>
     </tr>
   </table>
